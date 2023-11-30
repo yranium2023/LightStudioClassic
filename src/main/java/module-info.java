@@ -13,5 +13,5 @@ module org.example {
     requires vjson;
 
     opens org.example to javafx.fxml;
-//    exports org.example;
+    exports org.example;
 }
