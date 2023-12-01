@@ -63,7 +63,12 @@
                 </includes>
                 <filtering>false</filtering>
             </resource>
-
+            <resource>
+                <directory>src/main/resources</directory>
+                <includes>
+                    <include>**/*.png</include> <!-- 可根据实际需要添加其他文件类型 -->
+                </includes>
+            </resource>
             <resource>
                 <!--把lib/目录下第三方jar包打进程序中，如systemPath目录下的jar-->
                 <directory>lib/</directory>
