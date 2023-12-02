@@ -32,7 +32,8 @@ public class HelloApplication extends Application {
         AnchorPane root = new AnchorPane();
         Scene scene = new Scene(root,WIDTH,HEIGHT);
         stage.setTitle("坦克");
-        stage.getIcons().add(new Image(Director.class.getResource("/image/icon.png").toString()));
+        String resource=getClass().getResource("/image/icon.png").toString();
+        stage.getIcons().add(new Image(resource));
         stage.setResizable(false);
         stage.setScene(scene);
         stage.show();

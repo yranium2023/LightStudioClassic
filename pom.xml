@@ -7,8 +7,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>javafx</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>LightStudioClassic</artifactId>
+    <version>1.0</version>
 
 
     <properties>
