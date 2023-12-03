@@ -12,6 +12,7 @@ module org.example {
     requires com.github.kwhat.jnativehook;
     requires vjson;
 
+
     opens org.example to javafx.fxml;
     exports org.example;
 }
