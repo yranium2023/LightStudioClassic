@@ -70,7 +70,7 @@ public class LSMain extends Application {
 
         //以下部分为测试所用，增加一个前往ImageImportScene的按钮
         var imageImportScene = mainScenes.get(1);
-        stage.getRootSceneGroup().addScene(imageImportScene);
+
         var testInputButton = new FusionButton("导入图片") {{
             setPrefWidth(150);
             setPrefHeight(navigatePane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);
@@ -78,7 +78,7 @@ public class LSMain extends Application {
         }};
 
         testInputButton.setOnAction(e -> {
-            stage.getRootSceneGroup().show(imageImportScene, VSceneShowMethod.FROM_LEFT);
+            sceneGroup.show(imageImportScene, VSceneShowMethod.FROM_LEFT);
         });
 
         navigatePane.getContentPane().getChildren().add(testInputButton);
