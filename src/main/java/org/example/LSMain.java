@@ -47,6 +47,7 @@ public class LSMain extends Application {
         };
         stage.getInitialScene().enableAutoContentWidthHeight();
         stage.setTitle("LightStudioClassic v1.0");
+        stage.setTitle("中文字体测试");
 
         //添加scene 要用的记得添加进去
         mainScenes.add(new IntroScene());
