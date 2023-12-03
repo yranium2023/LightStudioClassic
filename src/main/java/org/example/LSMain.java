@@ -71,7 +71,7 @@ public class LSMain extends Application {
         //以下部分为测试所用，增加一个前往ImageImportScene的按钮
         var imageImportScene = mainScenes.get(1);
 
-        var testInputButton = new FusionButton("导入图片") {{
+        var testInputButton = new FusionButton("图库") {{
             setPrefWidth(150);
             setPrefHeight(navigatePane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);
             setOnlyAnimateWhenNotClicked(true);
