@@ -2,11 +2,17 @@ package org.example;
 
 import io.vproxy.vfx.control.globalscreen.GlobalScreenUtils;
 import io.vproxy.vfx.manager.task.TaskManager;
+import io.vproxy.vfx.ui.button.FusionButton;
+import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.VSceneGroup;
+import io.vproxy.vfx.ui.scene.VSceneHideMethod;
+import io.vproxy.vfx.ui.scene.VSceneShowMethod;
 import io.vproxy.vfx.ui.stage.VStage;
+import io.vproxy.vfx.util.FXUtils;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.example.ImageTools.ImportImageResource;
+import org.example.Scene.ImageImportScene;
 import org.example.Scene.IntroScene;
 import org.example.Scene.SuperScene;
 
@@ -38,13 +44,38 @@ public class LSMain extends Application {
         stage.getInitialScene().enableAutoContentWidthHeight();
         stage.setTitle("LightStudioClassic v1.0");
 
+        //添加scene 要用的记得添加进去
         mainScenes.add(new IntroScene());
+        mainScenes.add(new ImageImportScene());
         var initialScene = mainScenes.get(0);
         sceneGroup = new VSceneGroup(initialScene);
         for (var s : mainScenes) {
             if (s == initialScene) continue;
             sceneGroup.addScene(s);
         }
+
+        var navigatePane = new FusionPane();
+
+        navigatePane.getNode().setPrefHeight(60);
+        FXUtils.observeHeight(stage.getInitialScene().getContentPane(), sceneGroup.getNode(), -10 - 60 - 5 - 10);
+
+        FXUtils.observeWidth(stage.getInitialScene().getContentPane(), sceneGroup.getNode(), -20);
+        FXUtils.observeWidth(stage.getInitialScene().getContentPane(), navigatePane.getNode(), -20);
+
+        //以下部分为测试所用，增加一个前往ImageImportScene的按钮
+        var imageImportScene = mainScenes.get(1);
+        stage.getRootSceneGroup().addScene(imageImportScene, VSceneHideMethod.TO_LEFT);
+        var testInputButton = new FusionButton("导入图片") {{
+            setPrefWidth(150);
+            setPrefHeight(navigatePane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);
+            setOnlyAnimateWhenNotClicked(true);
+        }};
+
+        testInputButton.setOnAction(e -> {
+            stage.getRootSceneGroup().show(imageImportScene, VSceneShowMethod.FROM_LEFT);
+        });
+
+        stage.getRoot().getContentPane().getChildren().add(testInputButton);
 
         stage.getStage().setWidth(1280);
         stage.getStage().setHeight(800);

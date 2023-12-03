@@ -23,7 +23,7 @@ import java.io.File;
  */
 public class ImageImportScene extends SuperScene{
 
-    public ImageImportScene(VSceneRole role) {
+    public ImageImportScene() {
         super(VSceneRole.MAIN);
         enableAutoContentWidthHeight();
 
