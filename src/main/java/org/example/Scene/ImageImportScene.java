@@ -15,6 +15,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * @Description: 用于文件管理 暂时用于测试
@@ -37,27 +38,38 @@ public class ImageImportScene extends SuperScene{
             // 创建文件选择器
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("选择图片");
+            fileChooser.setInitialDirectory(new File(System.getProperty("user.home"))); // 设置初始目录
 
             // 添加文件过滤器，限定选择的文件类型为图片
-            FileChooser.ExtensionFilter imageFilter = new FileChooser.ExtensionFilter(
-                    "图片文件", "*.png", "*.jpg", "*.gif", "*.bmp", "*.jpeg");
-            fileChooser.getExtensionFilters().add(imageFilter);
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.gif", "*.bmp", "*.jpeg")
+            );
 
-            // 显示文件选择器对话框并获取选中的文件
-            File selectedFile = fileChooser.showOpenDialog(null);
+            // 显示文件选择器对话框并获取选中的多个文件
+            List<File> selectedFiles = fileChooser.showOpenMultipleDialog(null);
 
-            if (selectedFile != null) {
-                // 如果用户选择了文件，则加载该文件并显示在界面上
-                String imagePath = selectedFile.toURI().toString();
-                Image selectedImage = new Image(imagePath);
-
-                // 这里你可以根据需要使用选择的图像做一些操作
-                // 例如，显示在界面上或者传递给其他部分进行处理
+            if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                for (File selectedFile : selectedFiles) {
+                    // 处理每个选中的图片文件，例如显示在界面上或传递给其他部分进行处理
+                    String imagePath = selectedFile.toURI().toString();
+                    Image selectedImage = new Image(imagePath);
+                    // 在这里可以根据需要使用选择的图像做一些操作
+                }
             }
+
         });
+
+        var gridPane = new GridPane();
+        gridPane.setLayoutY(300);
+        gridPane.setHgap(50);
+        gridPane.setVgap(50);
+        FXUtils.observeWidthCenter(getContentPane(), gridPane);
+        gridPane.add(defaultButton, 0, 0);
+
+        getContentPane().getChildren().addAll(
+                gridPane
+        );
     }
-
-
 
     @Override
     public String title() {

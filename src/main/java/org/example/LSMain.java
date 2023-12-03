@@ -3,6 +3,8 @@ package org.example;
 import io.vproxy.vfx.control.globalscreen.GlobalScreenUtils;
 import io.vproxy.vfx.manager.task.TaskManager;
 import io.vproxy.vfx.ui.button.FusionButton;
+import io.vproxy.vfx.ui.layout.HPadding;
+import io.vproxy.vfx.ui.layout.VPadding;
 import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.VSceneGroup;
 import io.vproxy.vfx.ui.scene.VSceneHideMethod;
@@ -10,6 +12,8 @@ import io.vproxy.vfx.ui.scene.VSceneShowMethod;
 import io.vproxy.vfx.ui.stage.VStage;
 import io.vproxy.vfx.util.FXUtils;
 import javafx.application.Application;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.ImageTools.ImportImageResource;
 import org.example.Scene.ImageImportScene;
@@ -62,9 +66,11 @@ public class LSMain extends Application {
         FXUtils.observeWidth(stage.getInitialScene().getContentPane(), sceneGroup.getNode(), -20);
         FXUtils.observeWidth(stage.getInitialScene().getContentPane(), navigatePane.getNode(), -20);
 
+
+
         //以下部分为测试所用，增加一个前往ImageImportScene的按钮
         var imageImportScene = mainScenes.get(1);
-        stage.getRootSceneGroup().addScene(imageImportScene, VSceneHideMethod.TO_LEFT);
+        stage.getRootSceneGroup().addScene(imageImportScene);
         var testInputButton = new FusionButton("导入图片") {{
             setPrefWidth(150);
             setPrefHeight(navigatePane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);
@@ -75,7 +81,20 @@ public class LSMain extends Application {
             stage.getRootSceneGroup().show(imageImportScene, VSceneShowMethod.FROM_LEFT);
         });
 
-        stage.getRoot().getContentPane().getChildren().add(testInputButton);
+        navigatePane.getContentPane().getChildren().add(testInputButton);
+
+        var box = new HBox(
+                new HPadding(10),
+                new VBox(
+                        new VPadding(10),
+                        sceneGroup.getNode(),
+                        new VPadding(5),
+                        navigatePane.getNode()
+                )
+        );
+        stage.getInitialScene().getContentPane().getChildren().add(box);
+
+
 
         stage.getStage().setWidth(1280);
         stage.getStage().setHeight(800);
