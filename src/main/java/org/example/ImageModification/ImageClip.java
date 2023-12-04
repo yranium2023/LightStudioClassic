@@ -39,7 +39,7 @@ public class ImageClip{
     public static void imageClip(Image image,Pane anchorPane) {
         // 创建ImageView并设置图像
         ImageView imageView = new ImageView(image);
-        imageRectangle=new Rectangle(0,0,image.getWidth(),image.getHeight();
+        imageRectangle=new Rectangle(0,0,image.getWidth(),image.getHeight());
         clip.setStrokeWidth(3);
         clip.setStrokeType(StrokeType.CENTERED);
         clip.setStroke(Color.GREEN);
