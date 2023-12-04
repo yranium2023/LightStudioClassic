@@ -50,7 +50,9 @@ public class LSMain extends Application {
 
         //添加scene 要用的记得添加进去
         mainScenes.add(new IntroScene());
-        mainScenes.add(new ImageImportScene());
+        mainScenes.add(new ImageImportScene(()->sceneGroup));
+
+
         var initialScene = mainScenes.get(0);
         sceneGroup = new VSceneGroup(initialScene);
         for (var s : mainScenes) {
@@ -65,8 +67,7 @@ public class LSMain extends Application {
             getNode().setLayoutY(15);
         }};
 
-        navigatePane.getNode().setPrefHeight(50);
-        navigatePane.getNode().setPrefWidth(250);
+
         FXUtils.observeHeight(stage.getInitialScene().getContentPane(), sceneGroup.getNode(), -80);
 
         FXUtils.observeWidthHeight(stage.getInitialScene().getContentPane(), sceneGroup.getNode());
@@ -85,10 +86,11 @@ public class LSMain extends Application {
             setPrefHeight(navigatePane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);
             setOnlyAnimateWhenNotClicked(true);
         }};
+
+
         navigatePane.getContentPane().widthProperty().addListener((ob, old, now) -> {
             if (now == null) return;
             var v = now.doubleValue();
-
             InputButton.setLayoutX(v - 125 - InputButton.getPrefWidth());
             ImageEditButton.setLayoutX(v - ImageEditButton.getPrefWidth()-5);
         });
