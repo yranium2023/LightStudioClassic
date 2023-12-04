@@ -22,6 +22,7 @@ import javafx.stage.FileChooser;
 import org.example.ImageTools.ImportImageResource;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -31,6 +32,9 @@ import java.util.function.Supplier;
  * @date 2023/12/3 20:56
  */
 public class ImageImportScene extends SuperScene{
+
+    private Image editingImages = null;
+
     public ImageImportMenuScene menuScene=new ImageImportMenuScene();
     public ImageImportScene(Supplier<VSceneGroup> sceneGroupSup) {
         super(VSceneRole.MAIN);
@@ -53,9 +57,22 @@ public class ImageImportScene extends SuperScene{
         });
         getContentPane().getChildren().add(menuBtn);
 
+        //如果没有选择要编辑的图片 直接进入编辑图片的话 默认选择第一张图片
+        if(!menuScene.getSelectedImages().isEmpty()){
+            editingImages=menuScene.getSelectedImages().get(0);
+        }
 
+    }
 
+    /***
+     * @Description  返回所需要编辑的图片
+     * @return javafx.scene.image.Image
+     * @author 张喆宇
+     * @date 2023/12/4 18:59
+    **/
 
+    public Image getEditingImages() {
+        return editingImages;
     }
 
     @Override
