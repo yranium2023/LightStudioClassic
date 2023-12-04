@@ -47,7 +47,6 @@ public class LSMain extends Application {
         };
         stage.getInitialScene().enableAutoContentWidthHeight();
         stage.setTitle("LightStudioClassic v1.0");
-        stage.setTitle("中文字体测试");
 
         //添加scene 要用的记得添加进去
         mainScenes.add(new IntroScene());
@@ -59,41 +58,65 @@ public class LSMain extends Application {
             sceneGroup.addScene(s);
         }
 
-        var navigatePane = new FusionPane();
+        var navigatePane = new FusionPane(){{
+            getNode().setPrefWidth(250);
+            getNode().setPrefHeight(50);
+            getNode().setLayoutX(1025);
+            getNode().setLayoutY(5);
+        }};
 
-        navigatePane.getNode().setPrefHeight(60);
-        FXUtils.observeHeight(stage.getInitialScene().getContentPane(), sceneGroup.getNode(), -10 - 60 - 5 - 10);
+        navigatePane.getNode().setPrefHeight(50);
+        navigatePane.getNode().setPrefWidth(250);
+        FXUtils.observeHeight(stage.getInitialScene().getContentPane(), sceneGroup.getNode(), -80);
 
-        FXUtils.observeWidth(stage.getInitialScene().getContentPane(), sceneGroup.getNode(), -20);
-        FXUtils.observeWidth(stage.getInitialScene().getContentPane(), navigatePane.getNode(), -20);
+        FXUtils.observeWidth(stage.getInitialScene().getContentPane(), navigatePane.getNode(), -10-navigatePane.getNode().getLayoutX());
+        System.out.println(navigatePane.getNode().getLayoutX());
+        FXUtils.observeWidthHeight(stage.getInitialScene().getContentPane(), sceneGroup.getNode());
 
 
 
         //以下部分为测试所用，增加一个前往ImageImportScene的按钮
         var imageImportScene = mainScenes.get(1);
 
-        var testInputButton = new FusionButton("图库") {{
-            setPrefWidth(150);
+        var InputButton = new FusionButton("图库") {{
+            setPrefWidth(100);
             setPrefHeight(navigatePane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);
             setOnlyAnimateWhenNotClicked(true);
         }};
+        var ImageEditButton = new FusionButton("编辑") {{
+            setPrefWidth(100);
+            setPrefHeight(navigatePane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);
+            setOnlyAnimateWhenNotClicked(true);
+        }};
+        navigatePane.getContentPane().widthProperty().addListener((ob, old, now) -> {
+            if (now == null) return;
+            var v = now.doubleValue();
+            InputButton.setLayoutX(v-125-InputButton.getPrefWidth());
+            ImageEditButton.setLayoutX(v - ImageEditButton.getPrefWidth());
+        });
 
-        testInputButton.setOnAction(e -> {
+        InputButton.setOnAction(e -> {
             sceneGroup.show(imageImportScene, VSceneShowMethod.FROM_LEFT);
         });
 
-        navigatePane.getContentPane().getChildren().add(testInputButton);
+        navigatePane.getContentPane().getChildren().add(InputButton);
+        navigatePane.getContentPane().getChildren().add(ImageEditButton);
+
 
         var box = new HBox(
-                new HPadding(10),
+                new HPadding(900),
                 new VBox(
-                        new VPadding(10),
-                        sceneGroup.getNode(),
-                        new VPadding(5),
+                        new VPadding(20),
                         navigatePane.getNode()
                 )
         );
-        stage.getInitialScene().getContentPane().getChildren().add(box);
+        var sceneBox=new VBox(
+                box,
+                new VPadding(80),
+                sceneGroup.getNode()
+        );
+        stage.getInitialScene().getContentPane().getChildren().add(sceneGroup.getNode());
+        stage.getInitialScene().getContentPane().getChildren().add(navigatePane.getNode());
 
 
 
