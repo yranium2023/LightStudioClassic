@@ -1,14 +1,10 @@
-package org.example.Imagemodification;
-
+package org.example.ImageModification;
 
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
-
 import javafx.geometry.Rectangle2D;
-import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,11 +13,9 @@ import javafx.scene.input.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeType;
-import javafx.stage.Stage;
 
 
 /**
@@ -32,6 +26,8 @@ import javafx.stage.Stage;
 
 public class ImageClip{
     private static Rectangle clip = new Rectangle(50,50,100,100);
+
+    private static Rectangle imageRectangle;
     private static double mouseX;
     private static double mouseY;
     private static Shape darkenedArea;
@@ -43,11 +39,12 @@ public class ImageClip{
     public static void imageClip(Image image,Pane anchorPane) {
         // 创建ImageView并设置图像
         ImageView imageView = new ImageView(image);
+        imageRectangle=new Rectangle(0,0,image.getWidth(),image.getHeight();
         clip.setStrokeWidth(3);
         clip.setStrokeType(StrokeType.CENTERED);
         clip.setStroke(Color.GREEN);
         clip.setFill(Color.TRANSPARENT);
-        darkenedArea = Shape.subtract(new Rectangle(0,0,image.getWidth(),image.getHeight()),clip);
+        darkenedArea = Shape.subtract(imageRectangle,clip);
         darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
         anchorPane.getChildren().addAll(imageView,darkenedArea,clip);
         anchorPane.setOnMouseMoved(event -> {
@@ -61,9 +58,10 @@ public class ImageClip{
                     clip.setHeight(clip.getHeight() + deltaY);
                     mouseX = mouseEvent.getX();
                     mouseY = mouseEvent.getY();
-                    darkenedArea = Shape.subtract(new Rectangle(0,0,image.getWidth(),image.getHeight()),clip);
+                    int index=anchorPane.getChildren().indexOf(darkenedArea);
+                    darkenedArea = Shape.subtract(imageRectangle,clip);
                     darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
-                    anchorPane.getChildren().set(1,darkenedArea);
+                    anchorPane.getChildren().set(index,darkenedArea);
                 });
             } else if (mouseX >= clip.getX() - 10 && mouseX <= clip.getX() + 10 && mouseY >= clip.getY() - 10 && mouseY <= clip.getY() + 10) {
                 anchorPane.setOnMouseDragged(mouseEvent -> {
@@ -77,9 +75,10 @@ public class ImageClip{
                     clip.setHeight(bottomRightY - clip.getY());
                     mouseX = mouseEvent.getX();
                     mouseY = mouseEvent.getY();
-                    darkenedArea = Shape.subtract(new Rectangle(0,0,image.getWidth(),image.getHeight()),clip);
+                    int index=anchorPane.getChildren().indexOf(darkenedArea);
+                    darkenedArea = Shape.subtract(imageRectangle,clip);
                     darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
-                    anchorPane.getChildren().set(1,darkenedArea);
+                    anchorPane.getChildren().set(index,darkenedArea);
                 });
             } else {
                 anchorPane.setOnMouseDragged(mouseEvent -> {
@@ -89,9 +88,10 @@ public class ImageClip{
                     clip.setY(clip.getY() + deltaY);
                     mouseX = mouseEvent.getX();
                     mouseY = mouseEvent.getY();
-                    darkenedArea = Shape.subtract(new Rectangle(0,0,image.getWidth(),image.getHeight()),clip);
+                    int index=anchorPane.getChildren().indexOf(darkenedArea);
+                    darkenedArea = Shape.subtract(imageRectangle,clip);
                     darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
-                    anchorPane.getChildren().set(1,darkenedArea);
+                    anchorPane.getChildren().set(index,darkenedArea);
                 });
             }
         });
@@ -105,7 +105,6 @@ public class ImageClip{
                 //保存裁剪图片
                 anchorPane.getChildren().add(imageView);
                 SnapshotParameters params = new SnapshotParameters();
-                params.setFill(Color.TRANSPARENT); // 设置背景为透明
                 params.setViewport(new Rectangle2D(0, 0, image.getWidth(), image.getHeight())); // 设置裁剪区域
                 // 调用snapshot方法获取裁剪后的图像
                 WritableImage snapshot = anchorPane.snapshot(params, null);
