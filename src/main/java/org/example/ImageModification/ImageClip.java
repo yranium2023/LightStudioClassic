@@ -1,4 +1,4 @@
-package org.example.Imagemodification;
+package org.example.ImageModification;
 
 
 import java.io.File;

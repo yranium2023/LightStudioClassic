@@ -29,4 +29,6 @@ replay_pid*
 .idea/
 src/test
 target
+javafx.iml
+LightStudioClassic.iml
 
