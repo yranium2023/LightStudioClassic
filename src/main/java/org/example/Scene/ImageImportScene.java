@@ -1,7 +1,10 @@
 package org.example.Scene;
 
+import io.vproxy.vfx.manager.image.ImageManager;
 import io.vproxy.vfx.theme.Theme;
 import io.vproxy.vfx.ui.button.FusionButton;
+import io.vproxy.vfx.ui.button.FusionImageButton;
+import io.vproxy.vfx.ui.scene.VScene;
 import io.vproxy.vfx.ui.scene.VSceneRole;
 import io.vproxy.vfx.ui.shapes.BrokenLine;
 import io.vproxy.vfx.ui.shapes.EndpointStyle;
@@ -9,8 +12,12 @@ import io.vproxy.vfx.ui.stage.VStage;
 import io.vproxy.vfx.ui.stage.VStageInitParams;
 import io.vproxy.vfx.ui.wrapper.ThemeLabel;
 import io.vproxy.vfx.util.FXUtils;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 
@@ -28,7 +35,23 @@ public class ImageImportScene extends SuperScene{
         super(VSceneRole.MAIN);
         enableAutoContentWidthHeight();
 
+        var menuScene = new VScene(VSceneRole.DRAWER_VERTICAL);
+        menuScene.getNode().setPrefWidth(450);
+        menuScene.enableAutoContentWidth();
+        menuScene.getNode().setBackground(new Background(new BackgroundFill(
+                Theme.current().subSceneBackgroundColor(),
+                CornerRadii.EMPTY,
+                Insets.EMPTY
+        )));
 
+
+        var menuBtn = new FusionImageButton(ImageManager.get().load("image/menu.png")) {{
+            setPrefWidth(40);
+            setPrefHeight(VStage.TITLE_BAR_HEIGHT + 1);
+            getImageView().setFitHeight(15);
+            setLayoutX(-2);
+            setLayoutY(-1);
+        }};
         FusionButton defaultButton = new FusionButton("导入图片") {{
             setPrefWidth(320);
             setPrefHeight(150);
