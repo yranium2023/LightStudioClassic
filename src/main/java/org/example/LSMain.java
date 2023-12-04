@@ -58,21 +58,18 @@ public class LSMain extends Application {
             sceneGroup.addScene(s);
         }
 
-        var navigatePane = new FusionPane(){{
+        var navigatePane = new FusionPane() {{
             getNode().setPrefWidth(250);
             getNode().setPrefHeight(50);
-            getNode().setLayoutX(1025);
+            getNode().setLayoutX(1020);
             getNode().setLayoutY(5);
         }};
 
         navigatePane.getNode().setPrefHeight(50);
         navigatePane.getNode().setPrefWidth(250);
         FXUtils.observeHeight(stage.getInitialScene().getContentPane(), sceneGroup.getNode(), -80);
-
-        FXUtils.observeWidth(stage.getInitialScene().getContentPane(), navigatePane.getNode(), -10-navigatePane.getNode().getLayoutX());
-        System.out.println(navigatePane.getNode().getLayoutX());
+        
         FXUtils.observeWidthHeight(stage.getInitialScene().getContentPane(), sceneGroup.getNode());
-
 
 
         //以下部分为测试所用，增加一个前往ImageImportScene的按钮
@@ -91,10 +88,17 @@ public class LSMain extends Application {
         navigatePane.getContentPane().widthProperty().addListener((ob, old, now) -> {
             if (now == null) return;
             var v = now.doubleValue();
-            InputButton.setLayoutX(v-125-InputButton.getPrefWidth());
+
+            InputButton.setLayoutX(v - 125 - InputButton.getPrefWidth());
             ImageEditButton.setLayoutX(v - ImageEditButton.getPrefWidth());
         });
+        stage.getInitialScene().getContentPane().widthProperty().addListener((ob, old, now) -> {
+            if (now == null) return;
+            var v = now.doubleValue();
 
+            navigatePane.getNode().setLayoutX(v-255);
+
+        });
         InputButton.setOnAction(e -> {
             sceneGroup.show(imageImportScene, VSceneShowMethod.FROM_LEFT);
         });
@@ -110,14 +114,13 @@ public class LSMain extends Application {
                         navigatePane.getNode()
                 )
         );
-        var sceneBox=new VBox(
+        var sceneBox = new VBox(
                 box,
                 new VPadding(80),
                 sceneGroup.getNode()
         );
         stage.getInitialScene().getContentPane().getChildren().add(sceneGroup.getNode());
         stage.getInitialScene().getContentPane().getChildren().add(navigatePane.getNode());
-
 
 
         stage.getStage().setWidth(1280);
