@@ -2,6 +2,7 @@ package org.example.ImageTools;
 
 import io.vproxy.vfx.manager.image.ImageManager;
 import javafx.scene.image.Image;
+import org.example.Main;
 
 /**
  * @author 吴鹄远
@@ -17,7 +18,7 @@ public class ImportImageResource {
         if (!path.startsWith("/")) {
             path = "/" + path;
         }
-        String resource=getClass().getResource(path).toString();
+        String resource= Main.class.getResource(path).toString();
         Image image=new Image(resource);
         return image;
     }
