@@ -62,13 +62,13 @@ public class LSMain extends Application {
             getNode().setPrefWidth(250);
             getNode().setPrefHeight(50);
             getNode().setLayoutX(1020);
-            getNode().setLayoutY(5);
+            getNode().setLayoutY(15);
         }};
 
         navigatePane.getNode().setPrefHeight(50);
         navigatePane.getNode().setPrefWidth(250);
         FXUtils.observeHeight(stage.getInitialScene().getContentPane(), sceneGroup.getNode(), -80);
-        
+
         FXUtils.observeWidthHeight(stage.getInitialScene().getContentPane(), sceneGroup.getNode());
 
 
@@ -90,13 +90,13 @@ public class LSMain extends Application {
             var v = now.doubleValue();
 
             InputButton.setLayoutX(v - 125 - InputButton.getPrefWidth());
-            ImageEditButton.setLayoutX(v - ImageEditButton.getPrefWidth());
+            ImageEditButton.setLayoutX(v - ImageEditButton.getPrefWidth()-5);
         });
         stage.getInitialScene().getContentPane().widthProperty().addListener((ob, old, now) -> {
             if (now == null) return;
             var v = now.doubleValue();
 
-            navigatePane.getNode().setLayoutX(v-255);
+            navigatePane.getNode().setLayoutX(v-270);
 
         });
         InputButton.setOnAction(e -> {
@@ -107,18 +107,6 @@ public class LSMain extends Application {
         navigatePane.getContentPane().getChildren().add(ImageEditButton);
 
 
-        var box = new HBox(
-                new HPadding(900),
-                new VBox(
-                        new VPadding(20),
-                        navigatePane.getNode()
-                )
-        );
-        var sceneBox = new VBox(
-                box,
-                new VPadding(80),
-                sceneGroup.getNode()
-        );
         stage.getInitialScene().getContentPane().getChildren().add(sceneGroup.getNode());
         stage.getInitialScene().getContentPane().getChildren().add(navigatePane.getNode());
 
