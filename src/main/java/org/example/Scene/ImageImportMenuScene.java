@@ -81,11 +81,10 @@ public class ImageImportMenuScene extends SuperScene{
                     // 将选中的图片添加到列表中
                     selectedImages.add(selectedImage);
                     // 在这里可以根据需要使用选择的图像做一些操作
+                    System.out.println("传入成功");
                 }
             }
         });
-
-
 
     }
 
