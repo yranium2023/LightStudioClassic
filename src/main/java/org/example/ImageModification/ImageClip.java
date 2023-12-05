@@ -30,7 +30,7 @@ import java.io.IOException;
  * @date 2023/12/3 20:22
  */
 
-public class ImageClip extends Application{
+public class ImageClip{
     private static Rectangle clip = new Rectangle(50,50,100,100);
     private static double mouseX;
     private static double mouseY;
@@ -145,15 +145,7 @@ public class ImageClip extends Application{
             anchorPane.getChildren().set(index,darkenedArea);
         });
     }
-    @Override
-    public void start(Stage stage) throws Exception {
-        Image image = new Image(getClass().getResource("/image/a.jpg").toString());
-        AnchorPane anchorPane=new AnchorPane();
-        imageClip(image,anchorPane);
-        Scene scene = new Scene(anchorPane,1000,1000);
-        stage.setScene(scene);
-        stage.show();
-    }
+
 }
 
 
