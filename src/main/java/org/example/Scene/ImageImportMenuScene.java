@@ -64,7 +64,7 @@ public class ImageImportMenuScene extends SuperScene{
 
             // 添加文件过滤器，限定选择的文件类型为图片
             fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.gif", "*.bmp", "*.jpeg")
+                    new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.bmp", "*.jpeg")
             );
 
             // 显示文件选择器对话框并获取选中的多个文件
