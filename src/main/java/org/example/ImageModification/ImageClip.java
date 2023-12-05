@@ -139,9 +139,10 @@ public class ImageClip extends Application{
             mouseX = mouseEvent.getX();
             mouseY = mouseEvent.getY();
             //图片外阴影区域设置，待优化
+            int index=anchorPane.getChildren().indexOf(darkenedArea);
             darkenedArea = Shape.subtract(imageViewRect,clip);
             darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
-            anchorPane.getChildren().set(1,darkenedArea);
+            anchorPane.getChildren().set(index,darkenedArea);
         });
     }
     @Override
