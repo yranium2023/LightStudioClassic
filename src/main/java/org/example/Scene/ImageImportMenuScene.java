@@ -11,6 +11,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.stage.FileChooser;
+import org.example.StaticValues;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -82,7 +83,7 @@ public class ImageImportMenuScene extends SuperScene{
                     Image selectedImage = new Image(imagePath);
                     // 将选中的图片添加到列表中
                     selectedImages.add(selectedImage);
-                    // 在这里可以根据需要使用选择的图像做一些操作
+
                     System.out.println("传入成功");
                 }
 
@@ -114,9 +115,9 @@ public class ImageImportMenuScene extends SuperScene{
             button.getImageView().setFitHeight(80);
             // 添加按钮点击事件处理程序
             button.setOnAction(e -> {
-                if (ImageImportScene.editingImage != image) {
+                if (StaticValues.editingImage != image) {
                     System.out.println("选择成功");
-                    ImageImportScene.editingImage = image;
+                    StaticValues.editingImage = image;
                 }
             });
             // 将按钮添加到列表

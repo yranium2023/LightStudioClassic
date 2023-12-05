@@ -25,8 +25,6 @@ import java.util.function.Supplier;
  * @date 2023/12/3 20:56
  */
 public class ImageImportScene extends SuperScene {
-    //全局变量 直接用 要编辑的图像
-    public static Image editingImage = null;
 
     public ImageImportMenuScene menuScene = new ImageImportMenuScene();
 
