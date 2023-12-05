@@ -2,6 +2,7 @@ package org.example.Scene;
 
 import io.vproxy.vfx.theme.Theme;
 import io.vproxy.vfx.ui.button.FusionButton;
+import io.vproxy.vfx.ui.button.FusionImageButton;
 import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.VSceneRole;
 import javafx.geometry.Insets;
@@ -24,6 +25,7 @@ public class ImageImportMenuScene extends SuperScene{
     //所有所选中的图片
     private List<Image> selectedImages = new ArrayList<>();
 
+    private List<FusionImageButton> fusionImageButtons = null;
     public ImageImportMenuScene() {
         super(VSceneRole.DRAWER_VERTICAL);
         getNode().setPrefWidth(350);
@@ -83,9 +85,56 @@ public class ImageImportMenuScene extends SuperScene{
                     // 在这里可以根据需要使用选择的图像做一些操作
                     System.out.println("传入成功");
                 }
+
+                fusionImageButtons=createImageButtons();
+
             }
         });
 
+    }
+
+    /***
+     * @Description 创建多个FusionButton 含有图片
+     * @return java.util.List<Button>
+     * @author 张喆宇
+     * @date 2023/12/4 21:33
+     **/
+    private List<FusionImageButton> createImageButtons() {
+        List<FusionImageButton> buttons = new ArrayList<>();
+        if(selectedImages.isEmpty()){
+            return null;
+        }
+        for (Image image : selectedImages) {
+            // 创建按钮
+            FusionImageButton button = new FusionImageButton(image);
+
+            // 设置按钮大小
+            button.setPrefSize(80, 80);
+            button.getImageView().setFitWidth(80);
+            button.getImageView().setFitHeight(80);
+            // 添加按钮点击事件处理程序
+            button.setOnAction(e -> {
+                if (ImageImportScene.editingImage != image) {
+                    System.out.println("选择成功");
+                    ImageImportScene.editingImage = image;
+                }
+            });
+            // 将按钮添加到列表
+            buttons.add(button);
+        }
+
+        return buttons;
+    }
+
+    /***
+     * @Description  清除所有产生的按钮
+     * @return null
+     * @author 张喆宇
+     * @date 2023/12/5 22:29
+    **/
+
+    public void clearImageButtons(){
+        fusionImageButtons=null;
     }
 
     /***
@@ -94,12 +143,13 @@ public class ImageImportMenuScene extends SuperScene{
      * @author 张喆宇
      * @date 2023/12/4 18:53
     **/
-
     public List<Image> getSelectedImages() {
         return selectedImages;
     }
 
-
+    public List<FusionImageButton> getFusionImageButtons() {
+        return fusionImageButtons;
+    }
 
     @Override
     public String title() {
