@@ -34,7 +34,7 @@ public class DeepCopy {
             return cloneObj;
         }
 
-        @SuppressWarnings("unchecked")
+
         public static <T> List<T> deepCopy(List<T> src)  {
             List<T> dest = null;
             try {
