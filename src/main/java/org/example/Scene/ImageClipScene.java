@@ -16,37 +16,37 @@ import org.example.StaticValues;
  * @date 2023/12/4 17:00
  */
 public class ImageClipScene extends SuperScene{
-    public ImageClipScene() {
-        super(VSceneRole.MAIN);
-        //新建一个pane，用于展示图片
-        Pane ImagePane=new Pane(){{
+    //新建一个pane，用于展示图片
+    private static Pane ImagePane=new Pane(){{
             setPrefWidth(900);
             setPrefHeight(550);
             setLayoutX(100);
             setLayoutY(100);
         }};
+    public ImageClipScene() {
+        super(VSceneRole.MAIN);
 
-        //创建一个矩形，用来包裹ImagePane
-        Rectangle ImagePaneRec=new Rectangle(0,0,ImagePane.getPrefWidth()-2,ImagePane.getPrefHeight()-2){{
-            setFill(Color.WHITE);
-            setStroke(Color.WHITE);
-            setStrokeType(StrokeType.INSIDE);
-            setLayoutX(ImagePane.getLayoutX());
-            setLayoutY(ImagePane.getLayoutY());
-        }};
-        ImagePane.setClip(ImagePaneRec);
 
-//        if(StaticValues.editingImage!=null){
-//            ImageClip.imageClip(StaticValues.editingImage,ImagePane);
-//        }
-        ImagePane.getChildren().add(new ImageView(ImportImageResource.getInstance().getImage("image/icon.png")));
+
         getContentPane().getChildren().add(ImagePane);
 
 
     }
 
 
-
+    public static Pane getClipImagePane(){
+        return ImagePane;
+    }
+    public static void InitClipImagePane(){
+        ImagePane.getChildren().clear();
+        //创建一个矩形，用来包裹ImagePane
+        var ImagePaneRec=new Rectangle(0,0,ImagePane.getPrefWidth()-2,ImagePane.getPrefHeight()-2){{
+            setFill(Color.WHITE);
+            setStroke(Color.WHITE);
+            setStrokeType(StrokeType.INSIDE);
+        }};
+        ImagePane.setClip(ImagePaneRec);
+    }
     @Override
     public String title() {
         return "ImageClip";

@@ -16,10 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.ImageTools.ImportImageResource;
-import org.example.Scene.ImageEditScene;
-import org.example.Scene.ImageImportScene;
-import org.example.Scene.IntroScene;
-import org.example.Scene.SuperScene;
+import org.example.Scene.*;
 
 import java.util.ArrayList;
 import java.util.List;

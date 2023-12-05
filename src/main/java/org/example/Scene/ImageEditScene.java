@@ -11,6 +11,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
+import org.example.ImageModification.ImageClip;
+import org.example.StaticValues;
 
 import java.util.function.Supplier;
 
@@ -83,6 +85,10 @@ public class ImageEditScene extends SuperScene{
                 sceneGroupSup.get().addScene(imageClipScene);
             }
             sceneGroupSup.get().show(imageClipScene, VSceneShowMethod.FROM_TOP);
+            if(StaticValues.editingImage!=null){
+                ImageClipScene.InitClipImagePane();
+                ImageClip.imageClip(StaticValues.editingImage,ImageClipScene.getClipImagePane());
+            }
         });
         imageClipPane.getContentPane().getChildren().add(imageClipButton);
         getContentPane().getChildren().add(editingPaneRec);

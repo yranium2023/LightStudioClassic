@@ -43,8 +43,10 @@ public class ImageClip{
      * @updateTime 2023/12/4 10:59
      */
     public static void imageClip(Image image,Pane anchorPane) {
+
         // 创建ImageView并设置图像
         ImageView imageView = ImageScaler.getImageView(image);
+        System.out.println(imageView.getLayoutX());
         clip.setStrokeWidth(3);
         clip.setStrokeType(StrokeType.CENTERED);
         clip.setStroke(Color.GREEN);
