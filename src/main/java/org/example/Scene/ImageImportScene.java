@@ -1,10 +1,13 @@
 package org.example.Scene;
 
+import io.vproxy.vfx.control.scroll.VScrollPane;
 import io.vproxy.vfx.ui.button.FusionImageButton;
 import io.vproxy.vfx.ui.scene.*;
 import io.vproxy.vfx.ui.stage.VStage;
+import io.vproxy.vfx.util.FXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
+import javafx.scene.shape.StrokeType;
 import org.example.ImageTools.ImportImageResource;
 
 import javafx.scene.shape.Rectangle;
@@ -33,19 +36,36 @@ public class ImageImportScene extends SuperScene{
             setLayoutX(-2);
             setLayoutY(-1);
         }};
+        //新建VScrollPane用于生成滑动窗口，并存放flowPane
+        VScrollPane scrollFlowPane=new VScrollPane(){{
+            getNode().setLayoutX(100);
+            getNode().setLayoutY(100);
+            getNode().setPrefWidth(850);
+            getNode().setPrefHeight(550);
+        }};
+
         // 创建 FlowPane 用于放图片按钮
-        FlowPane flowPane = new FlowPane();
-        flowPane.setLayoutX(100);
-        flowPane.setLayoutY(100);
-        flowPane.setPrefWidth(900);
-        flowPane.setPrefHeight(550);
-        // 设置行列间距
-        flowPane.setHgap(50);
-        flowPane.setVgap(25);
-        // 创建一个矩形用于显示pane
-        Rectangle rectangle = new Rectangle(flowPane.getLayoutX()-20,flowPane.getLayoutY()-20,flowPane.getPrefWidth(),flowPane.getPrefHeight());
-        rectangle.setFill(Color.TRANSPARENT);
-        rectangle.setStroke(Color.WHITE); // 设置矩形的边框颜色
+        FlowPane flowPane = new FlowPane(){{
+            setLayoutX(0);
+            setLayoutY(0);
+            setPrefHeight(scrollFlowPane.getNode().getPrefHeight());
+            setPrefWidth(scrollFlowPane.getNode().getPrefWidth());
+            // 设置行列间距
+            setHgap(50);
+            setVgap(25);
+        }};
+        //绑定两个pane的宽和高
+        FXUtils.observeWidthHeight(scrollFlowPane.getNode(),flowPane);
+
+
+
+
+        // 创建一个矩形用于显示flowPane的边框
+        Rectangle flowPnaeRec = new Rectangle(scrollFlowPane.getNode().getLayoutX()-20,scrollFlowPane.getNode().getLayoutY()-10,flowPane.getPrefWidth()+20,flowPane.getPrefHeight()+10){{
+            setFill(Color.TRANSPARENT);
+            setStroke(Color.WHITE); // 设置矩形的边框颜色
+            setStrokeType(StrokeType.INSIDE);//边框为内嵌式，不会超出pane的范围
+        }};
         menuScene.enableAutoContentWidthHeight();
         menuBtn.setOnAction(e->{
             if(!sceneGroupSup.get().getScenes().contains(menuScene)){
@@ -66,9 +86,11 @@ public class ImageImportScene extends SuperScene{
             menuScene.getSelectedImages().clear();
 
         });
-        getContentPane().getChildren().add(rectangle);
+        getContentPane().getChildren().add(flowPnaeRec);
         getContentPane().getChildren().add(menuBtn);
-        getContentPane().getChildren().add(flowPane);
+        getContentPane().getChildren().add(scrollFlowPane.getNode());
+        scrollFlowPane.setContent(flowPane);
+
     }
 
     /***
