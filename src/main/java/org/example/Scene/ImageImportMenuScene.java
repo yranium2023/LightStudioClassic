@@ -12,6 +12,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.stage.FileChooser;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,6 +21,8 @@ import java.util.List;
  * @date 2023/12/4 14:37
  */
 public class ImageImportMenuScene extends SuperScene{
+    //所有所选中的图片
+    private List<Image> selectedImages = new ArrayList<>();
 
     public ImageImportMenuScene() {
         super(VSceneRole.DRAWER_VERTICAL);
@@ -61,24 +64,42 @@ public class ImageImportMenuScene extends SuperScene{
 
             // 添加文件过滤器，限定选择的文件类型为图片
             fileChooser.getExtensionFilters().addAll(
-                    new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.gif", "*.bmp", "*.jpeg")
+                    new FileChooser.ExtensionFilter("Images", "*.png", "*.jpg", "*.bmp", "*.jpeg")
             );
 
             // 显示文件选择器对话框并获取选中的多个文件
             List<File> selectedFiles = fileChooser.showOpenMultipleDialog(null);
 
             if (selectedFiles != null && !selectedFiles.isEmpty()) {
+                // 清空之前选中的图片
+                selectedImages.clear();
+
                 for (File selectedFile : selectedFiles) {
                     // 处理每个选中的图片文件，例如显示在界面上或传递给其他部分进行处理
                     String imagePath = selectedFile.toURI().toString();
                     Image selectedImage = new Image(imagePath);
+                    // 将选中的图片添加到列表中
+                    selectedImages.add(selectedImage);
                     // 在这里可以根据需要使用选择的图像做一些操作
+                    System.out.println("传入成功");
                 }
             }
-
         });
 
     }
+
+    /***
+     * @Description 返回所有选中的图片
+     * @return java.util.List<javafx.scene.image.Image>
+     * @author 张喆宇
+     * @date 2023/12/4 18:53
+    **/
+
+    public List<Image> getSelectedImages() {
+        return selectedImages;
+    }
+
+
 
     @Override
     public String title() {

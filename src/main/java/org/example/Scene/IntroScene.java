@@ -25,22 +25,6 @@ public class IntroScene extends SuperScene {
 
         getContentPane().getChildren().add(label);
         FXUtils.observeWidthHeightCenter(getContentPane(),label);
-//        var pane = new VBox(
-//                new ThemeLabel("Contributors:       ") {{
-//                    FontManager.get().setFont(this, settings -> settings.setSize(25));
-//                }},
-//                new VPadding(20),
-//                new ThemeLabel("yranium\nmissing\nAlbert_Ling")
-//        ) {{
-//            setAlignment(Pos.BOTTOM_RIGHT);
-//        }};
-//
-//        StackPane root = new StackPane();
-//        getContentPane().getChildren().add(root);
-//        root.getChildren().add(pane);
-//        StackPane.setAlignment(pane,Pos.BOTTOM_RIGHT);
-//        FXUtils.observeHeight(getContentPane(),root,-10);
-//        FXUtils.observeWidth(getContentPane(),root,-100);
 
 
 

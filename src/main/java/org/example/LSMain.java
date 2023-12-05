@@ -16,6 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.ImageTools.ImportImageResource;
+import org.example.Scene.ImageEditScene;
 import org.example.Scene.ImageImportScene;
 import org.example.Scene.IntroScene;
 import org.example.Scene.SuperScene;
@@ -50,7 +51,8 @@ public class LSMain extends Application {
 
         //添加scene 要用的记得添加进去
         mainScenes.add(new IntroScene());
-        mainScenes.add(new ImageImportScene(()->sceneGroup));
+        mainScenes.add(new ImageImportScene(() -> sceneGroup));
+        mainScenes.add(new ImageEditScene(() -> sceneGroup));
 
 
         var initialScene = mainScenes.get(0);
@@ -75,6 +77,7 @@ public class LSMain extends Application {
 
         //以下部分为测试所用，增加一个前往ImageImportScene的按钮
         var imageImportScene = mainScenes.get(1);
+        var imageEditScene = mainScenes.get(2);
 
         var InputButton = new FusionButton("图库") {{
             setPrefWidth(100);
@@ -92,17 +95,20 @@ public class LSMain extends Application {
             if (now == null) return;
             var v = now.doubleValue();
             InputButton.setLayoutX(v - 125 - InputButton.getPrefWidth());
-            ImageEditButton.setLayoutX(v - ImageEditButton.getPrefWidth()-5);
+            ImageEditButton.setLayoutX(v - ImageEditButton.getPrefWidth() - 5);
         });
         stage.getInitialScene().getContentPane().widthProperty().addListener((ob, old, now) -> {
             if (now == null) return;
             var v = now.doubleValue();
 
-            navigatePane.getNode().setLayoutX(v-270);
+            navigatePane.getNode().setLayoutX(v - 270);
 
         });
         InputButton.setOnAction(e -> {
             sceneGroup.show(imageImportScene, VSceneShowMethod.FROM_LEFT);
+        });
+        ImageEditButton.setOnAction(e -> {
+            sceneGroup.show(imageEditScene, VSceneShowMethod.FROM_RIGHT);
         });
 
         navigatePane.getContentPane().getChildren().add(InputButton);
@@ -119,4 +125,5 @@ public class LSMain extends Application {
         stage.getStage().show();
 
     }
+
 }
