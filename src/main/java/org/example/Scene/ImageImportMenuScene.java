@@ -98,7 +98,6 @@ public class ImageImportMenuScene extends SuperScene{
 
                             // 将选中的图片添加到列表中
                             selectedImages.add(selectedImage);
-
                             System.out.println("传入一张图片成功");
                         } finally {
                             latch.countDown();
@@ -173,23 +172,6 @@ public class ImageImportMenuScene extends SuperScene{
 
             // 设置按钮大小
             button.setPrefSize(80, 80);
-            //存储图片的实际大小
-            var x=image.getWidth();
-            var y=image.getHeight();
-            var rate=x/y;
-            System.out.println(x);
-            if(rate>1){
-                button.getImageView().setFitWidth(80);
-                button.getImageView().setFitHeight(80/rate);
-                button.getImageView().setLayoutY(40-40/rate);
-            }else{
-                button.getImageView().setFitWidth(80*rate);
-                button.getImageView().setFitHeight(80);
-                button.getImageView().setLayoutX(40-40*rate);
-            }
-
-
-
             // 添加按钮点击事件处理程序
             button.setOnAction(e -> {
                 if (StaticValues.editingImage != image) {
@@ -205,7 +187,22 @@ public class ImageImportMenuScene extends SuperScene{
                     Image loadedImage = imageLoaderService.getValue();
                     // 使用 Platform.runLater 来确保更新操作在 JavaFX Application 线程上执行
                     Platform.runLater(() -> button.getImageView().setImage(loadedImage));
-                    button.getImageView().setLayoutY(10);
+                    //存储图片的实际大小
+                    var x=image.getWidth();
+                    var y=image.getHeight();
+                    var rate=x/y;
+                    System.out.println(x);
+                    if(rate>1){
+                        button.getImageView().setFitWidth(80);
+                        button.getImageView().setFitHeight(80/rate);
+                        button.getImageView().setLayoutX(0);
+                        button.getImageView().setLayoutY(40-40/rate);
+                    }else{
+                        button.getImageView().setFitWidth(80*rate);
+                        button.getImageView().setFitHeight(80);
+                        button.getImageView().setLayoutY(0);
+                        button.getImageView().setLayoutX(40-40*rate);
+                    }
                 }
             });
 
