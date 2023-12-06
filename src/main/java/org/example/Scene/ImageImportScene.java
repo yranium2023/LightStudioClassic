@@ -80,7 +80,6 @@ public class ImageImportScene extends SuperScene {
                 sceneGroupSup.get().addScene(menuScene, VSceneHideMethod.TO_LEFT);
             }
             sceneGroupSup.get().show(menuScene, VSceneShowMethod.FROM_LEFT);
-
             // 启动或重新开始 Timeline 定时器
             refreshTimeline.stop();  // 停止之前的定时器，以免叠加
             //50ms刷新一次
@@ -91,6 +90,7 @@ public class ImageImportScene extends SuperScene {
                     flowPane.getChildren().addAll(fusionImageButtons);
                     //清空生成的按钮
                     menuScene.clearImageButtons();
+                    refreshTimeline.stop();
                 }
             }));
             refreshTimeline.setCycleCount(Timeline.INDEFINITE);
