@@ -191,7 +191,6 @@ public class ImageImportMenuScene extends SuperScene{
                     var x=image.getWidth();
                     var y=image.getHeight();
                     var rate=x/y;
-                    System.out.println(x);
                     if(rate>1){
                         button.getImageView().setFitWidth(80);
                         button.getImageView().setFitHeight(80/rate);
