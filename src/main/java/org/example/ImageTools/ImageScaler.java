@@ -18,7 +18,7 @@ public class ImageScaler {
         ImageView imageView = new ImageView(image);
         // 设置ImageView的属性，以实现缩放
         imageView.setPreserveRatio(true); // 保持宽高比
-        imageView.setFitWidth(800);        // 设置宽度，根据需要调整
+        imageView.setFitWidth(900);        // 设置宽度，根据需要调整
         imageView.setFitHeight(imageView.getImage().getHeight()*imageView.getFitWidth()/imageView.getImage().getWidth());
         return imageView;
     }

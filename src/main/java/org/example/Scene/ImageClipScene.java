@@ -23,10 +23,9 @@ public class ImageClipScene extends SuperScene{
             setLayoutX(100);
             setLayoutY(100);
         }};
+
     public ImageClipScene() {
         super(VSceneRole.MAIN);
-
-
 
         getContentPane().getChildren().add(ImagePane);
 

@@ -22,6 +22,7 @@ import org.example.ImageTools.ImageScaler;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
+import java.util.Set;
 
 
 /**
@@ -46,12 +47,12 @@ public class ImageClip{
 
         // 创建ImageView并设置图像
         ImageView imageView = ImageScaler.getImageView(image);
-        System.out.println(imageView.getLayoutX());
+
         clip.setStrokeWidth(3);
         clip.setStrokeType(StrokeType.CENTERED);
         clip.setStroke(Color.GREEN);
         clip.setFill(Color.TRANSPARENT);
-        imageViewRect=new Rectangle(imageView.getX(),imageView.getY(),imageView.getFitWidth(), imageView.getFitHeight());
+        imageViewRect=new Rectangle(imageView.getLayoutX(),imageView.getLayoutY(),imageView.getFitWidth(), imageView.getFitHeight());
         darkenedArea=Shape.subtract(imageViewRect,clip);
         darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
         anchorPane.getChildren().addAll(imageView,darkenedArea,clip);
@@ -142,9 +143,16 @@ public class ImageClip{
             mouseY = mouseEvent.getY();
             //图片外阴影区域设置，待优化
             int index=anchorPane.getChildren().indexOf(darkenedArea);
-            darkenedArea = Shape.subtract(imageViewRect,clip);
+            darkenedArea = Shape.subtract(imageViewRect,new Rectangle(
+                    clip.getX(),
+                    clip.getY(),
+                    clip.getWidth(),
+                    clip.getHeight()
+            ));
             darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
             anchorPane.getChildren().set(index,darkenedArea);
+            System.out.println(clip.getX());
+            System.out.println(darkenedArea.getBoundsInParent().getMinX());
         });
     }
 
