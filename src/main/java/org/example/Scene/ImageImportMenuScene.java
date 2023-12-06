@@ -5,17 +5,27 @@ import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.button.FusionImageButton;
 import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.VSceneRole;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.stage.FileChooser;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
+import javafx.scene.image.Image;
+
 import org.example.StaticValues;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author 吴鹄远
@@ -74,24 +84,71 @@ public class ImageImportMenuScene extends SuperScene{
             List<File> selectedFiles = fileChooser.showOpenMultipleDialog(null);
 
             if (selectedFiles != null && !selectedFiles.isEmpty()) {
-                // 清空之前选中的图片
-                selectedImages.clear();
+                // 使用线程池处理文件导入
+                ExecutorService executorService = Executors.newFixedThreadPool(5);
+                CountDownLatch latch = new CountDownLatch(selectedFiles.size());
 
                 for (File selectedFile : selectedFiles) {
-                    // 处理每个选中的图片文件，例如显示在界面上或传递给其他部分进行处理
-                    String imagePath = selectedFile.toURI().toString();
-                    Image selectedImage = new Image(imagePath);
-                    // 将选中的图片添加到列表中
-                    selectedImages.add(selectedImage);
+                    executorService.submit(() -> {
+                        try {
+                            // 处理每个选中的图片文件，例如显示在界面上或传递给其他部分进行处理
+                            String imagePath = selectedFile.toURI().toString();
+                            Image selectedImage = new Image(imagePath);
 
-                    System.out.println("传入成功");
+                            // 将选中的图片添加到列表中
+                            selectedImages.add(selectedImage);
+
+                            System.out.println("传入一张图片成功");
+                        } finally {
+                            latch.countDown();
+                        }
+                    });
                 }
 
-                fusionImageButtons=createImageButtons();
+                // 等待所有任务完成
+                try {
+                    latch.await();
+                } catch (InterruptedException ex) {
+                    ex.printStackTrace();
+                }
 
+                executorService.shutdown();
+
+                // 在 JavaFX 线程上更新 UI
+                Platform.runLater(() -> {
+                    // 生成特殊的按钮
+                    fusionImageButtons = createImageButtons();
+                    // 清空之前选中的图片
+                    selectedImages.clear();
+                    System.out.println("图片全部传入成功");
+                });
             }
         });
 
+
+    }
+    /***
+     * @Description 用于创建图片导入的任务 特殊类
+     * @author 张喆宇
+     * @date 2023/12/6 15:30
+    **/
+
+    class ImageLoaderService extends Service<Image> {
+        private String imagePath;
+
+        public ImageLoaderService(String imagePath) {
+            this.imagePath = imagePath;
+        }
+
+        @Override
+        protected Task<Image> createTask() {
+            return new Task<>() {
+                @Override
+                protected Image call() throws Exception {
+                    return new Image(imagePath);
+                }
+            };
+        }
     }
 
     /***
@@ -102,17 +159,22 @@ public class ImageImportMenuScene extends SuperScene{
      **/
     private List<FusionImageButton> createImageButtons() {
         List<FusionImageButton> buttons = new ArrayList<>();
-        if(selectedImages.isEmpty()){
-            return null;
+
+        if (selectedImages.isEmpty()) {
+            return buttons;
         }
+
         for (Image image : selectedImages) {
-            // 创建按钮
-            FusionImageButton button = new FusionImageButton(image);
+            FusionImageButton button = new FusionImageButton();
+
+            // 使用异步加载图片的服务
+            ImageLoaderService imageLoaderService = new ImageLoaderService(image.getUrl());
 
             // 设置按钮大小
             button.setPrefSize(80, 80);
             button.getImageView().setFitWidth(80);
             button.getImageView().setFitHeight(80);
+
             // 添加按钮点击事件处理程序
             button.setOnAction(e -> {
                 if (StaticValues.editingImage != image) {
@@ -120,6 +182,20 @@ public class ImageImportMenuScene extends SuperScene{
                     StaticValues.editingImage = image;
                 }
             });
+
+            // 监听服务的成功事件，在成功加载图片后更新按钮的图像
+            imageLoaderService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
+                @Override
+                public void handle(WorkerStateEvent event) {
+                    Image loadedImage = imageLoaderService.getValue();
+                    // 使用 Platform.runLater 来确保更新操作在 JavaFX Application 线程上执行
+                    Platform.runLater(() -> button.getImageView().setImage(loadedImage));
+                }
+            });
+
+            // 启动异步加载任务
+            imageLoaderService.start();
+
             // 将按钮添加到列表
             buttons.add(button);
         }

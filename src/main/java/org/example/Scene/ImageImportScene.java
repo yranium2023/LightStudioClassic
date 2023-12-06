@@ -8,11 +8,14 @@ import io.vproxy.vfx.ui.scene.VSceneRole;
 import io.vproxy.vfx.ui.scene.VSceneShowMethod;
 import io.vproxy.vfx.ui.stage.VStage;
 import io.vproxy.vfx.util.FXUtils;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.scene.image.Image;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
+import javafx.util.Duration;
 import org.example.ImageTools.ImportImageResource;
 
 import java.util.ArrayList;
@@ -68,24 +71,39 @@ public class ImageImportScene extends SuperScene {
             setStrokeType(StrokeType.INSIDE);//边框为内嵌式，不会超出pane的范围
         }};
         menuScene.enableAutoContentWidthHeight();
+
+        // 在初始化部分定义一个 Timeline 用于刷新添加按钮
+        Timeline refreshTimeline = new Timeline();
+
         menuBtn.setOnAction(e -> {
             if (!sceneGroupSup.get().getScenes().contains(menuScene)) {
                 sceneGroupSup.get().addScene(menuScene, VSceneHideMethod.TO_LEFT);
             }
             sceneGroupSup.get().show(menuScene, VSceneShowMethod.FROM_LEFT);
-            if(menuScene.getFusionImageButtons()!=null){
-                // 将按钮添加到 FlowPane
-                flowPane.getChildren().addAll(menuScene.getFusionImageButtons());
-                menuScene.clearImageButtons();
-            }
 
+            // 启动或重新开始 Timeline 定时器
+            refreshTimeline.stop();  // 停止之前的定时器，以免叠加
+            //50ms刷新一次
+            refreshTimeline.getKeyFrames().setAll(new KeyFrame(Duration.millis(50), event -> {
+                List<FusionImageButton> fusionImageButtons = menuScene.getFusionImageButtons();
+                if (fusionImageButtons != null && !fusionImageButtons.isEmpty()) {
+                    // 将按钮添加到 FlowPane
+                    flowPane.getChildren().addAll(fusionImageButtons);
+                    //清空生成的按钮
+                    menuScene.clearImageButtons();
+                }
+            }));
+            refreshTimeline.setCycleCount(Timeline.INDEFINITE);
+            refreshTimeline.play();
         });
+
         getContentPane().getChildren().add(flowPaneRec);
         getContentPane().getChildren().add(menuBtn);
         getContentPane().getChildren().add(scrollFlowPane.getNode());
         scrollFlowPane.setContent(flowPane);
 
     }
+
 
     @Override
     public String title() {
