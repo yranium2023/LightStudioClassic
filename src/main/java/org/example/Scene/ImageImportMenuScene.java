@@ -190,6 +190,7 @@ public class ImageImportMenuScene extends SuperScene{
                     Image loadedImage = imageLoaderService.getValue();
                     // 使用 Platform.runLater 来确保更新操作在 JavaFX Application 线程上执行
                     Platform.runLater(() -> button.getImageView().setImage(loadedImage));
+                    button.getImageView().setLayoutY(10);
                 }
             });
 
