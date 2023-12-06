@@ -26,7 +26,6 @@ public class ImageClipScene extends SuperScene{
 
     public ImageClipScene() {
         super(VSceneRole.MAIN);
-
         getContentPane().getChildren().add(ImagePane);
 
 
@@ -39,12 +38,20 @@ public class ImageClipScene extends SuperScene{
     public static void InitClipImagePane(){
         ImagePane.getChildren().clear();
         //创建一个矩形，用来包裹ImagePane
-        var ImagePaneRec=new Rectangle(0,0,ImagePane.getPrefWidth()-2,ImagePane.getPrefHeight()-2){{
+        var ImagePaneRec=new Rectangle(0,0,ImagePane.getPrefWidth(),ImagePane.getPrefHeight()){{
             setFill(Color.WHITE);
             setStroke(Color.WHITE);
             setStrokeType(StrokeType.INSIDE);
         }};
+        var ImagePaneStrokeRec=new Rectangle(0,0,ImagePane.getPrefWidth(),ImagePane.getPrefHeight()){{
+            setStrokeWidth(2);
+            setFill(Color.rgb(255,255,255,0.6));
+
+            setStroke(Color.WHITE);
+            setStrokeType(StrokeType.INSIDE);
+        }};
         ImagePane.setClip(ImagePaneRec);
+        ImagePane.getChildren().add(ImagePaneStrokeRec);
     }
     @Override
     public String title() {

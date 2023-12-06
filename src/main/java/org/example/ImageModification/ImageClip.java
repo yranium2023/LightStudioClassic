@@ -46,13 +46,14 @@ public class ImageClip{
     public static void imageClip(Image image,Pane anchorPane) {
 
         // 创建ImageView并设置图像
-        ImageView imageView = ImageScaler.getImageView(image);
-
+        ImageView imageView = ImageScaler.getImageView(image,anchorPane);
         clip.setStrokeWidth(3);
         clip.setStrokeType(StrokeType.CENTERED);
         clip.setStroke(Color.GREEN);
         clip.setFill(Color.TRANSPARENT);
-        imageViewRect=new Rectangle(imageView.getLayoutX(),imageView.getLayoutY(),imageView.getFitWidth(), imageView.getFitHeight());
+        imageViewRect=new Rectangle(imageView.getX(),imageView.getY(),imageView.getFitWidth(), imageView.getFitHeight());
+        clip.setX(imageView.getX()+10);
+        clip.setY(imageView.getY()+10);
         darkenedArea=Shape.subtract(imageViewRect,clip);
         darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
         anchorPane.getChildren().addAll(imageView,darkenedArea,clip);
@@ -151,8 +152,8 @@ public class ImageClip{
             ));
             darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
             anchorPane.getChildren().set(index,darkenedArea);
-            System.out.println(clip.getX());
-            System.out.println(darkenedArea.getBoundsInParent().getMinX());
+//            System.out.println(clip.getX());
+//            System.out.println(darkenedArea.getBoundsInParent().getMinX());
         });
     }
 

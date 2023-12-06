@@ -5,6 +5,7 @@ import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.button.FusionImageButton;
 import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.VSceneRole;
+import io.vproxy.vfx.util.FXUtils;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.image.Image;
@@ -172,8 +173,22 @@ public class ImageImportMenuScene extends SuperScene{
 
             // 设置按钮大小
             button.setPrefSize(80, 80);
-            button.getImageView().setFitWidth(80);
-            button.getImageView().setFitHeight(80);
+            //存储图片的实际大小
+            var x=image.getWidth();
+            var y=image.getHeight();
+            var rate=x/y;
+            System.out.println(x);
+            if(rate>1){
+                button.getImageView().setFitWidth(80);
+                button.getImageView().setFitHeight(80/rate);
+                button.getImageView().setLayoutY(40-40/rate);
+            }else{
+                button.getImageView().setFitWidth(80*rate);
+                button.getImageView().setFitHeight(80);
+                button.getImageView().setLayoutX(40-40*rate);
+            }
+
+
 
             // 添加按钮点击事件处理程序
             button.setOnAction(e -> {
