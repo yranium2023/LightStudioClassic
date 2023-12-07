@@ -5,22 +5,20 @@ import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.button.FusionImageButton;
 import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.VSceneRole;
-import io.vproxy.vfx.util.FXUtils;
 import javafx.application.Platform;
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.stage.FileChooser;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
-import javafx.concurrent.WorkerStateEvent;
-import javafx.event.EventHandler;
-import javafx.scene.image.Image;
-
+import org.example.ImageTools.ConvertUtil;
 import org.example.StaticValues;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,11 +31,12 @@ import java.util.concurrent.Executors;
  * @Description 这个类用于创建导入图像、查看导入历史的场景
  * @date 2023/12/4 14:37
  */
-public class ImageImportMenuScene extends SuperScene{
+public class ImageImportMenuScene extends SuperScene {
     //所有所选中的图片
     private List<Image> selectedImages = new ArrayList<>();
 
     private List<FusionImageButton> fusionImageButtons = null;
+
     public ImageImportMenuScene() {
         super(VSceneRole.DRAWER_VERTICAL);
         getNode().setPrefWidth(350);
@@ -47,11 +46,11 @@ public class ImageImportMenuScene extends SuperScene{
                 CornerRadii.EMPTY,
                 Insets.EMPTY
         )));
-        var IOpane=new FusionPane(){{
-           getNode().setPrefHeight(50);
-           getNode().setPrefWidth(300);
-           getNode().setLayoutX(25);
-           getNode().setLayoutY(700);
+        var IOpane = new FusionPane() {{
+            getNode().setPrefHeight(50);
+            getNode().setPrefWidth(300);
+            getNode().setLayoutX(25);
+            getNode().setLayoutY(700);
         }};
         getContentPane().getChildren().add(IOpane.getNode());
         FusionButton ImageImportButton = new FusionButton("导入图片") {{
@@ -95,9 +94,26 @@ public class ImageImportMenuScene extends SuperScene{
                             // 处理每个选中的图片文件，例如显示在界面上或传递给其他部分进行处理
                             String imagePath = selectedFile.toURI().toString();
                             Image selectedImage = new Image(imagePath);
-
-                            // 将选中的图片添加到列表中
-                            selectedImages.add(selectedImage);
+                            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(selectedImage, null);
+                            double selectedImageHeight = selectedImage.getHeight();
+                            double selectedImageWidth = selectedImage.getWidth();
+                            if (selectedImageHeight > 2000 || selectedImageWidth > 2000) {
+                                double rate = selectedImageHeight / selectedImageWidth;
+                                // 对图片稍微压缩，用于编辑
+                                double editorHeight = 2000;
+                                double editorWidth = 2000;
+                                if (rate > 1) {
+                                    editorWidth = 2000 / rate;
+                                } else {
+                                    editorHeight = 2000 * rate;
+                                }
+                                BufferedImage compressedEditorBufferedImage = ConvertUtil.resetSize(bufferedImage, editorWidth, editorHeight, true);
+                                Image compressedEditorImage = ConvertUtil.ConvertToFxImage(compressedEditorBufferedImage);
+                                // 将选中的图片添加到列表中
+                                selectedImages.add(compressedEditorImage);
+                            } else {
+                                selectedImages.add(selectedImage);
+                            }
                             System.out.println("传入一张图片成功");
                         } finally {
                             latch.countDown();
@@ -127,11 +143,12 @@ public class ImageImportMenuScene extends SuperScene{
 
 
     }
+
     /***
      * @Description 用于创建图片导入的任务 特殊类
      * @author 张喆宇
      * @date 2023/12/6 15:30
-    **/
+     **/
 
     class ImageLoaderService extends Service<Image> {
         private String imagePath;
@@ -161,15 +178,11 @@ public class ImageImportMenuScene extends SuperScene{
         List<FusionImageButton> buttons = new ArrayList<>();
 
         if (selectedImages.isEmpty()) {
-            return buttons;
+            return null;
         }
 
         for (Image image : selectedImages) {
             FusionImageButton button = new FusionImageButton();
-
-            // 使用异步加载图片的服务
-            ImageLoaderService imageLoaderService = new ImageLoaderService(image.getUrl());
-
             // 设置按钮大小
             button.setPrefSize(80, 80);
             // 添加按钮点击事件处理程序
@@ -179,35 +192,24 @@ public class ImageImportMenuScene extends SuperScene{
                     StaticValues.editingImage = image;
                 }
             });
+            double selectedImageHeight = image.getHeight();
+            double selectedImageWidth = image.getWidth();
+            double rate = selectedImageHeight / selectedImageWidth;
+            // 对图片较大压缩，用于生成图片按钮
+            double buttonWidth = 80;
+            double buttonHeight = 80;
+            if (rate > 1) {
+                buttonWidth = 80 / rate;
+            } else {
+                buttonHeight = 80 * rate;
+            }
 
-            // 监听服务的成功事件，在成功加载图片后更新按钮的图像
-            imageLoaderService.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-                @Override
-                public void handle(WorkerStateEvent event) {
-                    Image loadedImage = imageLoaderService.getValue();
-                    // 使用 Platform.runLater 来确保更新操作在 JavaFX Application 线程上执行
-                    Platform.runLater(() -> button.getImageView().setImage(loadedImage));
-                    //存储图片的实际大小
-                    var x=image.getWidth();
-                    var y=image.getHeight();
-                    var rate=x/y;
-                    if(rate>1){
-                        button.getImageView().setFitWidth(80);
-                        button.getImageView().setFitHeight(80/rate);
-                        button.getImageView().setLayoutX(0);
-                        button.getImageView().setLayoutY(40-40/rate);
-                    }else{
-                        button.getImageView().setFitWidth(80*rate);
-                        button.getImageView().setFitHeight(80);
-                        button.getImageView().setLayoutY(0);
-                        button.getImageView().setLayoutX(40-40*rate);
-                    }
-                }
-            });
-
-            // 启动异步加载任务
-            imageLoaderService.start();
-
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+            BufferedImage compressedButtonBufferedImage = ConvertUtil.resetSize(bufferedImage, buttonWidth, buttonHeight, true);
+            Image compressedButtonImage = ConvertUtil.ConvertToFxImage(compressedButtonBufferedImage);
+            button.getImageView().setImage(compressedButtonImage);
+            button.getImageView().setLayoutX((80-buttonWidth)/2);
+            button.getImageView().setLayoutY((80-buttonHeight)/2);
             // 将按钮添加到列表
             buttons.add(button);
         }
@@ -216,14 +218,14 @@ public class ImageImportMenuScene extends SuperScene{
     }
 
     /***
-     * @Description  清除所有产生的按钮
+     * @Description 清除所有产生的按钮
      * @return null
      * @author 张喆宇
      * @date 2023/12/5 22:29
-    **/
+     **/
 
-    public void clearImageButtons(){
-        fusionImageButtons=null;
+    public void clearImageButtons() {
+        fusionImageButtons = null;
     }
 
     /***
@@ -231,10 +233,11 @@ public class ImageImportMenuScene extends SuperScene{
      * @return java.util.List<javafx.scene.image.Image>
      * @author 张喆宇
      * @date 2023/12/4 18:53
-    **/
+     **/
     public List<Image> getSelectedImages() {
         return selectedImages;
     }
+
 
     public List<FusionImageButton> getFusionImageButtons() {
         return fusionImageButtons;
