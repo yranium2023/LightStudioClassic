@@ -6,7 +6,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -25,10 +24,12 @@ public class ConvertUtil {
 
         return new ImageView(wr).getImage();
     }
+
     public static ImageView ConvertToFxImageView(BufferedImage image) {
         return new ImageView(ConvertToFxImage(image));
     }
-    public static BufferedImage convertToBufferedImage(Image fxImage,int BufferedImageType) {
+
+    public static BufferedImage convertToBufferedImage(Image fxImage, int BufferedImageType) {
         // 获取Image的宽度和高度
         int width = (int) fxImage.getWidth();
         int height = (int) fxImage.getHeight();
@@ -37,19 +38,20 @@ public class ConvertUtil {
 
 
         // 将fxImage绘制到BufferedImage中
-        return  SwingFXUtils.fromFXImage(fxImage, null);
+        return SwingFXUtils.fromFXImage(fxImage, null);
 
 
     }
-    public static BufferedImage resetSize(BufferedImage srcImg, double targetWidth, double targetHeight,boolean higherQuality) {
-        if ( srcImg == null)
+
+    public static BufferedImage resetSize(BufferedImage srcImg, double targetWidth, double targetHeight, boolean higherQuality) {
+        if (srcImg == null)
             return srcImg;
 
         int type = srcImg.getType();
-        BufferedImage ret ;
+        BufferedImage ret;
         int w, h;
         long stime = System.currentTimeMillis();
-        if(targetHeight>srcImg.getHeight()||targetWidth>srcImg.getWidth()){
+        if (targetHeight > srcImg.getHeight() || targetWidth > srcImg.getWidth()) {
 
             return DeepCopy.cpyBufferedImage(srcImg);
         }
@@ -58,14 +60,14 @@ public class ConvertUtil {
             //双线性压缩
             w = srcImg.getWidth();
             h = srcImg.getHeight();
-            double scaleX = (double)targetWidth / w;
-            double scaleY = (double)targetHeight / h;
+            double scaleX = (double) targetWidth / w;
+            double scaleY = (double) targetHeight / h;
             BufferedImage tmp = new BufferedImage((int) targetWidth, (int) targetHeight, type);
             Graphics2D g2 = tmp.createGraphics();
             g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-            g2.drawImage(srcImg, 0, 0,(int)  targetWidth, (int) targetHeight, null);
+            g2.drawImage(srcImg, 0, 0, (int) targetWidth, (int) targetHeight, null);
             g2.dispose();
-            ret=tmp;
+            ret = tmp;
 
         } else {
             //粗糙压缩，适用于滑块拖动过程
@@ -79,13 +81,13 @@ public class ConvertUtil {
                 g2.drawImage(tmp, 0, 0, w, h, null);
                 g2.dispose();
                 ret = tmp;
-            } while (w != (int) targetWidth || h !=(int)  targetHeight);
+            } while (w != (int) targetWidth || h != (int) targetHeight);
         }
         long etime = System.currentTimeMillis();
         System.out.printf("压缩执行时长：%d 毫秒\n", (etime - stime));
 
         return ret;
+
+
     }
-
-
 }
