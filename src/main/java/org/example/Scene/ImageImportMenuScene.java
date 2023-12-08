@@ -22,7 +22,9 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author 吴鹄远
@@ -34,8 +36,6 @@ public class ImageImportMenuScene extends SuperScene {
     private List<Image> selectedImages = new ArrayList<>();
 
     private List<FusionImageButton> fusionImageButtons = null;
-
-    private static ExecutorService executorService = Executors.newCachedThreadPool();
 
     public ImageImportMenuScene() {
         super(VSceneRole.DRAWER_VERTICAL);
@@ -175,58 +175,43 @@ public class ImageImportMenuScene extends SuperScene {
      * @date 2023/12/4 21:33
      **/
     private List<FusionImageButton> createImageButtons() {
-        List<Future<FusionImageButton>> futures = new ArrayList<>();
+        List<FusionImageButton> buttons = new ArrayList<>();
 
         if (selectedImages.isEmpty()) {
             return null;
         }
+
         for (Image image : selectedImages) {
-            Future<FusionImageButton> future = executorService.submit(() -> {
-                FusionImageButton button = new FusionImageButton();
-                // 设置按钮大小
-                button.setPrefSize(80, 80);
-                // 添加按钮点击事件处理程序
-                button.setOnAction(e -> {
-                    if (StaticValues.editingImage != image) {
-                        System.out.println("选择成功");
-                        StaticValues.editingImage = image;
-                    }
-                });
-                double selectedImageHeight = image.getHeight();
-                double selectedImageWidth = image.getWidth();
-                double rate = selectedImageHeight / selectedImageWidth;
-                double buttonWidth = 80;
-                double buttonHeight = 80;
-
-                if (rate > 1) {
-                    buttonWidth = 80 / rate;
-                } else {
-                    buttonHeight = 80 * rate;
+            FusionImageButton button = new FusionImageButton();
+            // 设置按钮大小
+            button.setPrefSize(80, 80);
+            // 添加按钮点击事件处理程序
+            button.setOnAction(e -> {
+                if (StaticValues.editingImage != image) {
+                    System.out.println("选择成功");
+                    StaticValues.editingImage = image;
                 }
-
-                BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
-                BufferedImage compressedButtonBufferedImage = ConvertUtil.resetSize(bufferedImage, buttonWidth, buttonHeight, true);
-                Image compressedButtonImage = ConvertUtil.ConvertToFxImage(compressedButtonBufferedImage);
-
-                button.getImageView().setImage(compressedButtonImage);
-                button.getImageView().setLayoutX((80 - buttonWidth) / 2);
-                button.getImageView().setLayoutY((80 - buttonHeight) / 2);
-
-                return button;
             });
-
-            futures.add(future);
-        }
-        List<FusionImageButton> buttons = new ArrayList<>();
-
-        // 获取所有任务的结果
-        for (Future<FusionImageButton> future : futures) {
-            try {
-                FusionImageButton button = future.get();
-                buttons.add(button);
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
+            double selectedImageHeight = image.getHeight();
+            double selectedImageWidth = image.getWidth();
+            double rate = selectedImageHeight / selectedImageWidth;
+            // 对图片较大压缩，用于生成图片按钮
+            double buttonWidth = 80;
+            double buttonHeight = 80;
+            if (rate > 1) {
+                buttonWidth = 80 / rate;
+            } else {
+                buttonHeight = 80 * rate;
             }
+
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+            BufferedImage compressedButtonBufferedImage = ConvertUtil.resetSize(bufferedImage, buttonWidth, buttonHeight, true);
+            Image compressedButtonImage = ConvertUtil.ConvertToFxImage(compressedButtonBufferedImage);
+            button.getImageView().setImage(compressedButtonImage);
+            button.getImageView().setLayoutX((80-buttonWidth)/2);
+            button.getImageView().setLayoutY((80-buttonHeight)/2);
+            // 将按钮添加到列表
+            buttons.add(button);
         }
 
         return buttons;
