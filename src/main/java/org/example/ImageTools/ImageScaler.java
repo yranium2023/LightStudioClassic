@@ -10,20 +10,22 @@ import io.vproxy.vfx.util.FXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import org.example.ImagePane.ImagePane;
 
 
 public class ImageScaler {
 
-    public static ImageView getImageView(Image image, Pane pane) {
+    public static ImageView getImageView(Image image, ImagePane imagePane) {
 
         // 创建ImageView来显示图片
         ImageView imageView = new ImageView(image);
         // 设置ImageView的属性，以实现缩放
         imageView.setPreserveRatio(true); // 保持宽高比
-        imageView.setFitWidth(pane.getPrefWidth()-20);        // 设置宽度，根据需要调整
-        imageView.setFitHeight(imageView.getImage().getHeight()*imageView.getFitWidth()/imageView.getImage().getWidth());
-        imageView.setX((pane.getPrefWidth()-imageView.getFitWidth())/2);
-        imageView.setY((pane.getPrefHeight()-imageView.getFitHeight())/2);
+        imageView.fitHeightProperty().bind(imagePane.widthProperty().multiply(0.95));
+//        imageView.setFitWidth(imagePane.getPrefWidth()-20);        // 设置宽度，根据需要调整
+//        imageView.setFitHeight(imageView.getImage().getHeight()*imageView.getFitWidth()/imageView.getImage().getWidth());
+        imageView.setX((imagePane.getPrefWidth()-imageView.getFitWidth())/2);
+        imageView.setY((imagePane.getPrefHeight()-imageView.getFitHeight())/2);
         return imageView;
     }
 }

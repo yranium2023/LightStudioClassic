@@ -17,6 +17,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeType;
 import javafx.stage.Stage;
+import org.example.ImagePane.ImagePane;
 import org.example.ImageTools.ImageScaler;
 
 import javax.imageio.ImageIO;
@@ -43,10 +44,11 @@ public class ImageClip{
      * @author missing
      * @updateTime 2023/12/4 10:59
      */
-    public static void imageClip(Image image,Pane anchorPane) {
+    public static void imageClip(Image image, ImagePane anchorPane) {
 
         // 创建ImageView并设置图像
         ImageView imageView = ImageScaler.getImageView(image,anchorPane);
+
         clip.setStrokeWidth(3);
         clip.setStrokeType(StrokeType.CENTERED);
         clip.setStroke(Color.GREEN);

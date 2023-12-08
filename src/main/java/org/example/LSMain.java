@@ -30,12 +30,13 @@ public class LSMain extends Application {
     //承载所有场景
     private final List<SuperScene> mainScenes = new ArrayList<>();
     private VSceneGroup sceneGroup;
+    private static VStage stage;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
         primaryStage.getIcons().add(ImportImageResource.getInstance().getImage("image/icon.png"));
-        var stage = new VStage(primaryStage) {
+        stage = new VStage(primaryStage) {
             @Override
             public void close() {
                 super.close();
@@ -97,7 +98,6 @@ public class LSMain extends Application {
         stage.getInitialScene().getContentPane().widthProperty().addListener((ob, old, now) -> {
             if (now == null) return;
             var v = now.doubleValue();
-
             navigatePane.getNode().setLayoutX(v - 270);
 
         });
@@ -123,4 +123,7 @@ public class LSMain extends Application {
 
     }
 
+    public static VStage getStage() {
+        return stage;
+    }
 }
