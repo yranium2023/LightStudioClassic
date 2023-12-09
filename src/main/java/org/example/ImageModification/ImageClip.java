@@ -144,8 +144,15 @@ public class ImageClip {
         //确认裁剪
         ImageClipScene.getAffirmButton().setOnAction(event->{
             System.out.println("确认裁剪");
+            Image imageToClip;
+            if(editingImageObj.getClipImages().isEmpty()){
+                imageToClip=editingImageObj.getOriginalImage();
+            }else{
+                int lastIndex=editingImageObj.getClipImages().size()-1;
+                imageToClip=editingImageObj.getClipImages().get(lastIndex);
+            }
             //获取当前原图和当前显示的图像的比例
-            double ratio=editingImageObj.getOriginalImage().getWidth()/imageView.getFitWidth();
+            double ratio=imageToClip.getWidth()/imageView.getFitWidth();
             //获取裁剪的起点
             double clipX=clip.getX()-imageView.getX();
             double clipY=clip.getY()-imageView.getY();
@@ -156,11 +163,23 @@ public class ImageClip {
             //在裁剪时，所有的参数乘上系数
             params.setViewport(new Rectangle2D(clipX*ratio, clipY*ratio, clip.getWidth()*ratio,clip.getHeight()*ratio)); // 设置裁剪区域
             // 调用snapshot方法获取裁剪后的图像
-            ImageView originalImageView=new ImageView(editingImageObj.getOriginalImage());
-            WritableImage snapshot = originalImageView.snapshot(params, null);
+            ImageView ImageViewToClip=new ImageView(imageToClip);
+            WritableImage snapshot = ImageViewToClip.snapshot(params, null);
             // 将 WritableImage 转换为 Image
             Image clippedImage = SwingFXUtils.toFXImage(SwingFXUtils.fromFXImage(snapshot, null), null);
+            //把生成的Image加入clipImage的List中
             editingImageObj.getClipImages().add(clippedImage);
+            //生成和替换缩略图
+            Image newButtonImage=ImageObj.resizeButtonImage(clippedImage);
+            editingImageObj.setButtonImage(newButtonImage);
+            //生成和替换压缩图片
+            Image newEditingImage=ImageObj.resizeNormalImage(clippedImage);
+            editingImageObj.setEditingImage(newEditingImage);
+            //将当前界面上的图片进行替换
+            int index=imagePane.getChildren().indexOf(imageView);
+            copyImageViewProperties(ImageScaler.getImageView(newEditingImage,imagePane),imageView,imagePane);
+            imagePane.getChildren().set(index,imageView);
+
 
 
         });
@@ -185,6 +204,7 @@ public class ImageClip {
                 clip.setY(clipY);
                 clip.setHeight(clipHeight);
             }
+
 
             mouseX = mouseEvent.getX();
             mouseY = mouseEvent.getY();
@@ -240,6 +260,30 @@ public class ImageClip {
             clip.setY(newClipY);
         }
 
+    }
+    /**
+     * @Description 复制ImageView属性的方法 
+     * @param sourceImageView
+     * @param targetImageView
+     * @author 吴鹄远
+     * @date 2023/12/9 22:38
+    **/
+    
+    private static void copyImageViewProperties(ImageView sourceImageView, ImageView targetImageView,ImagePane imagePane) {
+        // 设置目标ImageView的属性
+        double ratio=sourceImageView.getFitWidth()/sourceImageView.getFitHeight();
+        targetImageView.setImage(sourceImageView.getImage());
+        targetImageView.fitWidthProperty().unbind();
+        targetImageView.fitHeightProperty().unbind();
+        targetImageView.setFitWidth(sourceImageView.getFitWidth());
+        targetImageView.setFitHeight(sourceImageView.getFitHeight());
+        if(ratio>1){
+            targetImageView.fitWidthProperty().bind(imagePane.widthProperty().multiply(0.95));
+            targetImageView.fitHeightProperty().bind(targetImageView.fitWidthProperty().multiply(1/ratio));
+        }else{
+            targetImageView.fitHeightProperty().bind(imagePane.heightProperty().multiply(0.95));
+            targetImageView.fitWidthProperty().bind(targetImageView.fitHeightProperty().multiply(ratio));
+        }
     }
 
 

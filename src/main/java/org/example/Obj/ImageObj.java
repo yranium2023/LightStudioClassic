@@ -132,7 +132,7 @@ public class ImageObj {
      * @date 2023/12/9 21:47
     **/
 
-    public Image resizeNormalImage(Image image){
+    public static Image resizeNormalImage(Image image){
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
         double imageHeight = image.getHeight();
         double imageWidth = image.getWidth();
@@ -161,7 +161,7 @@ public class ImageObj {
      * @date 2023/12/9 21:49
     **/
 
-    public Image resizeButtonImage(Image image){
+    public static Image resizeButtonImage(Image image){
         double imageHeight = image.getHeight();
         double imageWidth = image.getWidth();
         double rate = imageHeight / imageWidth;
