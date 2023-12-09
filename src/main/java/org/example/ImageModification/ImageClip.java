@@ -172,6 +172,7 @@ public class ImageClip {
             //生成和替换缩略图
             Image newButtonImage=ImageObj.resizeButtonImage(clippedImage);
             editingImageObj.setButtonImage(newButtonImage);
+            editingImageObj.renewButton();
             //生成和替换压缩图片
             Image newEditingImage=ImageObj.resizeNormalImage(clippedImage);
             editingImageObj.setEditingImage(newEditingImage);
