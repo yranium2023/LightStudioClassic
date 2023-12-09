@@ -5,19 +5,25 @@ import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.button.FusionImageButton;
 import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.VSceneRole;
+import io.vproxy.vfx.ui.wrapper.ThemeLabel;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import org.example.ImageTools.ConvertUtil;
 import org.example.Obj.ImageObj;
 import org.example.StaticValues;
+
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -35,8 +41,8 @@ import java.util.concurrent.Executors;
 public class ImageImportMenuScene extends SuperScene {
     //所有所选中的图片
     private List<ImageObj> selectedImages = new ArrayList<>();
-
-    private List<FusionImageButton> fusionImageButtons = null;
+    private List<ImageObj> totalImages= new ArrayList<>();
+    private List<VBox> fusionImageButtonsVbox = null;
 
     public ImageImportMenuScene() {
         super(VSceneRole.DRAWER_VERTICAL);
@@ -137,7 +143,7 @@ public class ImageImportMenuScene extends SuperScene {
                 // 在 JavaFX 线程上更新 UI
                 Platform.runLater(() -> {
                     // 生成特殊的按钮
-                    fusionImageButtons = createImageButtons();
+                    fusionImageButtonsVbox = createImageButtonsVbox();
                     // 清空之前选中的图片
                     selectedImages.clear();
                     System.out.println("图片全部传入成功");
@@ -148,29 +154,7 @@ public class ImageImportMenuScene extends SuperScene {
 
     }
 
-    /***
-     * @Description 用于创建图片导入的任务 特殊类
-     * @author 张喆宇
-     * @date 2023/12/6 15:30
-     **/
 
-    class ImageLoaderService extends Service<Image> {
-        private String imagePath;
-
-        public ImageLoaderService(String imagePath) {
-            this.imagePath = imagePath;
-        }
-
-        @Override
-        protected Task<Image> createTask() {
-            return new Task<>() {
-                @Override
-                protected Image call() throws Exception {
-                    return new Image(imagePath);
-                }
-            };
-        }
-    }
 
     /***
      * @Description 创建多个FusionButton 含有图片
@@ -178,8 +162,8 @@ public class ImageImportMenuScene extends SuperScene {
      * @author 张喆宇
      * @date 2023/12/4 21:33
      **/
-    private List<FusionImageButton> createImageButtons() {
-        List<FusionImageButton> buttons = new ArrayList<>();
+    private List<VBox> createImageButtonsVbox() {
+        List<VBox> buttonBoxs = new ArrayList<>();
 
         if (selectedImages.isEmpty()) {
             return null;
@@ -216,10 +200,17 @@ public class ImageImportMenuScene extends SuperScene {
             button.getImageView().setLayoutX((80-buttonWidth)/2);
             button.getImageView().setLayoutY((80-buttonHeight)/2);
             // 将按钮添加到列表
-            buttons.add(button);
+            Label descriptionLabel = new Label(Integer.toString((int)imageObj.getOriginalImage().getWidth())+'*'+(int)imageObj.getOriginalImage().getHeight());
+            descriptionLabel.setTextFill(Color.WHITE);
+            VBox buttonVBox = new VBox();
+            buttonVBox.setAlignment(Pos.CENTER); // 居中对齐
+            buttonVBox.setSpacing(5);
+            buttonVBox.getChildren().add(button);
+            buttonVBox.getChildren().add(descriptionLabel);
+            buttonBoxs.add(buttonVBox);
         }
 
-        return buttons;
+        return buttonBoxs;
     }
 
     /***
@@ -230,22 +221,28 @@ public class ImageImportMenuScene extends SuperScene {
      **/
 
     public void clearImageButtons() {
-        fusionImageButtons = null;
+        fusionImageButtonsVbox = null;
+    }
+    /***
+     * @Description  返回所有选中的图片
+     * @return java.util.List<org.example.Obj.ImageObj>
+     * @author 张喆宇
+     * @date 2023/12/9 13:38
+    **/
+
+    public List<ImageObj> getTotalImages() {
+        return totalImages;
     }
 
     /***
-     * @Description 返回所有选中的图片
-     * @return java.util.List<javafx.scene.image.Image>
+     * @Description  传出单次选择产生的按钮
+     * @return java.util.List<io.vproxy.vfx.ui.button.FusionImageButton>
      * @author 张喆宇
-     * @date 2023/12/4 18:53
-     **/
-    public List<ImageObj> getSelectedImages() {
-        return selectedImages;
-    }
+     * @date 2023/12/9 13:37
+    **/
 
-
-    public List<FusionImageButton> getFusionImageButtons() {
-        return fusionImageButtons;
+    public List<VBox> getFusionImageButtons() {
+        return fusionImageButtonsVbox;
     }
 
     @Override
