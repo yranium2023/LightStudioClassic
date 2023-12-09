@@ -1,5 +1,7 @@
 package org.example.Obj;
 
+import io.vproxy.vfx.ui.button.FusionButton;
+import io.vproxy.vfx.ui.button.FusionImageButton;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import org.example.ImageTools.ConvertUtil;
@@ -26,7 +28,10 @@ public class ImageObj {
     private List<Image> editImages = new ArrayList<>();
     //传入图片的路径
     String imagePath = null;
-
+    //图库中按钮
+    private FusionImageButton imageButton = null;
+    //横板按钮
+    private FusionImageButton  copyButton = null;
     /***
      * @Description  构造函数 用于构建Image对象
      * @param originalImage
@@ -178,4 +183,40 @@ public class ImageObj {
         return ConvertUtil.ConvertToFxImage(compressedButtonBufferedImage);
     }
 
+    /***
+     * @Description  存入图库中按钮
+     * @param imageButton
+     * @author 张喆宇
+     * @date 2023/12/10 0:30
+    **/
+
+    public void setImageButton(FusionImageButton  imageButton) {
+        this.imageButton = imageButton;
+    }
+
+    /***
+     * @Description  存入横版按钮
+     * @param copyButton
+     * @author 张喆宇
+     * @date 2023/12/10 0:30
+    **/
+
+    public void setCopyButton(FusionImageButton  copyButton) {
+        this.copyButton = copyButton;
+    }
+
+    /***
+     * @Description 更新图片
+     * @return null
+     * @author 张喆宇
+     * @date 2023/12/10 0:32
+    **/
+    public void renewButton(){
+        this.imageButton.getImageView().setImage(buttonImage);
+        this.imageButton.getImageView().setLayoutX((80 - buttonImage.getWidth()) / 2);
+        this.imageButton.getImageView().setLayoutY((80 - buttonImage.getHeight()) / 2);
+        this.copyButton.getImageView().setImage(buttonImage);
+        this.copyButton.getImageView().setLayoutX((80 - buttonImage.getWidth()) / 2);
+        this.copyButton.getImageView().setLayoutY((80 - buttonImage.getHeight()) / 2);
+    }
 }

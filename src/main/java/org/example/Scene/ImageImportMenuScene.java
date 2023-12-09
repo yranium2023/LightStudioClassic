@@ -208,6 +208,8 @@ public class ImageImportMenuScene extends SuperScene {
             copy.getImageView().setLayoutY((80 - buttonHeight) / 2);
             // 将按钮添加到列表 同时添加一个拷贝
             fusionImageButtons.add(copy);
+            imageObj.setImageButton(button);
+            imageObj.setCopyButton(copy);
             Label descriptionLabel = new Label(Integer.toString((int) imageObj.getOriginalImage().getWidth()) + '×' + (int) imageObj.getOriginalImage().getHeight());
             descriptionLabel.setTextFill(Color.WHITE);
             VBox buttonVBox = new VBox();
