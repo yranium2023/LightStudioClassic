@@ -10,7 +10,6 @@ import io.vproxy.vfx.ui.stage.VStage;
 import io.vproxy.vfx.util.FXUtils;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.scene.image.Image;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -19,7 +18,6 @@ import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 import org.example.ImageTools.ImportImageResource;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -85,12 +83,12 @@ public class ImageImportScene extends SuperScene {
             refreshTimeline.stop();  // 停止之前的定时器，以免叠加
             //50ms刷新一次
             refreshTimeline.getKeyFrames().setAll(new KeyFrame(Duration.millis(50), event -> {
-                List<VBox> fusionImageButtons = menuScene.getFusionImageButtons();
+                List<VBox> fusionImageButtons = menuScene.getFusionImageButtonsVbox();
                 if (fusionImageButtons != null && !fusionImageButtons.isEmpty()) {
                     // 将按钮添加到 FlowPane
                     flowPane.getChildren().addAll(fusionImageButtons);
                     //清空生成的按钮
-                    menuScene.clearImageButtons();
+                    menuScene.clearImageButtonsVbox();
                     refreshTimeline.stop();
                 }
             }));

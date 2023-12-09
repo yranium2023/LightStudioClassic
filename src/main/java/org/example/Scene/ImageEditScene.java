@@ -1,17 +1,21 @@
 package org.example.Scene;
 
 import io.vproxy.vfx.control.scroll.VScrollPane;
+import io.vproxy.vfx.theme.Theme;
 import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.pane.FusionPane;
-import io.vproxy.vfx.ui.scene.VSceneGroup;
-import io.vproxy.vfx.ui.scene.VSceneRole;
-import io.vproxy.vfx.ui.scene.VSceneShowMethod;
+import io.vproxy.vfx.ui.scene.*;
 import io.vproxy.vfx.util.FXUtils;
+import javafx.geometry.Insets;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import org.example.ImageModification.ImageClip;
+import org.example.LSMain;
 import org.example.StaticValues;
 
 import java.util.function.Supplier;
@@ -48,9 +52,9 @@ public class ImageEditScene extends SuperScene{
         VScrollPane editingPane=new VScrollPane(){{
            enableAutoContentWidthHeight();
            getNode().setPrefWidth(250);
-           getNode().setPrefHeight(500);
+           getNode().setPrefHeight(550);
            getNode().setLayoutX(1050-50);
-           getNode().setLayoutY(250);
+           getNode().setLayoutY(100);
         }};
         //创建一个矩形用来包裹editingPane
         Rectangle editingPaneRec=new Rectangle(
@@ -95,8 +99,41 @@ public class ImageEditScene extends SuperScene{
         getContentPane().getChildren().add(editingPane.getNode());
         editingPane.setContent(imageClipPane.getNode());
 
-
-        
+        //生成下方pane
+        var navigatePane = new FusionPane();{
+            getNode().setPrefHeight(30);
+            getNode().setPrefWidth(getContentPane().getWidth());
+        }
+        navigatePane.getNode().layoutYProperty().bind(LSMain.getStage().getInitialScene().getContentPane().heightProperty().add(-50));
+        getContentPane().getChildren().add(navigatePane.getNode());
+        FXUtils.observeWidthCenter(LSMain.getStage().getInitialScene().getContentPane(),navigatePane.getNode());
+        var fromBottomButton = new FusionButton("选择编辑图片") {{
+            setPrefWidth(1200);
+            setPrefHeight(30);
+        }};
+        fromBottomButton.setOnAction(e -> {
+            var scene = new VScene(VSceneRole.DRAWER_HORIZONTAL);
+            scene.enableAutoContentWidthHeight();
+            scene.getNode().setPrefHeight(100);
+            scene.getNode().setBackground(new Background(new BackgroundFill(
+                    Theme.current().subSceneBackgroundColor(),
+                    CornerRadii.EMPTY,
+                    Insets.EMPTY
+            )));
+            var closeBtn = new FusionButton("hide") {{
+                setPrefWidth(100);
+                setPrefHeight(50);
+            }};
+            closeBtn.setOnAction(ee -> {
+                sceneGroupSup.get().hide(scene, VSceneHideMethod.TO_BOTTOM);
+                FXUtils.runDelay(VScene.ANIMATION_DURATION_MILLIS, () -> sceneGroupSup.get().removeScene(scene));
+            });
+            scene.getContentPane().getChildren().add(closeBtn);
+            FXUtils.observeWidthHeightCenter(scene.getContentPane(), closeBtn);
+            sceneGroupSup.get().addScene(scene, VSceneHideMethod.TO_BOTTOM);
+            FXUtils.runDelay(50, () -> sceneGroupSup.get().show(scene, VSceneShowMethod.FROM_BOTTOM));
+        });
+        navigatePane.getContentPane().getChildren().add(fromBottomButton);
     }
 
     @Override
