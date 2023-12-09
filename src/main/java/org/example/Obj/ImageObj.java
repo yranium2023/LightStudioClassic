@@ -103,25 +103,25 @@ public class ImageObj {
     }
 
     /***
-     * @Description  向裁剪列表中添加一张裁剪后的图片
-     * @param image
+     * @Description  获取裁剪图片列表
      * @author 张喆宇
      * @date 2023/12/9 11:26
     **/
 
-    public void addClipImage(Image image){
-        this.clipImages.add(image);
+    public List<Image> getClipImages() {
+        return clipImages;
     }
 
     /***
-     * @Description  向编辑猎豹中添加一张编辑后的图片
-     * @param image
+     * @Description  获取编辑图片列表
      * @author 张喆宇
      * @date 2023/12/9 11:28
     **/
-
-    public void addEditImage(Image image){
-        this.editImages.add(image);
+    public List<Image> getEditImages() {
+        return editImages;
     }
+
+
+
 
 }

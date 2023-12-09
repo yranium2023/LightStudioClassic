@@ -19,6 +19,7 @@ import org.example.ImagePane.ImagePane;
 import org.example.ImagePane.ImageScaler;
 import org.example.LSMain;
 import org.example.Obj.ImageObj;
+import org.example.Scene.ImageClipScene;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -45,8 +46,8 @@ public class ImageClip {
      * @author missing
      * @updateTime 2023/12/4 10:59
      */
-    public static void imageClip(ImageObj imageObj, ImagePane imagePane, FusionPane modulePane) {
-        Image image=imageObj.getEditingImage();
+    public static void imageClip(ImageObj editingImageObj, ImagePane imagePane, FusionPane modulePane) {
+        Image image=editingImageObj.getEditingImage();
 
 
         // 创建ImageView并设置图像
@@ -140,29 +141,28 @@ public class ImageClip {
                 clipMove(imageView, imagePane, 1, 1, 0, 0);
             }
         });
-        //确认或者取消裁剪，逻辑有待修改。
-        imagePane.setOnKeyPressed(event -> {
-            if ("Enter".equals(event.getCode().getName())) {
-                System.out.println("Enter key pressed");
-                imagePane.getChildren().remove(imageView);
-                Rectangle rectangle = new Rectangle(clip.getX(), clip.getY(), clip.getWidth(), clip.getHeight());
-                System.out.println(rectangle);
-                imageView.setClip(rectangle);
-                //保存裁剪图片
-                imagePane.getChildren().add(imageView);
-                SnapshotParameters params = new SnapshotParameters();
-                params.setFill(Color.TRANSPARENT); // 设置背景为透明
-                params.setViewport(new Rectangle2D(0, 0, image.getWidth(), image.getHeight())); // 设置裁剪区域
-                // 调用snapshot方法获取裁剪后的图像
-                WritableImage snapshot = imagePane.snapshot(params, null);
-                // 保存裁剪后的图像到本地文件
-                File file = new File("cropped_image.png");
-                try {
-                    ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+        //确认裁剪
+        ImageClipScene.getAffirmButton().setOnAction(event->{
+            System.out.println("确认裁剪");
+            //获取当前原图和当前显示的图像的比例
+            double ratio=editingImageObj.getOriginalImage().getWidth()/imageView.getFitWidth();
+            //获取裁剪的起点
+            double clipX=clip.getX()-imageView.getX();
+            double clipY=clip.getY()-imageView.getY();
+            //首先获得裁剪的图像
+            SnapshotParameters params = new SnapshotParameters();
+            params.setFill(Color.TRANSPARENT); // 设置背景为透明
+            //保存裁剪图片
+            //在裁剪时，所有的参数乘上系数
+            params.setViewport(new Rectangle2D(clipX*ratio, clipY*ratio, clip.getWidth()*ratio,clip.getHeight()*ratio)); // 设置裁剪区域
+            // 调用snapshot方法获取裁剪后的图像
+            ImageView originalImageView=new ImageView(editingImageObj.getOriginalImage());
+            WritableImage snapshot = originalImageView.snapshot(params, null);
+            // 将 WritableImage 转换为 Image
+            Image clippedImage = SwingFXUtils.toFXImage(SwingFXUtils.fromFXImage(snapshot, null), null);
+            editingImageObj.getClipImages().add(clippedImage);
+
+
         });
     }
 
