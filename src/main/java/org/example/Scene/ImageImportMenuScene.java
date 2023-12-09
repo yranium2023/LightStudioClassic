@@ -170,10 +170,18 @@ public class ImageImportMenuScene extends SuperScene {
 
         for (ImageObj imageObj : selectedImages) {
             FusionImageButton button = new FusionImageButton();
+            FusionImageButton copy = new FusionImageButton();
             // 设置按钮大小
             button.setPrefSize(80, 80);
+            copy.setPrefSize(80, 80);
             // 添加按钮点击事件处理程序
             button.setOnAction(e -> {
+                if (StaticValues.editingImageObj != imageObj) {
+                    System.out.println("选择成功");
+                    StaticValues.editingImageObj = imageObj;
+                }
+            });
+            copy.setOnAction(e -> {
                 if (StaticValues.editingImageObj != imageObj) {
                     System.out.println("选择成功");
                     StaticValues.editingImageObj = imageObj;
@@ -198,8 +206,11 @@ public class ImageImportMenuScene extends SuperScene {
             button.getImageView().setImage(compressedButtonImage);
             button.getImageView().setLayoutX((80-buttonWidth)/2);
             button.getImageView().setLayoutY((80-buttonHeight)/2);
-            // 将按钮添加到列表
-            fusionImageButtons.add(button);
+            copy.getImageView().setImage(compressedButtonImage);
+            copy.getImageView().setLayoutX((80-buttonWidth)/2);
+            copy.getImageView().setLayoutY((80-buttonHeight)/2);
+            // 将按钮添加到列表 同时添加一个拷贝
+            fusionImageButtons.add(copy);
             Label descriptionLabel = new Label(Integer.toString((int)imageObj.getOriginalImage().getWidth())+'×'+(int)imageObj.getOriginalImage().getHeight());
             descriptionLabel.setTextFill(Color.WHITE);
             VBox buttonVBox = new VBox();

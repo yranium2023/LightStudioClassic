@@ -28,7 +28,7 @@ import java.util.function.Supplier;
  */
 public class ImageImportScene extends SuperScene {
 
-    public ImageImportMenuScene menuScene = new ImageImportMenuScene();
+    public static ImageImportMenuScene menuScene = new ImageImportMenuScene();
 
     public ImageImportScene(Supplier<VSceneGroup> sceneGroupSup) {
         super(VSceneRole.MAIN);
