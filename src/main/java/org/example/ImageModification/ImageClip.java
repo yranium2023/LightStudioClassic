@@ -262,10 +262,10 @@ public class ImageClip {
 
             //调整大小
             if(clipBounds.getHeight()>imageViewBounds.getHeight()){
-                clip.setHeight(imageViewBounds.getHeight()-1);
+                clip.setHeight(imageViewBounds.getHeight()-5);
             }
             if(clipBounds.getWidth()>imageViewBounds.getWidth()){
-                clip.setWidth(imageViewBounds.getWidth()-1);
+                clip.setWidth(imageViewBounds.getWidth()-5);
             }
 
             // 设置新的 clip 位置
