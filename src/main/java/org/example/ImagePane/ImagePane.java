@@ -48,12 +48,5 @@ public class ImagePane extends Pane {
         getChildren().add(ImagePaneStrokeRec);
     }
 
-    public double getX(){
-        return ImagePaneRec.getX();
-    }
-
-    public double getY(){
-        return ImagePaneRec.getY();
-    }
 
 }

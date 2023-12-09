@@ -32,7 +32,6 @@ public class ImageScaler {
         double y=image.getHeight();
         double ratio=x/y;
         initImageView(imageView,imagePane,ratio);
-        System.out.println(imageView.getFitWidth());
         if(ratio>1){
             imageView.fitWidthProperty().bind(imagePane.widthProperty().multiply(0.95));
             imageView.fitHeightProperty().bind(imageView.fitWidthProperty().multiply(1/ratio));
@@ -44,14 +43,13 @@ public class ImageScaler {
             if(imageView.getFitWidth()!=0){
                 double v= now.doubleValue();
                 imageView.setX((v-imageView.getFitWidth())/2);
-                System.out.println(v);
-                System.out.println(imageView.getFitWidth());
-                System.out.println(imageView.getX());
             }
         });
         imagePane.heightProperty().addListener((ob,old,now)->{
-            double v= now.doubleValue();
-            imageView.setY((v-imageView.getFitHeight())/2);
+            if(imageView.getFitHeight()!=0){
+                double v= now.doubleValue();
+                imageView.setY((v-imageView.getFitHeight())/2);
+            }
         });
         return imageView;
     }

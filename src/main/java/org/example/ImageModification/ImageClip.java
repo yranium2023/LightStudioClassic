@@ -1,6 +1,7 @@
 package org.example.ImageModification;
 
 
+import io.vproxy.vfx.ui.pane.FusionPane;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
@@ -44,7 +45,7 @@ public class ImageClip {
      * @author missing
      * @updateTime 2023/12/4 10:59
      */
-    public static void imageClip(ImageObj imageObj, ImagePane imagePane) {
+    public static void imageClip(ImageObj imageObj, ImagePane imagePane, FusionPane modulePane) {
         Image image=imageObj.getEditingImage();
 
 
