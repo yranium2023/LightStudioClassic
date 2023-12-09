@@ -1,23 +1,26 @@
 package org.example.Scene;
 
+import io.vproxy.vfx.control.scroll.ScrollDirection;
 import io.vproxy.vfx.control.scroll.VScrollPane;
 import io.vproxy.vfx.theme.Theme;
 import io.vproxy.vfx.ui.button.FusionButton;
+import io.vproxy.vfx.ui.layout.HPadding;
 import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.*;
 import io.vproxy.vfx.util.FXUtils;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.geometry.Insets;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
+import javafx.util.Duration;
 import org.example.ImageModification.ImageClip;
 import org.example.LSMain;
 import org.example.StaticValues;
 
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -27,6 +30,9 @@ import java.util.function.Supplier;
  */
 public class ImageEditScene extends SuperScene{
     private ImageClipScene imageClipScene=new ImageClipScene();
+
+    VScene scene = new VScene(VSceneRole.DRAWER_HORIZONTAL);
+
     public ImageEditScene(Supplier<VSceneGroup> sceneGroupSup) {
         super(VSceneRole.MAIN);
 
@@ -111,27 +117,68 @@ public class ImageEditScene extends SuperScene{
             setPrefWidth(1200);
             setPrefHeight(30);
         }};
+
+        // 在初始化部分定义一个 Timeline 用于刷新添加按钮
+        Timeline refreshTimeline = new Timeline();
+        //初始化scene
+        scene.enableAutoContentWidthHeight();
+        scene.getNode().setPrefHeight(120);
+        scene.getNode().setBackground(new Background(new BackgroundFill(
+                Theme.current().subSceneBackgroundColor(),
+                CornerRadii.EMPTY,
+                Insets.EMPTY
+        )));
+        //新建VScrollPane用于生成滑动窗口，并存放flowPane
+        VScrollPane scrollFlowPane = new VScrollPane(ScrollDirection.HORIZONTAL) {{
+            getNode().setLayoutX(0);
+            getNode().setLayoutY(0);
+            getNode().setPrefWidth(1275);
+            getNode().setPrefHeight(100);
+        }};
+        FXUtils.observeWidthHeight(scene.getContentPane(),scrollFlowPane.getNode());
+        // 创建 FlowPane 用于放图片按钮
+        HBox hBox = new HBox() {{
+            setLayoutX(10);
+            setLayoutY(0);
+            setPrefHeight(scrollFlowPane.getNode().getPrefHeight());
+            setPrefWidth(scrollFlowPane.getNode().getPrefWidth());
+            // 设置行间距
+        }};
+        //绑定两个pane的宽和高
+        FXUtils.observeWidthHeight(scrollFlowPane.getNode(), hBox);
+        // 创建一个矩形用于显示flowPane的边框
+        Rectangle flowPaneRec = new Rectangle(scrollFlowPane.getNode().getLayoutX() , scrollFlowPane.getNode().getLayoutY() , hBox.getPrefWidth() , hBox.getPrefHeight() ) {{
+            setFill(Color.TRANSPARENT);
+            setStroke(Color.WHITE); // 设置矩形的边框颜色
+            setStrokeType(StrokeType.INSIDE);//边框为内嵌式，不会超出pane的范围
+        }};
+        flowPaneRec.heightProperty().bind(scrollFlowPane.getNode().heightProperty());
+        scene.getContentPane().getChildren().add(flowPaneRec);
+        scene.getContentPane().getChildren().add(scrollFlowPane.getNode());
+        scrollFlowPane.setContent(hBox);
         fromBottomButton.setOnAction(e -> {
-            var scene = new VScene(VSceneRole.DRAWER_HORIZONTAL);
-            scene.enableAutoContentWidthHeight();
-            scene.getNode().setPrefHeight(100);
-            scene.getNode().setBackground(new Background(new BackgroundFill(
-                    Theme.current().subSceneBackgroundColor(),
-                    CornerRadii.EMPTY,
-                    Insets.EMPTY
-            )));
-            var closeBtn = new FusionButton("hide") {{
-                setPrefWidth(100);
-                setPrefHeight(50);
-            }};
-            closeBtn.setOnAction(ee -> {
-                sceneGroupSup.get().hide(scene, VSceneHideMethod.TO_BOTTOM);
-                FXUtils.runDelay(VScene.ANIMATION_DURATION_MILLIS, () -> sceneGroupSup.get().removeScene(scene));
-            });
-            scene.getContentPane().getChildren().add(closeBtn);
-            FXUtils.observeWidthHeightCenter(scene.getContentPane(), closeBtn);
-            sceneGroupSup.get().addScene(scene, VSceneHideMethod.TO_BOTTOM);
-            FXUtils.runDelay(50, () -> sceneGroupSup.get().show(scene, VSceneShowMethod.FROM_BOTTOM));
+            if (!sceneGroupSup.get().getScenes().contains(scene)) {
+                sceneGroupSup.get().addScene(scene, VSceneHideMethod.TO_BOTTOM);
+            }
+             sceneGroupSup.get().show(scene, VSceneShowMethod.FROM_BOTTOM);
+            // 启动或重新开始 Timeline 定时器
+            refreshTimeline.stop();  // 停止之前的定时器，以免叠加
+            //50ms刷新一次
+            refreshTimeline.getKeyFrames().setAll(new KeyFrame(Duration.millis(50), event -> {
+                List<FusionButton> fusionImageButtons = ImageImportScene.menuScene.getFusionImageButtons();
+                if (fusionImageButtons != null && !fusionImageButtons.isEmpty()) {
+                    // 将按钮添加到 hBox
+                    for(FusionButton fusionButton:fusionImageButtons){
+                        hBox.getChildren().add(fusionButton);
+                        hBox.getChildren().add(new HPadding(100));
+                    }
+                    //清空生成的按钮
+                    ImageImportScene.menuScene.clearImageButtons();
+                    refreshTimeline.stop();
+                }
+            }));
+            refreshTimeline.setCycleCount(Timeline.INDEFINITE);
+            refreshTimeline.play();
         });
         navigatePane.getContentPane().getChildren().add(fromBottomButton);
     }
