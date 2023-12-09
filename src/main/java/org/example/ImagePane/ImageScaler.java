@@ -48,12 +48,13 @@ public class ImageScaler {
                 imageView.fitWidthProperty().unbind();
                 imageView.fitHeightProperty().unbind();
                 double paneRatio1=imagePane.getWidth()/imagePane.getHeight();
-                if(ratio>paneRatio1){
+                double ratio1=imageView.getFitWidth()/imageView.getFitHeight();
+                if(ratio1>paneRatio1){
                     imageView.fitWidthProperty().bind(imagePane.widthProperty().multiply(0.95));
-                    imageView.fitHeightProperty().bind(imageView.fitWidthProperty().multiply(1/ratio));
+                    imageView.fitHeightProperty().bind(imageView.fitWidthProperty().multiply(1/ratio1));
                 }else{
                     imageView.fitHeightProperty().bind(imagePane.heightProperty().multiply(0.95));
-                    imageView.fitWidthProperty().bind(imageView.fitHeightProperty().multiply(ratio));
+                    imageView.fitWidthProperty().bind(imageView.fitHeightProperty().multiply(ratio1));
                 }
             }
         });
@@ -64,12 +65,13 @@ public class ImageScaler {
                 imageView.fitWidthProperty().unbind();
                 imageView.fitHeightProperty().unbind();
                 double paneRatio1=imagePane.getWidth()/imagePane.getHeight();
-                if(ratio>paneRatio1){
+                double ratio1=imageView.getFitWidth()/imageView.getFitHeight();
+                if(ratio1>paneRatio1){
                     imageView.fitWidthProperty().bind(imagePane.widthProperty().multiply(0.95));
-                    imageView.fitHeightProperty().bind(imageView.fitWidthProperty().multiply(1/ratio));
+                    imageView.fitHeightProperty().bind(imageView.fitWidthProperty().multiply(1/ratio1));
                 }else{
                     imageView.fitHeightProperty().bind(imagePane.heightProperty().multiply(0.95));
-                    imageView.fitWidthProperty().bind(imageView.fitHeightProperty().multiply(ratio));
+                    imageView.fitWidthProperty().bind(imageView.fitHeightProperty().multiply(ratio1));
                 }
             }
         });
