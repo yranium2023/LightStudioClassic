@@ -2,6 +2,7 @@ package org.example.ImageModification;
 
 
 import javafx.embed.swing.SwingFXUtils;
+import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Cursor;
 import javafx.scene.SnapshotParameters;
@@ -27,6 +28,7 @@ import java.io.IOException;
  * @date 2023/12/3 20:22
  */
 
+
 public class ImageClip {
     private static Rectangle clip = new Rectangle(50, 50, 100, 100);
     private static double mouseX;
@@ -49,12 +51,46 @@ public class ImageClip {
         clip.setStrokeType(StrokeType.CENTERED);
         clip.setStroke(Color.GREEN);
         clip.setFill(Color.TRANSPARENT);
+
         imageViewRect = new Rectangle(imageView.getX(), imageView.getY(), imageView.getFitWidth(), imageView.getFitHeight());
+        imageViewRect.widthProperty().bind(imageView.fitWidthProperty());
+        imageViewRect.heightProperty().bind(imageView.fitHeightProperty());
+        imageViewRect.xProperty().bind(imageView.xProperty());
+        imageViewRect.yProperty().bind(imageView.yProperty());
         clip.setX(imageView.getX() + 10);
         clip.setY(imageView.getY() + 10);
         darkenedArea = Shape.subtract(imageViewRect, clip);
         darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
         anchorPane.getChildren().addAll(imageView, darkenedArea, clip);
+        imageView.fitWidthProperty().addListener((ob,old,now)->{
+            if(old!=now){
+                enSureClipInRec();
+                int index = anchorPane.getChildren().indexOf(darkenedArea);
+                darkenedArea = Shape.subtract(imageViewRect, new Rectangle(
+                        clip.getX(),
+                        clip.getY(),
+                        clip.getWidth(),
+                        clip.getHeight()
+                ));
+                darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
+                anchorPane.getChildren().set(index, darkenedArea);
+            }
+        });
+        imageView.fitHeightProperty().addListener((ob,old,now)->{
+            if(old!=now){
+                enSureClipInRec();
+                int index = anchorPane.getChildren().indexOf(darkenedArea);
+                darkenedArea = Shape.subtract(imageViewRect, new Rectangle(
+                        clip.getX(),
+                        clip.getY(),
+                        clip.getWidth(),
+                        clip.getHeight()
+                ));
+                darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
+                anchorPane.getChildren().set(index, darkenedArea);
+            }
+        });
+
         anchorPane.setOnMouseMoved(event -> {
             mouseX = event.getX();
             mouseY = event.getY();
@@ -157,10 +193,52 @@ public class ImageClip {
             ));
             darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
             anchorPane.getChildren().set(index, darkenedArea);
-//            System.out.println(clip.getX());
-//            System.out.println(darkenedArea.getBoundsInParent().getMinX());
         });
     }
+    /**
+     * @Description 实现在Rec的变化中clip一直都不超出rec的区域
+     * @author 吴鹄远
+     * @date 2023/12/9 14:03
+    **/
+
+    private static void enSureClipInRec(){
+        Bounds clipBounds=clip.getBoundsInLocal();
+        Bounds imageViewBounds=imageViewRect.getBoundsInLocal();
+        if(!imageViewBounds.contains(clipBounds)){
+            double newClipX = clip.getX();
+            double newClipY = clip.getY();
+
+            // 调整 X 坐标
+            if (clipBounds.getMinX() < imageViewBounds.getMinX()) {
+                newClipX += imageViewBounds.getMinX() - clipBounds.getMinX();
+            } else if (clipBounds.getMaxX() > imageViewBounds.getMaxX()) {
+                newClipX -= clipBounds.getMaxX() - imageViewBounds.getMaxX();
+            }
+
+            // 调整 Y 坐标
+            if (clipBounds.getMinY() < imageViewBounds.getMinY()) {
+                newClipY += imageViewBounds.getMinY() - clipBounds.getMinY();
+            } else if (clipBounds.getMaxY() > imageViewBounds.getMaxY()) {
+                newClipY -= clipBounds.getMaxY() - imageViewBounds.getMaxY();
+            }
+
+            //调整大小
+            if(clipBounds.getHeight()>imageViewBounds.getHeight()){
+                clip.setHeight(imageViewBounds.getHeight());
+            }
+            if(clipBounds.getWidth()>imageViewBounds.getWidth()){
+                clip.setWidth(imageViewBounds.getWidth());
+            }
+
+            // 设置新的 clip 位置
+            clip.setX(newClipX);
+            clip.setY(newClipY);
+        }
+
+    }
+
+
+
 
 }
 

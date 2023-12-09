@@ -27,16 +27,14 @@ public class ImageScaler {
         double ratio=x/y;
         //初始状态下，设置宽高
         if(ratio>1){
-            imageView.setFitWidth(imagePane.getWidth()*0.95);        // 设置宽度，根据需要调整
+            imageView.setFitWidth(imagePane.getPrefWidth()*0.95);        // 设置宽度，根据需要调整
             imageView.setFitHeight(imageView.getFitWidth()/ratio);
         }else{
-            imageView.setFitHeight(imagePane.getHeight()*0.95);
+            imageView.setFitHeight(imagePane.getPrefHeight()*0.95);
             imageView.setFitWidth(imageView.getFitHeight()*ratio);
         }
-        System.out.println(imagePane.getWidth());
-        System.out.println(imageView.getFitWidth());
-        imageView.setX((imagePane.getWidth()-imageView.getFitWidth())/2);
-        imageView.setY((imagePane.getHeight()-imageView.getFitHeight())/2);
+        imageView.setX((imagePane.getPrefWidth()-imageView.getFitWidth())/2);
+        imageView.setY((imagePane.getPrefHeight()-imageView.getFitHeight())/2);
         if(ratio>1){
             imageView.fitWidthProperty().bind(imagePane.widthProperty().multiply(0.95));
             imageView.fitHeightProperty().bind(imageView.fitWidthProperty().multiply(1/ratio));
@@ -46,8 +44,6 @@ public class ImageScaler {
         }
         imagePane.widthProperty().addListener((ob,old,now)->{
             double v= now.doubleValue();
-            System.out.println(v);
-            System.out.println(imageView.fitWidthProperty().doubleValue());
             imageView.setX((v-imageView.fitWidthProperty().doubleValue())/2);
         });
         imagePane.heightProperty().addListener((ob,old,now)->{
