@@ -41,6 +41,8 @@ public class ImageImportMenuScene extends SuperScene {
     private List<ImageObj> totalImages= new ArrayList<>();
     private List<VBox> fusionImageButtonsVbox = null;
 
+    private List<FusionButton> fusionImageButtons = new ArrayList<>();
+
     public ImageImportMenuScene() {
         super(VSceneRole.DRAWER_VERTICAL);
         getNode().setPrefWidth(350);
@@ -154,7 +156,7 @@ public class ImageImportMenuScene extends SuperScene {
 
 
     /***
-     * @Description 创建多个FusionButton 含有图片
+     * @Description 创建多个FusionButtonBox 含有图片 和文字说明
      * @return java.util.List<Button>
      * @author 张喆宇
      * @date 2023/12/4 21:33
@@ -197,6 +199,7 @@ public class ImageImportMenuScene extends SuperScene {
             button.getImageView().setLayoutX((80-buttonWidth)/2);
             button.getImageView().setLayoutY((80-buttonHeight)/2);
             // 将按钮添加到列表
+            fusionImageButtons.add(button);
             Label descriptionLabel = new Label(Integer.toString((int)imageObj.getOriginalImage().getWidth())+'×'+(int)imageObj.getOriginalImage().getHeight());
             descriptionLabel.setTextFill(Color.WHITE);
             VBox buttonVBox = new VBox();
@@ -211,13 +214,13 @@ public class ImageImportMenuScene extends SuperScene {
     }
 
     /***
-     * @Description 清除所有产生的按钮
+     * @Description 清除所有产生的按钮box
      * @return null
      * @author 张喆宇
      * @date 2023/12/5 22:29
      **/
 
-    public void clearImageButtons() {
+    public void clearImageButtonsVbox() {
         fusionImageButtonsVbox = null;
     }
     /***
@@ -232,14 +235,35 @@ public class ImageImportMenuScene extends SuperScene {
     }
 
     /***
-     * @Description  传出单次选择产生的按钮
+     * @Description  传出单次选择产生的按钮Vbox
      * @return java.util.List<io.vproxy.vfx.ui.button.FusionImageButton>
      * @author 张喆宇
      * @date 2023/12/9 13:37
     **/
 
-    public List<VBox> getFusionImageButtons() {
+    public List<VBox> getFusionImageButtonsVbox() {
         return fusionImageButtonsVbox;
+    }
+
+    /***
+     * @Description  传出单次选择产生的按钮
+     * @return java.util.List<io.vproxy.vfx.ui.button.FusionButton>
+     * @author 张喆宇
+     * @date 2023/12/9 19:18
+    **/
+
+    public List<FusionButton> getFusionImageButtons() {
+        return fusionImageButtons;
+    }
+
+    /***
+     * @Description  清空单次选择产生的按钮
+     * @author 张喆宇
+     * @date 2023/12/9 19:19
+    **/
+
+    public void clearImageButtons() {
+        fusionImageButtons.clear();
     }
 
     @Override
