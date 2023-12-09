@@ -41,11 +41,13 @@ public class ImageScaler {
             imageView.fitWidthProperty().bind(imageView.fitHeightProperty().multiply(ratio));
         }
         imagePane.widthProperty().addListener((ob,old,now)->{
-            double v= now.doubleValue();
-            imageView.setX((v-imageView.getFitWidth())/2);
-            System.out.println(v);
-            System.out.println(imageView.getFitWidth());
-            System.out.println(imageView.getX());
+            if(imageView.getFitWidth()!=0){
+                double v= now.doubleValue();
+                imageView.setX((v-imageView.getFitWidth())/2);
+                System.out.println(v);
+                System.out.println(imageView.getFitWidth());
+                System.out.println(imageView.getX());
+            }
         });
         imagePane.heightProperty().addListener((ob,old,now)->{
             double v= now.doubleValue();
@@ -66,7 +68,6 @@ public class ImageScaler {
         // 计算初始位置使图片居中
         double initialX = (imagePane.getPrefWidth() - imageView.getFitWidth()) / 2;
         double initialY = (imagePane.getPrefHeight() - imageView.getFitHeight()) / 2;
-
         imageView.setX(initialX);
         imageView.setY(initialY);
     }
