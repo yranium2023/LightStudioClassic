@@ -1,6 +1,7 @@
 package org.example;
 
 import javafx.scene.image.Image;
+import org.example.Obj.ImageObj;
 
 /**
  * @author 吴鹄远
@@ -9,5 +10,5 @@ import javafx.scene.image.Image;
  */
 public class StaticValues {
     //全局变量 直接用 要编辑的图像
-    public static Image editingImage=null;
+    public static ImageObj editingImage=null;
 }

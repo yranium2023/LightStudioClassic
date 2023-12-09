@@ -16,6 +16,7 @@ import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
 import javafx.stage.FileChooser;
 import org.example.ImageTools.ConvertUtil;
+import org.example.Obj.ImageObj;
 import org.example.StaticValues;
 
 import java.awt.image.BufferedImage;
@@ -33,7 +34,7 @@ import java.util.concurrent.Executors;
  */
 public class ImageImportMenuScene extends SuperScene {
     //所有所选中的图片
-    private List<Image> selectedImages = new ArrayList<>();
+    private List<ImageObj> selectedImages = new ArrayList<>();
 
     private List<FusionImageButton> fusionImageButtons = null;
 
@@ -94,6 +95,7 @@ public class ImageImportMenuScene extends SuperScene {
                             // 处理每个选中的图片文件，例如显示在界面上或传递给其他部分进行处理
                             String imagePath = selectedFile.toURI().toString();
                             Image selectedImage = new Image(imagePath);
+                            ImageObj imageObj = new ImageObj(selectedImage);
                             BufferedImage bufferedImage = SwingFXUtils.fromFXImage(selectedImage, null);
                             double selectedImageHeight = selectedImage.getHeight();
                             double selectedImageWidth = selectedImage.getWidth();
@@ -109,10 +111,12 @@ public class ImageImportMenuScene extends SuperScene {
                                 }
                                 BufferedImage compressedEditorBufferedImage = ConvertUtil.resetSize(bufferedImage, editorWidth, editorHeight, true);
                                 Image compressedEditorImage = ConvertUtil.ConvertToFxImage(compressedEditorBufferedImage);
+                                imageObj.setEditingImage(compressedEditorImage);
                                 // 将选中的图片添加到列表中
-                                selectedImages.add(compressedEditorImage);
+                                selectedImages.add(imageObj);
                             } else {
-                                selectedImages.add(selectedImage);
+                                imageObj.setEditingImage(selectedImage);
+                                selectedImages.add(imageObj);
                             }
                             System.out.println("传入一张图片成功");
                         } finally {
@@ -181,19 +185,19 @@ public class ImageImportMenuScene extends SuperScene {
             return null;
         }
 
-        for (Image image : selectedImages) {
+        for (ImageObj imageObj : selectedImages) {
             FusionImageButton button = new FusionImageButton();
             // 设置按钮大小
             button.setPrefSize(80, 80);
             // 添加按钮点击事件处理程序
             button.setOnAction(e -> {
-                if (StaticValues.editingImage != image) {
+                if (StaticValues.editingImage != imageObj) {
                     System.out.println("选择成功");
-                    StaticValues.editingImage = image;
+                    StaticValues.editingImage = imageObj;
                 }
             });
-            double selectedImageHeight = image.getHeight();
-            double selectedImageWidth = image.getWidth();
+            double selectedImageHeight = imageObj.getEditingImage().getHeight();
+            double selectedImageWidth = imageObj.getEditingImage().getWidth();
             double rate = selectedImageHeight / selectedImageWidth;
             // 对图片较大压缩，用于生成图片按钮
             double buttonWidth = 80;
@@ -204,9 +208,10 @@ public class ImageImportMenuScene extends SuperScene {
                 buttonHeight = 80 * rate;
             }
 
-            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+            BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageObj.getEditingImage(), null);
             BufferedImage compressedButtonBufferedImage = ConvertUtil.resetSize(bufferedImage, buttonWidth, buttonHeight, true);
             Image compressedButtonImage = ConvertUtil.ConvertToFxImage(compressedButtonBufferedImage);
+            imageObj.setButtonImage(compressedButtonImage);
             button.getImageView().setImage(compressedButtonImage);
             button.getImageView().setLayoutX((80-buttonWidth)/2);
             button.getImageView().setLayoutY((80-buttonHeight)/2);
@@ -234,7 +239,7 @@ public class ImageImportMenuScene extends SuperScene {
      * @author 张喆宇
      * @date 2023/12/4 18:53
      **/
-    public List<Image> getSelectedImages() {
+    public List<ImageObj> getSelectedImages() {
         return selectedImages;
     }
 
