@@ -179,7 +179,7 @@ public class ImageClip {
             int index=imagePane.getChildren().indexOf(imageView);
             copyImageViewProperties(ImageScaler.getImageView(newEditingImage,imagePane),imageView,imagePane);
             imagePane.getChildren().set(index,imageView);
-
+            enSureClipInRec();
 
 
         });
