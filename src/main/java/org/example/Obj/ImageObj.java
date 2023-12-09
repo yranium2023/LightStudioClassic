@@ -1,7 +1,10 @@
 package org.example.Obj;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import org.example.ImageTools.ConvertUtil;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -121,7 +124,58 @@ public class ImageObj {
         return editImages;
     }
 
+    /***
+     * @Description  用于压缩图片 普通压缩
+     * @param image
+     * @return javafx.scene.image.Image
+     * @author 张喆宇
+     * @date 2023/12/9 21:47
+    **/
 
+    public Image resizeNormalImage(Image image){
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+        double imageHeight = image.getHeight();
+        double imageWidth = image.getWidth();
+        if (imageHeight > 2000 || imageWidth > 2000) {
+            double rate = imageHeight / imageWidth;
+            // 对图片稍微压缩，用于编辑
+            double editorHeight = 2000;
+            double editorWidth = 2000;
+            if (rate > 1) {
+                editorWidth = 2000 / rate;
+            } else {
+                editorHeight = 2000 * rate;
+            }
+            BufferedImage compressedEditorBufferedImage = ConvertUtil.resetSize(bufferedImage, editorWidth, editorHeight, true);
+            return ConvertUtil.ConvertToFxImage(compressedEditorBufferedImage);
+        } else {
+            return image;
+        }
+    }
 
+    /***
+     * @Description  用于压缩图片 按钮级别压缩
+     * @param image
+     * @return javafx.scene.image.Image
+     * @author 张喆宇
+     * @date 2023/12/9 21:49
+    **/
+
+    public Image resizeButtonImage(Image image){
+        double imageHeight = image.getHeight();
+        double imageWidth = image.getWidth();
+        double rate = imageHeight / imageWidth;
+        // 对图片较大压缩，用于生成图片按钮
+        double buttonWidth = 80;
+        double buttonHeight = 80;
+        if (rate > 1) {
+            buttonWidth = 80 / rate;
+        } else {
+            buttonHeight = 80 * rate;
+        }
+        BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
+        BufferedImage compressedButtonBufferedImage = ConvertUtil.resetSize(bufferedImage, buttonWidth, buttonHeight, true);
+        return ConvertUtil.ConvertToFxImage(compressedButtonBufferedImage);
+    }
 
 }

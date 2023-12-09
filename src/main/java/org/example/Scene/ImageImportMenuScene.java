@@ -21,7 +21,6 @@ import org.example.ImageTools.ConvertUtil;
 import org.example.Obj.ImageObj;
 import org.example.StaticValues;
 
-
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ import java.util.concurrent.Executors;
 public class ImageImportMenuScene extends SuperScene {
     //所有所选中的图片
     private List<ImageObj> selectedImages = new ArrayList<>();
-    private List<ImageObj> totalImages= new ArrayList<>();
+    private List<ImageObj> totalImages = new ArrayList<>();
     private List<VBox> fusionImageButtonsVbox = null;
 
     private List<FusionButton> fusionImageButtons = new ArrayList<>();
@@ -154,7 +153,6 @@ public class ImageImportMenuScene extends SuperScene {
     }
 
 
-
     /***
      * @Description 创建多个FusionButtonBox 含有图片 和文字说明
      * @return java.util.List<Button>
@@ -198,20 +196,19 @@ public class ImageImportMenuScene extends SuperScene {
             } else {
                 buttonHeight = 80 * rate;
             }
-
             BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageObj.getEditingImage(), null);
             BufferedImage compressedButtonBufferedImage = ConvertUtil.resetSize(bufferedImage, buttonWidth, buttonHeight, true);
             Image compressedButtonImage = ConvertUtil.ConvertToFxImage(compressedButtonBufferedImage);
             imageObj.setButtonImage(compressedButtonImage);
             button.getImageView().setImage(compressedButtonImage);
-            button.getImageView().setLayoutX((80-buttonWidth)/2);
-            button.getImageView().setLayoutY((80-buttonHeight)/2);
+            button.getImageView().setLayoutX((80 - buttonWidth) / 2);
+            button.getImageView().setLayoutY((80 - buttonHeight) / 2);
             copy.getImageView().setImage(compressedButtonImage);
-            copy.getImageView().setLayoutX((80-buttonWidth)/2);
-            copy.getImageView().setLayoutY((80-buttonHeight)/2);
+            copy.getImageView().setLayoutX((80 - buttonWidth) / 2);
+            copy.getImageView().setLayoutY((80 - buttonHeight) / 2);
             // 将按钮添加到列表 同时添加一个拷贝
             fusionImageButtons.add(copy);
-            Label descriptionLabel = new Label(Integer.toString((int)imageObj.getOriginalImage().getWidth())+'×'+(int)imageObj.getOriginalImage().getHeight());
+            Label descriptionLabel = new Label(Integer.toString((int) imageObj.getOriginalImage().getWidth()) + '×' + (int) imageObj.getOriginalImage().getHeight());
             descriptionLabel.setTextFill(Color.WHITE);
             VBox buttonVBox = new VBox();
             buttonVBox.setAlignment(Pos.CENTER); // 居中对齐
@@ -234,44 +231,45 @@ public class ImageImportMenuScene extends SuperScene {
     public void clearImageButtonsVbox() {
         fusionImageButtonsVbox = null;
     }
+
     /***
-     * @Description  返回所有选中的图片
+     * @Description 返回所有选中的图片
      * @return java.util.List<org.example.Obj.ImageObj>
      * @author 张喆宇
      * @date 2023/12/9 13:38
-    **/
+     **/
 
     public List<ImageObj> getTotalImages() {
         return totalImages;
     }
 
     /***
-     * @Description  传出单次选择产生的按钮Vbox
+     * @Description 传出单次选择产生的按钮Vbox
      * @return java.util.List<io.vproxy.vfx.ui.button.FusionImageButton>
      * @author 张喆宇
      * @date 2023/12/9 13:37
-    **/
+     **/
 
     public List<VBox> getFusionImageButtonsVbox() {
         return fusionImageButtonsVbox;
     }
 
     /***
-     * @Description  传出单次选择产生的按钮
+     * @Description 传出单次选择产生的按钮
      * @return java.util.List<io.vproxy.vfx.ui.button.FusionButton>
      * @author 张喆宇
      * @date 2023/12/9 19:18
-    **/
+     **/
 
     public List<FusionButton> getFusionImageButtons() {
         return fusionImageButtons;
     }
 
     /***
-     * @Description  清空单次选择产生的按钮
+     * @Description 清空单次选择产生的按钮
      * @author 张喆宇
      * @date 2023/12/9 19:19
-    **/
+     **/
 
     public void clearImageButtons() {
         fusionImageButtons.clear();
