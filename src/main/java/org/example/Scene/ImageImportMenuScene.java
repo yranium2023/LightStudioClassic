@@ -5,10 +5,7 @@ import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.button.FusionImageButton;
 import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.VSceneRole;
-import io.vproxy.vfx.ui.wrapper.ThemeLabel;
 import javafx.application.Platform;
-import javafx.concurrent.Service;
-import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -175,9 +172,9 @@ public class ImageImportMenuScene extends SuperScene {
             button.setPrefSize(80, 80);
             // 添加按钮点击事件处理程序
             button.setOnAction(e -> {
-                if (StaticValues.editingImage != imageObj) {
+                if (StaticValues.editingImageObj != imageObj) {
                     System.out.println("选择成功");
-                    StaticValues.editingImage = imageObj;
+                    StaticValues.editingImageObj = imageObj;
                 }
             });
             double selectedImageHeight = imageObj.getEditingImage().getHeight();
@@ -200,7 +197,7 @@ public class ImageImportMenuScene extends SuperScene {
             button.getImageView().setLayoutX((80-buttonWidth)/2);
             button.getImageView().setLayoutY((80-buttonHeight)/2);
             // 将按钮添加到列表
-            Label descriptionLabel = new Label(Integer.toString((int)imageObj.getOriginalImage().getWidth())+'*'+(int)imageObj.getOriginalImage().getHeight());
+            Label descriptionLabel = new Label(Integer.toString((int)imageObj.getOriginalImage().getWidth())+'×'+(int)imageObj.getOriginalImage().getHeight());
             descriptionLabel.setTextFill(Color.WHITE);
             VBox buttonVBox = new VBox();
             buttonVBox.setAlignment(Pos.CENTER); // 居中对齐

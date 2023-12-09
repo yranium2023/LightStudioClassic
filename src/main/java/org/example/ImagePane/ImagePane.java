@@ -18,7 +18,7 @@ public class ImagePane extends Pane {
     }};
     private Rectangle ImagePaneStrokeRec=new Rectangle(0,0,getPrefWidth(),getPrefHeight()){{
         setStrokeWidth(2);
-        setFill(Color.rgb(255,255,255,0.6));
+        setFill(Color.rgb(30,50,50,0.4));
         setStroke(Color.WHITE);
         setStrokeType(StrokeType.INSIDE);
     }};
@@ -46,6 +46,14 @@ public class ImagePane extends Pane {
         getChildren().clear();
         setClip(ImagePaneRec);
         getChildren().add(ImagePaneStrokeRec);
+    }
+
+    public double getX(){
+        return ImagePaneRec.getX();
+    }
+
+    public double getY(){
+        return ImagePaneRec.getY();
     }
 
 }

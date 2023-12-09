@@ -16,6 +16,8 @@ import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeType;
 import org.example.ImagePane.ImagePane;
 import org.example.ImagePane.ImageScaler;
+import org.example.LSMain;
+import org.example.Obj.ImageObj;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -42,10 +44,12 @@ public class ImageClip {
      * @author missing
      * @updateTime 2023/12/4 10:59
      */
-    public static void imageClip(Image image, ImagePane anchorPane) {
+    public static void imageClip(ImageObj imageObj, ImagePane imagePane) {
+        Image image=imageObj.getEditingImage();
+
 
         // 创建ImageView并设置图像
-        ImageView imageView = ImageScaler.getImageView(image, anchorPane);
+        ImageView imageView = ImageScaler.getImageView(image, imagePane);
 
         clip.setStrokeWidth(3);
         clip.setStrokeType(StrokeType.CENTERED);
@@ -61,11 +65,11 @@ public class ImageClip {
         clip.setY(imageView.getY() + 10);
         darkenedArea = Shape.subtract(imageViewRect, clip);
         darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
-        anchorPane.getChildren().addAll(imageView, darkenedArea, clip);
+        imagePane.getChildren().addAll(imageView, darkenedArea, clip);
         imageView.fitWidthProperty().addListener((ob,old,now)->{
             if(old!=now){
                 enSureClipInRec();
-                int index = anchorPane.getChildren().indexOf(darkenedArea);
+                int index = imagePane.getChildren().indexOf(darkenedArea);
                 darkenedArea = Shape.subtract(imageViewRect, new Rectangle(
                         clip.getX(),
                         clip.getY(),
@@ -73,13 +77,13 @@ public class ImageClip {
                         clip.getHeight()
                 ));
                 darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
-                anchorPane.getChildren().set(index, darkenedArea);
+                imagePane.getChildren().set(index, darkenedArea);
             }
         });
         imageView.fitHeightProperty().addListener((ob,old,now)->{
             if(old!=now){
                 enSureClipInRec();
-                int index = anchorPane.getChildren().indexOf(darkenedArea);
+                int index = imagePane.getChildren().indexOf(darkenedArea);
                 darkenedArea = Shape.subtract(imageViewRect, new Rectangle(
                         clip.getX(),
                         clip.getY(),
@@ -87,69 +91,69 @@ public class ImageClip {
                         clip.getHeight()
                 ));
                 darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
-                anchorPane.getChildren().set(index, darkenedArea);
+                imagePane.getChildren().set(index, darkenedArea);
             }
         });
 
-        anchorPane.setOnMouseMoved(event -> {
+        imagePane.setOnMouseMoved(event -> {
             mouseX = event.getX();
             mouseY = event.getY();
             clip.setOnMouseExited(e -> {
-                anchorPane.setCursor(Cursor.DEFAULT);
+                imagePane.setCursor(Cursor.DEFAULT);
             });
 
             if (mouseX <= clip.getX() + clip.getWidth() + 5 && mouseX >= clip.getX() + clip.getWidth() - 5 && mouseY <= clip.getY() + clip.getHeight() + 5 && mouseY >= clip.getY() + clip.getHeight() - 5) {
                 clip.setCursor(Cursor.NW_RESIZE);
-                clipMove(imageView, anchorPane, 0, 0, 1, 1);
+                clipMove(imageView, imagePane, 0, 0, 1, 1);
             } else if (mouseX >= clip.getX() - 10 && mouseX <= clip.getX() + 10 && mouseY >= clip.getY() - 10 && mouseY <= clip.getY() + 10) {
                 //改变鼠标样式
                 clip.setCursor(Cursor.NW_RESIZE);
                 //监视鼠标移动控制截图区移动
-                clipMove(imageView, anchorPane, 1, 1, -1, -1);
+                clipMove(imageView, imagePane, 1, 1, -1, -1);
             } else if (mouseY <= clip.getY() + 5 && mouseY >= clip.getY() && mouseX <= clip.getX() + clip.getWidth() + 5 && mouseX >= clip.getX() + clip.getWidth() - 5) {
                 //右上
                 clip.setCursor(Cursor.NE_RESIZE);
-                clipMove(imageView, anchorPane, 0, 1, 1, -1);
+                clipMove(imageView, imagePane, 0, 1, 1, -1);
             } else if (mouseX >= clip.getX() - 10 && mouseX <= clip.getX() + 10 && mouseY <= clip.getY() + clip.getHeight() + 5 && mouseY >= clip.getY() + clip.getHeight() - 5) {
                 //左下
                 clip.setCursor(Cursor.NE_RESIZE);
-                clipMove(imageView, anchorPane, 1, 0, -1, 1);
+                clipMove(imageView, imagePane, 1, 0, -1, 1);
             } else if (Math.abs(mouseX - clip.getX() - clip.getWidth() / 2) < 3 && Math.abs(mouseY - clip.getY()) < 5) {
                 //上
                 clip.setCursor(Cursor.N_RESIZE);
-                clipMove(imageView, anchorPane, 0, 1, 0, -1);
+                clipMove(imageView, imagePane, 0, 1, 0, -1);
             } else if (Math.abs(mouseX - clip.getX() - clip.getWidth() / 2) < 3 && Math.abs(mouseY - clip.getY() - clip.getHeight()) < 5) {
                 //下
                 clip.setCursor(Cursor.S_RESIZE);
-                clipMove(imageView, anchorPane, 0, 0, 0, 1);
+                clipMove(imageView, imagePane, 0, 0, 0, 1);
             } else if (Math.abs(mouseX - clip.getX()) < 3 && Math.abs(mouseY - clip.getY() - clip.getHeight() / 2) < 5) {
                 //左
                 clip.setCursor(Cursor.W_RESIZE);
-                clipMove(imageView, anchorPane, 1, 0, -1, 0);
+                clipMove(imageView, imagePane, 1, 0, -1, 0);
             } else if (Math.abs(mouseX - clip.getX() - clip.getWidth()) < 3 && Math.abs(mouseY - clip.getY() - clip.getHeight() / 2) < 5) {
                 //右
                 clip.setCursor(Cursor.E_RESIZE);
-                clipMove(imageView, anchorPane, 0, 0, 1, 0);
+                clipMove(imageView, imagePane, 0, 0, 1, 0);
             } else {
                 clip.setCursor(Cursor.MOVE);
-                clipMove(imageView, anchorPane, 1, 1, 0, 0);
+                clipMove(imageView, imagePane, 1, 1, 0, 0);
             }
         });
         //确认或者取消裁剪，逻辑有待修改。
-        anchorPane.setOnKeyPressed(event -> {
+        imagePane.setOnKeyPressed(event -> {
             if ("Enter".equals(event.getCode().getName())) {
                 System.out.println("Enter key pressed");
-                anchorPane.getChildren().remove(imageView);
+                imagePane.getChildren().remove(imageView);
                 Rectangle rectangle = new Rectangle(clip.getX(), clip.getY(), clip.getWidth(), clip.getHeight());
                 System.out.println(rectangle);
                 imageView.setClip(rectangle);
                 //保存裁剪图片
-                anchorPane.getChildren().add(imageView);
+                imagePane.getChildren().add(imageView);
                 SnapshotParameters params = new SnapshotParameters();
                 params.setFill(Color.TRANSPARENT); // 设置背景为透明
                 params.setViewport(new Rectangle2D(0, 0, image.getWidth(), image.getHeight())); // 设置裁剪区域
                 // 调用snapshot方法获取裁剪后的图像
-                WritableImage snapshot = anchorPane.snapshot(params, null);
+                WritableImage snapshot = imagePane.snapshot(params, null);
                 // 保存裁剪后的图像到本地文件
                 File file = new File("cropped_image.png");
                 try {

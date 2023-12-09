@@ -7,10 +7,16 @@ package org.example.ImagePane;
  */
 
 import io.vproxy.vfx.util.FXUtils;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import org.example.ImagePane.ImagePane;
+import org.example.LSMain;
+
+import java.time.Duration;
 
 
 public class ImageScaler {
@@ -25,16 +31,8 @@ public class ImageScaler {
         double x=image.getWidth();
         double y=image.getHeight();
         double ratio=x/y;
-        //初始状态下，设置宽高
-        if(ratio>1){
-            imageView.setFitWidth(imagePane.getPrefWidth()*0.95);        // 设置宽度，根据需要调整
-            imageView.setFitHeight(imageView.getFitWidth()/ratio);
-        }else{
-            imageView.setFitHeight(imagePane.getPrefHeight()*0.95);
-            imageView.setFitWidth(imageView.getFitHeight()*ratio);
-        }
-        imageView.setX((imagePane.getPrefWidth()-imageView.getFitWidth())/2);
-        imageView.setY((imagePane.getPrefHeight()-imageView.getFitHeight())/2);
+        initImageView(imageView,imagePane,ratio);
+        System.out.println(imageView.getFitWidth());
         if(ratio>1){
             imageView.fitWidthProperty().bind(imagePane.widthProperty().multiply(0.95));
             imageView.fitHeightProperty().bind(imageView.fitWidthProperty().multiply(1/ratio));
@@ -44,12 +42,34 @@ public class ImageScaler {
         }
         imagePane.widthProperty().addListener((ob,old,now)->{
             double v= now.doubleValue();
-            imageView.setX((v-imageView.fitWidthProperty().doubleValue())/2);
+            imageView.setX((v-imageView.getFitWidth())/2);
+            System.out.println(v);
+            System.out.println(imageView.getFitWidth());
+            System.out.println(imageView.getX());
         });
         imagePane.heightProperty().addListener((ob,old,now)->{
             double v= now.doubleValue();
-            imageView.setY((v-imageView.fitHeightProperty().doubleValue())/2);
+            imageView.setY((v-imageView.getFitHeight())/2);
         });
         return imageView;
     }
+    public static void initImageView(ImageView imageView, ImagePane imagePane, double ratio) {
+        // 初始状态下，设置宽高
+        if (ratio > 1) {
+            imageView.setFitWidth(imagePane.getPrefWidth() * 0.95);
+            imageView.setFitHeight(imageView.getFitWidth() / ratio);
+        } else {
+            imageView.setFitHeight(imagePane.getPrefHeight() * 0.95);
+            imageView.setFitWidth(imageView.getFitHeight() * ratio);
+        }
+
+        // 计算初始位置使图片居中
+        double initialX = (imagePane.getPrefWidth() - imageView.getFitWidth()) / 2;
+        double initialY = (imagePane.getPrefHeight() - imageView.getFitHeight()) / 2;
+
+        imageView.setX(initialX);
+        imageView.setY(initialY);
+    }
+
+
 }

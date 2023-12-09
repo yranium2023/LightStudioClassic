@@ -21,6 +21,7 @@ import org.example.StaticValues;
 public class ImageClipScene extends SuperScene{
     //新建一个pane，用于展示图片
     private static ImagePane clipImagePane=new ImagePane(){{
+
             setPrefWidth(900);
             setPrefHeight(550);
             setLayoutX(100);
