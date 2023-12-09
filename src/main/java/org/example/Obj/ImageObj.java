@@ -11,15 +11,18 @@ import java.util.List;
  * @date 2023/12/9 11:05
  */
 public class ImageObj {
-    private Image originalImage = null;//传入的原始图片
-    private Image buttonImage = null;//压缩到80*80的小图片
-    private Image editingImage =null;//压缩到2k的大图片
-
+    //传入的原始图片
+    private Image originalImage = null;
+    //压缩到80*80的小图片
+    private Image buttonImage = null;
+    //压缩到2k的大图片
+    private Image editingImage =null;
+    //裁减过程中产生的图片列表
     private List<Image> clipImages = new ArrayList<>();
-
+    //编辑过程中产生的图片列表
     private List<Image> editImages = new ArrayList<>();
-
-    String imagePath = null;//传入图片的路径
+    //传入图片的路径
+    String imagePath = null;
 
     /***
      * @Description  构造函数 用于构建Image对象
@@ -39,6 +42,7 @@ public class ImageObj {
      * @author 张喆宇
      * @date 2023/12/9 11:13
     **/
+
     public void setButtonImage(Image buttonImage) {
         this.buttonImage = buttonImage;
     }
@@ -49,6 +53,7 @@ public class ImageObj {
      * @author 张喆宇
      * @date 2023/12/9 11:13
     **/
+
     public void setEditingImage(Image editingImage) {
         this.editingImage = editingImage;
     }
@@ -59,6 +64,7 @@ public class ImageObj {
      * @author 张喆宇
      * @date 2023/12/9 11:14
     **/
+
     public Image getOriginalImage() {
         return originalImage;
     }
@@ -69,6 +75,7 @@ public class ImageObj {
      * @author 张喆宇
      * @date 2023/12/9 11:14
     **/
+
     public Image getButtonImage() {
         return buttonImage;
     }
@@ -79,6 +86,7 @@ public class ImageObj {
      * @author 张喆宇
      * @date 2023/12/9 11:14
     **/
+
     public Image getEditingImage() {
         return editingImage;
     }
@@ -89,6 +97,7 @@ public class ImageObj {
      * @author 张喆宇
      * @date 2023/12/9 11:14
     **/
+
     public String getImagePath() {
         return imagePath;
     }
