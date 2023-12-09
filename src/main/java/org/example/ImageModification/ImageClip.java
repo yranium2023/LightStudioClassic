@@ -59,12 +59,12 @@ public class ImageClip {
         clip.setFill(Color.TRANSPARENT);
 
         imageViewRect = new Rectangle(imageView.getX(), imageView.getY(), imageView.getFitWidth(), imageView.getFitHeight());
-        imageViewRect.widthProperty().bind(imageView.fitWidthProperty());
-        imageViewRect.heightProperty().bind(imageView.fitHeightProperty());
-        imageViewRect.xProperty().bind(imageView.xProperty());
-        imageViewRect.yProperty().bind(imageView.yProperty());
-        clip.setX(imageView.getX() + 10);
-        clip.setY(imageView.getY() + 10);
+        bindAll(imageViewRect,imageView);
+        clip.setX(imageView.getX());
+        clip.setY(imageView.getY());
+        clip.setWidth(3000);
+        clip.setHeight(3000);
+
         darkenedArea = Shape.subtract(imageViewRect, clip);
         darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
         imagePane.getChildren().addAll(imageView, darkenedArea, clip);
@@ -179,8 +179,21 @@ public class ImageClip {
             int index=imagePane.getChildren().indexOf(imageView);
             copyImageViewProperties(ImageScaler.getImageView(newEditingImage,imagePane),imageView,imagePane);
             imagePane.getChildren().set(index,imageView);
+            clip.setX(imageView.getX());
+            clip.setY(imageView.getY());
+            clip.setWidth(3000);
+            clip.setHeight(3000);
             enSureClipInRec();
-
+            initImageViewRect(imageViewRect,imageView);
+            int indexOfDark = imagePane.getChildren().indexOf(darkenedArea);
+            darkenedArea = Shape.subtract(imageViewRect, new Rectangle(
+                    clip.getX(),
+                    clip.getY(),
+                    clip.getWidth(),
+                    clip.getHeight()
+            ));
+            darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
+            imagePane.getChildren().set(indexOfDark, darkenedArea);
 
         });
     }
@@ -226,7 +239,7 @@ public class ImageClip {
      * @date 2023/12/9 14:03
     **/
 
-    private static void enSureClipInRec(){
+    public static void enSureClipInRec(){
         Bounds clipBounds=clip.getBoundsInLocal();
         Bounds imageViewBounds=imageViewRect.getBoundsInLocal();
         if(!imageViewBounds.contains(clipBounds)){
@@ -249,10 +262,10 @@ public class ImageClip {
 
             //调整大小
             if(clipBounds.getHeight()>imageViewBounds.getHeight()){
-                clip.setHeight(imageViewBounds.getHeight());
+                clip.setHeight(imageViewBounds.getHeight()-1);
             }
             if(clipBounds.getWidth()>imageViewBounds.getWidth()){
-                clip.setWidth(imageViewBounds.getWidth());
+                clip.setWidth(imageViewBounds.getWidth()-1);
             }
 
             // 设置新的 clip 位置
@@ -270,6 +283,7 @@ public class ImageClip {
     **/
     
     private static void copyImageViewProperties(ImageView sourceImageView, ImageView targetImageView,ImagePane imagePane) {
+        double paneRatio=imagePane.getWidth()/imagePane.getHeight();
         // 设置目标ImageView的属性
         double ratio=sourceImageView.getFitWidth()/sourceImageView.getFitHeight();
         targetImageView.setImage(sourceImageView.getImage());
@@ -277,13 +291,58 @@ public class ImageClip {
         targetImageView.fitHeightProperty().unbind();
         targetImageView.setFitWidth(sourceImageView.getFitWidth());
         targetImageView.setFitHeight(sourceImageView.getFitHeight());
-        if(ratio>1){
+        ImageScaler.initImageView(targetImageView,imagePane,ratio);
+        if(ratio>paneRatio){
             targetImageView.fitWidthProperty().bind(imagePane.widthProperty().multiply(0.95));
             targetImageView.fitHeightProperty().bind(targetImageView.fitWidthProperty().multiply(1/ratio));
         }else{
             targetImageView.fitHeightProperty().bind(imagePane.heightProperty().multiply(0.95));
             targetImageView.fitWidthProperty().bind(targetImageView.fitHeightProperty().multiply(ratio));
         }
+    }
+    /**
+     * @Description 绑定rect的所有属性
+     * @param imageViewRect
+     * @param imageView
+     * @author 吴鹄远
+     * @date 2023/12/9 23:33
+    **/
+
+    private static void bindAll(Rectangle imageViewRect,ImageView imageView){
+        imageViewRect.widthProperty().bind(imageView.fitWidthProperty());
+        imageViewRect.heightProperty().bind(imageView.fitHeightProperty());
+        imageViewRect.xProperty().bind(imageView.xProperty());
+        imageViewRect.yProperty().bind(imageView.yProperty());
+    }
+    /**
+     * @Description 解绑rect的所有属性
+     * @param imageViewRect
+     * @param imageView
+     * @author 吴鹄远
+     * @date 2023/12/9 23:34
+    **/
+
+    private static void unBindAll(Rectangle imageViewRect,ImageView imageView){
+        imageViewRect.widthProperty().unbind();
+        imageViewRect.heightProperty().unbind();
+        imageViewRect.xProperty().unbind();
+        imageViewRect.yProperty().unbind();
+    }
+    /**
+     * @Description  重新生成遮罩
+     * @param imageViewRect
+     * @param imageView
+     * @author 吴鹄远
+     * @date 2023/12/9 23:34
+    **/
+
+    private static void initImageViewRect(Rectangle imageViewRect,ImageView imageView){
+        unBindAll(imageViewRect,imageView);
+        imageViewRect.setX(imageView.getX());
+        imageViewRect.setY(imageView.getY());
+        imageViewRect.setWidth(imageView.getFitWidth());
+        imageViewRect.setHeight(imageViewRect.getHeight());
+        bindAll(imageViewRect,imageView);
     }
 
 

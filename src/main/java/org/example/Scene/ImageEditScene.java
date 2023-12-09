@@ -98,6 +98,7 @@ public class ImageEditScene extends SuperScene{
                 sceneGroupSup.get().show(imageClipScene, VSceneShowMethod.FROM_TOP);
                 ImageClipScene.InitClipImagePane();
                 ImageClip.imageClip(StaticValues.editingImageObj,ImageClipScene.getClipImagePane(),ImageClipScene.getModulePane());
+                ImageClip.enSureClipInRec();
             }
         });
         imageClipPane.getContentPane().getChildren().add(imageClipButton);
