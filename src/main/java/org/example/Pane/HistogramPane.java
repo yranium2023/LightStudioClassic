@@ -22,7 +22,7 @@ public class HistogramPane extends Pane {
     }};
     public HistogramPane(){
 
-        setMaxSize(250,200);
+        setMaxSize(180,150);
         getChildren().add(histogramPaneRec);
         widthProperty().addListener((ob, old, now) -> {
             if (now == null) return;

@@ -95,6 +95,7 @@ public class ImageEditScene extends SuperScene{
                 sceneGroupSup.get().addScene(imageClipScene);
             }
             if(StaticValues.editingImageObj !=null){
+                StaticValues.importHistogramPane(imageClipScene.getHistogramPane());
                 sceneGroupSup.get().show(imageClipScene, VSceneShowMethod.FROM_TOP);
                 ImageClipScene.InitClipImagePane();
                 ImageClip.imageClip(StaticValues.editingImageObj,ImageClipScene.getClipImagePane());

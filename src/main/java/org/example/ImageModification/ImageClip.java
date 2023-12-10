@@ -14,10 +14,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeType;
+import org.example.ImageStatistics.Histogram;
 import org.example.Pane.ImagePane;
 import org.example.ImageTools.ImageScaler;
 import org.example.Obj.ImageObj;
 import org.example.Scene.ImageClipScene;
+import org.example.StaticValues;
 
 
 /**
@@ -191,7 +193,8 @@ public class ImageClip {
             ));
             darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
             imagePane.getChildren().set(indexOfDark, darkenedArea);
-
+            //更新直方图
+            Histogram.drawHistogram(StaticValues.editingImageObj.getEditingImage());
         });
 
         //取消裁剪，回到裁剪前的图像
@@ -239,6 +242,7 @@ public class ImageClip {
             ));
             darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
             imagePane.getChildren().set(indexOfDark, darkenedArea);
+            Histogram.drawHistogram(StaticValues.editingImageObj.getEditingImage());
         });
 
         //复位按钮
@@ -279,6 +283,7 @@ public class ImageClip {
             ));
             darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
             imagePane.getChildren().set(indexOfDark, darkenedArea);
+            Histogram.drawHistogram(StaticValues.editingImageObj.getEditingImage());
         });
 
     }

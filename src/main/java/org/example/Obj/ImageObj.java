@@ -32,6 +32,7 @@ public class ImageObj {
     private FusionImageButton imageButton = null;
     //横板按钮
     private FusionImageButton  copyButton = null;
+
     /***
      * @Description  构造函数 用于构建Image对象
      * @param originalImage

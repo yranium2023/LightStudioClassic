@@ -17,6 +17,7 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -135,6 +136,7 @@ public class ImageImportMenuScene extends SuperScene {
                                 imageObj.setEditingImage(selectedImage);
                                 selectedImages.add(imageObj);
                             }
+
                             // 更新进度
                             progressBar.setProgress((double)(i+1)/(double)(totalFiles));
                             Platform.runLater(() -> label.setText(selectedFile.getName()));
@@ -197,12 +199,14 @@ public class ImageImportMenuScene extends SuperScene {
                 if (StaticValues.editingImageObj != imageObj) {
                     System.out.println("选择成功");
                     StaticValues.editingImageObj = imageObj;
+                    Histogram.drawHistogram(StaticValues.editingImageObj.getEditingImage());
                 }
             });
             copy.setOnAction(e -> {
                 if (StaticValues.editingImageObj != imageObj) {
                     System.out.println("选择成功");
                     StaticValues.editingImageObj = imageObj;
+                    Histogram.drawHistogram(StaticValues.editingImageObj.getEditingImage());
                 }
             });
             double selectedImageHeight = imageObj.getEditingImage().getHeight();

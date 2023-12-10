@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ImportImageResource;
 import org.example.Scene.*;
 
@@ -115,7 +116,6 @@ public class LSMain extends Application {
         navigatePane.getContentPane().getChildren().add(InputButton);
         navigatePane.getContentPane().getChildren().add(ImageEditButton);
 
-        
 
 
         stage.getInitialScene().getContentPane().getChildren().add(sceneGroup.getNode());
