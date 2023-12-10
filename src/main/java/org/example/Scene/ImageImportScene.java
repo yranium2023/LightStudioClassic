@@ -33,7 +33,8 @@ import java.util.function.Supplier;
 public class ImageImportScene extends SuperScene {
 
     public static ImageImportMenuScene menuScene = new ImageImportMenuScene();
-
+    public static Pane histogramPane=new Pane(){{
+    }};
 
 
     public ImageImportScene(Supplier<VSceneGroup> sceneGroupSup) {
@@ -102,13 +103,11 @@ public class ImageImportScene extends SuperScene {
             refreshTimeline.play();
         });
 
-        //将直方图pane加入scene中，并绑定属性
-        var tempPane=new Pane(){{
-           layoutXProperty().bind(flowPane.layoutXProperty().add(60));
-           layoutYProperty().bind(flowPane.layoutYProperty());
-        }};
-        StaticValues.importHistogramPane(tempPane);
+        histogramPane.layoutXProperty().bind(scrollFlowPane.getNode().layoutXProperty().add(scrollFlowPane.getNode().widthProperty().add(60)));
+        histogramPane.layoutYProperty().bind(scrollFlowPane.getNode().layoutYProperty());
+        StaticValues.importHistogramPane(histogramPane);
 
+        getContentPane().getChildren().add(histogramPane);
         getContentPane().getChildren().add(flowPaneRec);
         getContentPane().getChildren().add(menuBtn);
         getContentPane().getChildren().add(scrollFlowPane.getNode());

@@ -37,26 +37,27 @@ public class Histogram{
     private static BufferedImage bufferedImage;
     public static void drawHistogram(Image image){
         //清空
-        StaticValues.histogramPane.getChildren().clear();
+        StaticValues.histogramPane.initHistogramPane();
         //读取图像
         bufferedImage=ImageTransfer.toBufferedImage(image);
         // 创建灰度直方图
         Histogram= createHistogram(image);
+        StaticValues.histogramPane.getChildren().add(Histogram);
         Histogram.setCreateSymbols(false);
         Histogram.setVerticalGridLinesVisible(false);
         Histogram.setHorizontalGridLinesVisible(false);
         Histogram.setLegendVisible(false);
-        FXUtils.observeWidthHeight(StaticValues.histogramPane,Histogram);
-        Histogram.getXAxis().setTickLabelsVisible(false);
-        Histogram.getXAxis().setOpacity(0);
-        Histogram.getYAxis().setTickLabelsVisible(false);
-        Histogram.getYAxis().setOpacity(0);
+        Histogram.setId("histogramChart");
+        Histogram.setLayoutX(-45);
+        Histogram.setLayoutY(-10);
         //将直方图加入pane中
-        StaticValues.histogramPane.getChildren().add(Histogram);
         if(StaticValues.histogramPane.getScene()!=null){
             StaticValues.histogramPane.getStylesheets().add(Main.class.getResource("/CSS/histogram.css").toString());
         }
         System.out.println("创建直方图成功");
+        System.out.println(Histogram.getWidth());
+        System.out.println(StaticValues.histogramPane.getWidth());
+        System.out.println(Histogram.getPrefWidth());
     }
 
     private static AreaChart<Number, Number> createHistogram(Image image) {
