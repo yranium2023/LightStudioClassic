@@ -30,4 +30,6 @@ public class HistogramPane extends Pane {
             histogramPaneRec.setHeight(v);
         });
     }
+
+
 }

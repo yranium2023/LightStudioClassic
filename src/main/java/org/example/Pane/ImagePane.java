@@ -1,5 +1,6 @@
 package org.example.Pane;
 
+import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -47,6 +48,7 @@ public class ImagePane extends Pane {
         setClip(ImagePaneRec);
         getChildren().add(ImagePaneStrokeRec);
     }
+
 
 
 }

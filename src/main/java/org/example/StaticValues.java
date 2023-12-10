@@ -1,5 +1,10 @@
 package org.example;
 
+import javafx.scene.Group;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import org.example.Obj.ImageObj;
 import org.example.Pane.HistogramPane;
 
@@ -15,4 +20,14 @@ public class StaticValues {
         setWidth(250);
         setHeight(200);
     }};
+
+    public static void importHistogramPane(Pane newPane){
+        if(histogramPane.getParent()!=null){
+            Pane curPane=(Pane) histogramPane.getParent();
+            curPane.getChildren().remove(histogramPane);
+        }
+        if(histogramPane.getParent()==null){
+            newPane.getChildren().add(histogramPane);
+        }
+    }
 }

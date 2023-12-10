@@ -19,6 +19,8 @@ import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 import org.example.ImageTools.ImportImageResource;
 import org.example.Main;
+import org.example.Pane.HistogramPane;
+import org.example.StaticValues;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -101,9 +103,11 @@ public class ImageImportScene extends SuperScene {
         });
 
         //将直方图pane加入scene中，并绑定属性
-        histogramPane.layoutXProperty().bind(flowPane.widthProperty().add(60));
-        histogramPane.layoutYProperty().bind(flowPane.layoutYProperty());
-        getContentPane().getChildren().add(histogramPane);
+        var tempPane=new Pane(){{
+           layoutXProperty().bind(flowPane.layoutXProperty().add(60));
+           layoutYProperty().bind(flowPane.layoutYProperty());
+        }};
+        StaticValues.importHistogramPane(tempPane);
 
         getContentPane().getChildren().add(flowPaneRec);
         getContentPane().getChildren().add(menuBtn);
@@ -112,9 +116,7 @@ public class ImageImportScene extends SuperScene {
 
     }
 
-    public static Pane getHistogramPane() {
-        return histogramPane;
-    }
+
 
     @Override
     public String title() {
