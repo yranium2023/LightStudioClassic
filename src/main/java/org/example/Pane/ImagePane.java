@@ -1,4 +1,4 @@
-package org.example.ImagePane;
+package org.example.Pane;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;

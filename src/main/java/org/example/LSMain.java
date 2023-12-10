@@ -97,6 +97,7 @@ public class LSMain extends Application {
             InputButton.setLayoutX(v - 125 - InputButton.getPrefWidth());
             ImageEditButton.setLayoutX(v - ImageEditButton.getPrefWidth() - 5);
         });
+
         stage.getInitialScene().getContentPane().widthProperty().addListener((ob, old, now) -> {
             if (now == null) return;
             var v = now.doubleValue();

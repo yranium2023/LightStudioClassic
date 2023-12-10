@@ -176,7 +176,7 @@ public class ImageImportMenuScene extends SuperScene {
                 if (StaticValues.editingImageObj != imageObj) {
                     System.out.println("选择成功");
                     StaticValues.editingImageObj = imageObj;
-                    Histogram.drawHistogram(StaticValues.editingImageObj.getEditingImage(), ImageImportScene.getHistogramPane());
+                    Histogram.drawHistogram(StaticValues.editingImageObj.getEditingImage());
                 }
             });
             copy.setOnAction(e -> {

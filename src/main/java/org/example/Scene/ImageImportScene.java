@@ -32,10 +32,7 @@ public class ImageImportScene extends SuperScene {
 
     public static ImageImportMenuScene menuScene = new ImageImportMenuScene();
 
-    private static Pane histogramPane=new Pane(){{
-       setWidth(150);
-       setHeight(150);
-    }};
+
 
     public ImageImportScene(Supplier<VSceneGroup> sceneGroupSup) {
         super(VSceneRole.MAIN);
@@ -85,9 +82,6 @@ public class ImageImportScene extends SuperScene {
             if (!sceneGroupSup.get().getScenes().contains(menuScene)) {
                 sceneGroupSup.get().addScene(menuScene, VSceneHideMethod.TO_LEFT);
             }
-            if(menuScene.getContentPane().getScene()!=null){
-                menuScene.getContentPane().getScene().getStylesheets().add(Main.class.getResource("CSS/histogram.css").toString());
-            }
             sceneGroupSup.get().show(menuScene, VSceneShowMethod.FROM_LEFT);
             // 启动或重新开始 Timeline 定时器
             refreshTimeline.stop();  // 停止之前的定时器，以免叠加
@@ -107,7 +101,8 @@ public class ImageImportScene extends SuperScene {
         });
 
         //将直方图pane加入scene中，并绑定属性
-        histogramPane.layoutXProperty().bind(flowPaneRec.widthProperty().add(30));
+        histogramPane.layoutXProperty().bind(flowPane.widthProperty().add(60));
+        histogramPane.layoutYProperty().bind(flowPane.layoutYProperty());
         getContentPane().getChildren().add(histogramPane);
 
         getContentPane().getChildren().add(flowPaneRec);

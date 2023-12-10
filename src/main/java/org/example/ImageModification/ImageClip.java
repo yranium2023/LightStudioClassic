@@ -1,7 +1,6 @@
 package org.example.ImageModification;
 
 
-import io.vproxy.vfx.ui.pane.FusionPane;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Bounds;
 import javafx.geometry.Rectangle2D;
@@ -15,15 +14,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.shape.StrokeType;
-import org.example.ImagePane.ImagePane;
-import org.example.ImagePane.ImageScaler;
-import org.example.LSMain;
+import org.example.Pane.ImagePane;
+import org.example.ImageTools.ImageScaler;
 import org.example.Obj.ImageObj;
 import org.example.Scene.ImageClipScene;
-
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
 
 
 /**

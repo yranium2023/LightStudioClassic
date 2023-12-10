@@ -1,4 +1,4 @@
-package org.example.ImagePane;
+package org.example.ImageTools;
 
 /**
  * @author 申雄全
@@ -6,17 +6,9 @@ package org.example.ImagePane;
  * @date 2023/12/5 16:01
  */
 
-import io.vproxy.vfx.util.FXUtils;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import org.example.ImagePane.ImagePane;
-import org.example.LSMain;
-
-import java.time.Duration;
+import org.example.Pane.ImagePane;
 
 
 public class ImageScaler {

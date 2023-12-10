@@ -1,5 +1,6 @@
 package org.example.ImageStatistics;
 
+import io.vproxy.vfx.util.FXUtils;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.chart.AreaChart;
@@ -13,6 +14,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import org.example.ImageTools.ImageTransfer;
 import org.example.Main;
+import org.example.StaticValues;
 
 import java.awt.image.BufferedImage;
 import java.util.Arrays;
@@ -33,9 +35,9 @@ public class Histogram{
     private static int[] blueHistogram = new int[NUM_BINS];
     private static AreaChart<Number, Number> Histogram;//直方图，统计图片灰度和R,G,B
     private static BufferedImage bufferedImage;
-    public static void drawHistogram(Image image, Pane histogramPane){
+    public static void drawHistogram(Image image){
         //清空
-        histogramPane.getChildren().clear();
+        StaticValues.histogramPane.getChildren().clear();
         //读取图像
         bufferedImage=ImageTransfer.toBufferedImage(image);
         // 创建灰度直方图
@@ -44,10 +46,16 @@ public class Histogram{
         Histogram.setVerticalGridLinesVisible(false);
         Histogram.setHorizontalGridLinesVisible(false);
         Histogram.setLegendVisible(false);
-        Histogram.prefWidthProperty().bind(histogramPane.widthProperty());
-        Histogram.prefHeightProperty().bind(histogramPane.heightProperty());
+        FXUtils.observeWidthHeight(StaticValues.histogramPane,Histogram);
+        Histogram.getXAxis().setTickLabelsVisible(false);
+        Histogram.getXAxis().setOpacity(0);
+        Histogram.getYAxis().setTickLabelsVisible(false);
+        Histogram.getYAxis().setOpacity(0);
         //将直方图加入pane中
-        histogramPane.getChildren().add(Histogram);
+        StaticValues.histogramPane.getChildren().add(Histogram);
+        if(StaticValues.histogramPane.getScene()!=null){
+            StaticValues.histogramPane.getStylesheets().add(Main.class.getResource("/CSS/histogram.css").toString());
+        }
         System.out.println("创建直方图成功");
     }
 
