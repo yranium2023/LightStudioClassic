@@ -65,7 +65,7 @@ public class ImageClipScene extends SuperScene{
 
 
         FXUtils.observeWidthHeight(LSMain.getStage().getInitialScene().getContentPane(),clipImagePane,-350,-200);
-        FXUtils.observeHeight(LSMain.getStage().getInitialScene().getContentPane(),modulePane.getNode(),-200);
+        FXUtils.observeHeight(LSMain.getStage().getInitialScene().getContentPane(),modulePane.getNode(),-450);
 
     }
 

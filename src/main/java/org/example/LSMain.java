@@ -12,6 +12,7 @@ import io.vproxy.vfx.ui.scene.VSceneShowMethod;
 import io.vproxy.vfx.ui.stage.VStage;
 import io.vproxy.vfx.util.FXUtils;
 import javafx.application.Application;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -113,6 +114,8 @@ public class LSMain extends Application {
 
         navigatePane.getContentPane().getChildren().add(InputButton);
         navigatePane.getContentPane().getChildren().add(ImageEditButton);
+
+        
 
 
         stage.getInitialScene().getContentPane().getChildren().add(sceneGroup.getNode());

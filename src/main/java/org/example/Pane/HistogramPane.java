@@ -21,10 +21,7 @@ public class HistogramPane extends Pane {
         setStrokeType(StrokeType.INSIDE);
     }};
     public HistogramPane(){
-//        setPrefWidth(250);
-//        setPrefHeight(200);
-        setWidth(250);
-        setHeight(200);
+
         setMaxSize(250,200);
         getChildren().add(histogramPaneRec);
         widthProperty().addListener((ob, old, now) -> {

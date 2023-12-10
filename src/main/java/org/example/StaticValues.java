@@ -5,6 +5,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import org.example.ImageStatistics.Histogram;
 import org.example.Obj.ImageObj;
 import org.example.Pane.HistogramPane;
 
@@ -16,7 +17,10 @@ import org.example.Pane.HistogramPane;
 public class StaticValues {
     //全局变量 直接用 要编辑的图像
     public static ImageObj editingImageObj =null;
-    public static HistogramPane histogramPane=new HistogramPane();
+    public static HistogramPane histogramPane=new HistogramPane(){{
+        setWidth(250);
+        setHeight(200);
+    }};
 
     public static void importHistogramPane(Pane newPane){
         if(histogramPane.getParent()!=null){
@@ -27,4 +31,5 @@ public class StaticValues {
             newPane.getChildren().add(histogramPane);
         }
     }
+
 }

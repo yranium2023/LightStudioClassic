@@ -55,9 +55,6 @@ public class Histogram{
             StaticValues.histogramPane.getStylesheets().add(Main.class.getResource("/CSS/histogram.css").toString());
         }
         System.out.println("创建直方图成功");
-        System.out.println(Histogram.getWidth());
-        System.out.println(StaticValues.histogramPane.getWidth());
-        System.out.println(Histogram.getPrefWidth());
     }
 
     private static AreaChart<Number, Number> createHistogram(Image image) {
