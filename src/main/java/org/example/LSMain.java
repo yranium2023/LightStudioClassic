@@ -77,6 +77,8 @@ public class LSMain extends Application {
         var imageImportScene = mainScenes.get(1);
         var imageEditScene = mainScenes.get(2);
 
+        //读取css文件
+
         var InputButton = new FusionButton("图库") {{
             setPrefWidth(100);
             setPrefHeight(navigatePane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);

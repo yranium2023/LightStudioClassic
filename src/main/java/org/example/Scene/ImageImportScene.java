@@ -11,12 +11,14 @@ import io.vproxy.vfx.util.FXUtils;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 import org.example.ImageTools.ImportImageResource;
+import org.example.Main;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -29,6 +31,11 @@ import java.util.function.Supplier;
 public class ImageImportScene extends SuperScene {
 
     public static ImageImportMenuScene menuScene = new ImageImportMenuScene();
+
+    private static Pane histogramPane=new Pane(){{
+       setWidth(150);
+       setHeight(150);
+    }};
 
     public ImageImportScene(Supplier<VSceneGroup> sceneGroupSup) {
         super(VSceneRole.MAIN);
@@ -78,6 +85,9 @@ public class ImageImportScene extends SuperScene {
             if (!sceneGroupSup.get().getScenes().contains(menuScene)) {
                 sceneGroupSup.get().addScene(menuScene, VSceneHideMethod.TO_LEFT);
             }
+            if(menuScene.getContentPane().getScene()!=null){
+                menuScene.getContentPane().getScene().getStylesheets().add(Main.class.getResource("CSS/histogram.css").toString());
+            }
             sceneGroupSup.get().show(menuScene, VSceneShowMethod.FROM_LEFT);
             // 启动或重新开始 Timeline 定时器
             refreshTimeline.stop();  // 停止之前的定时器，以免叠加
@@ -96,6 +106,10 @@ public class ImageImportScene extends SuperScene {
             refreshTimeline.play();
         });
 
+        //将直方图pane加入scene中，并绑定属性
+        histogramPane.layoutXProperty().bind(flowPaneRec.widthProperty().add(30));
+        getContentPane().getChildren().add(histogramPane);
+
         getContentPane().getChildren().add(flowPaneRec);
         getContentPane().getChildren().add(menuBtn);
         getContentPane().getChildren().add(scrollFlowPane.getNode());
@@ -103,6 +117,9 @@ public class ImageImportScene extends SuperScene {
 
     }
 
+    public static Pane getHistogramPane() {
+        return histogramPane;
+    }
 
     @Override
     public String title() {

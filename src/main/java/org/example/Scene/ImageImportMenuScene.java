@@ -17,6 +17,7 @@ import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
 import org.example.Obj.ImageObj;
 import org.example.StaticValues;
@@ -148,8 +149,6 @@ public class ImageImportMenuScene extends SuperScene {
                 });
             }
         });
-
-
     }
 
 
@@ -177,6 +176,7 @@ public class ImageImportMenuScene extends SuperScene {
                 if (StaticValues.editingImageObj != imageObj) {
                     System.out.println("选择成功");
                     StaticValues.editingImageObj = imageObj;
+                    Histogram.drawHistogram(StaticValues.editingImageObj.getEditingImage(), ImageImportScene.getHistogramPane());
                 }
             });
             copy.setOnAction(e -> {
