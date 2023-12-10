@@ -3,20 +3,24 @@ package org.example.Scene;
 import io.vproxy.vfx.theme.Theme;
 import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.button.FusionImageButton;
+import io.vproxy.vfx.ui.layout.VPadding;
+import io.vproxy.vfx.ui.loading.VProgressBar;
 import io.vproxy.vfx.ui.pane.FusionPane;
-import io.vproxy.vfx.ui.scene.VSceneRole;
+import io.vproxy.vfx.ui.scene.*;
+import io.vproxy.vfx.ui.stage.VStage;
+import io.vproxy.vfx.util.FXUtils;
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
 import org.example.Obj.ImageObj;
@@ -26,9 +30,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.function.Supplier;
 
 /**
  * @author 吴鹄远
@@ -43,7 +45,8 @@ public class ImageImportMenuScene extends SuperScene {
 
     private List<FusionButton> fusionImageButtons = new ArrayList<>();
 
-    public ImageImportMenuScene() {
+    public ImageImportMenuScene(Supplier<VSceneGroup> sceneGroupSup) {
+
         super(VSceneRole.DRAWER_VERTICAL);
         getNode().setPrefWidth(350);
         enableAutoContentWidth();
@@ -90,14 +93,25 @@ public class ImageImportMenuScene extends SuperScene {
             List<File> selectedFiles = fileChooser.showOpenMultipleDialog(null);
 
             if (selectedFiles != null && !selectedFiles.isEmpty()) {
-                // 使用线程池处理文件导入
-                ExecutorService executorService = Executors.newFixedThreadPool(5);
-                CountDownLatch latch = new CountDownLatch(selectedFiles.size());
 
-                for (File selectedFile : selectedFiles) {
-                    executorService.submit(() -> {
-                        try {
-                            // 处理每个选中的图片文件，例如显示在界面上或传递给其他部分进行处理
+                Label label =new Label();
+                label.setTextFill(Color.WHITE);
+                VProgressBar progressBar = new VProgressBar();
+                progressBar.setLength(400);
+                VBox vBox = new VBox(
+                        label,
+                        new VPadding(10),
+                        progressBar
+                );
+
+
+                Task<Void> task = new Task<>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        int totalFiles = selectedFiles.size();
+                        for (int i = 0; i < totalFiles; i++) {
+                            // 处理每个选中的图片文件
+                            File selectedFile = selectedFiles.get(i);
                             String imagePath = selectedFile.toURI().toString();
                             Image selectedImage = new Image(imagePath);
                             ImageObj imageObj = new ImageObj(selectedImage);
@@ -106,7 +120,6 @@ public class ImageImportMenuScene extends SuperScene {
                             double selectedImageWidth = selectedImage.getWidth();
                             if (selectedImageHeight > 2000 || selectedImageWidth > 2000) {
                                 double rate = selectedImageHeight / selectedImageWidth;
-                                // 对图片稍微压缩，用于编辑
                                 double editorHeight = 2000;
                                 double editorWidth = 2000;
                                 if (rate > 1) {
@@ -117,35 +130,43 @@ public class ImageImportMenuScene extends SuperScene {
                                 BufferedImage compressedEditorBufferedImage = ConvertUtil.resetSize(bufferedImage, editorWidth, editorHeight, true);
                                 Image compressedEditorImage = ConvertUtil.ConvertToFxImage(compressedEditorBufferedImage);
                                 imageObj.setEditingImage(compressedEditorImage);
-                                // 将选中的图片添加到列表中
                                 selectedImages.add(imageObj);
                             } else {
                                 imageObj.setEditingImage(selectedImage);
                                 selectedImages.add(imageObj);
                             }
-                            System.out.println("传入一张图片成功");
-                        } finally {
-                            latch.countDown();
+                            // 更新进度
+                            progressBar.setProgress((double)(i+1)/(double)(totalFiles));
+                            Platform.runLater(() -> label.setText(selectedFile.getName()));
                         }
+                        return null;
+                    }
+                };
+
+                // 启动任务
+                new Thread(task).start();
+                VStage stage = new VStage();
+                stage.getStage().setResizable(false);
+                stage.getStage().setHeight(110);
+                stage.getStage().setWidth(500);
+                stage.getInitialScene().getContentPane().getChildren().add(vBox);
+                vBox.setAlignment(Pos.CENTER);
+                vBox.setLayoutX(50);
+                vBox.setLayoutY(25);
+                stage.show();
+                // 设置任务完成时的回调
+                task.setOnSucceeded(event -> {
+                    // 在 JavaFX 线程上更新 UI
+                    Platform.runLater(() -> {
+                        // 生成特殊的按钮
+                        fusionImageButtonsVbox = createImageButtonsVbox();
+                        // 清空之前选中的图片
+                        selectedImages.clear();
+                        System.out.println("图片全部传入成功");
+                        stage.close();
+                        sceneGroupSup.get().hide(this, VSceneHideMethod.TO_LEFT);
+                        FXUtils.runDelay(VScene.ANIMATION_DURATION_MILLIS, () -> sceneGroupSup.get().removeScene(this));
                     });
-                }
-
-                // 等待所有任务完成
-                try {
-                    latch.await();
-                } catch (InterruptedException ex) {
-                    ex.printStackTrace();
-                }
-
-                executorService.shutdown();
-
-                // 在 JavaFX 线程上更新 UI
-                Platform.runLater(() -> {
-                    // 生成特殊的按钮
-                    fusionImageButtonsVbox = createImageButtonsVbox();
-                    // 清空之前选中的图片
-                    selectedImages.clear();
-                    System.out.println("图片全部传入成功");
                 });
             }
         });
