@@ -3,9 +3,11 @@ package org.example.Scene;
 import io.vproxy.vfx.theme.Theme;
 import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.button.FusionImageButton;
+import io.vproxy.vfx.ui.layout.VPadding;
 import io.vproxy.vfx.ui.loading.VProgressBar;
 import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.*;
+import io.vproxy.vfx.ui.stage.VStage;
 import io.vproxy.vfx.util.FXUtils;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
@@ -18,6 +20,7 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
 import org.example.Obj.ImageObj;
@@ -90,14 +93,18 @@ public class ImageImportMenuScene extends SuperScene {
             List<File> selectedFiles = fileChooser.showOpenMultipleDialog(null);
 
             if (selectedFiles != null && !selectedFiles.isEmpty()) {
-                VBox vBox = new VBox();
-                vBox.setSpacing(1);
+
                 Label label =new Label();
                 label.setTextFill(Color.WHITE);
                 VProgressBar progressBar = new VProgressBar();
-                progressBar.setLength(350);
-                vBox.getChildren().add(label);
-                vBox.getChildren().add(progressBar);
+                progressBar.setLength(400);
+                VBox vBox = new VBox(
+                        label,
+                        new VPadding(10),
+                        progressBar
+                );
+
+
                 Task<Void> task = new Task<>() {
                     @Override
                     protected Void call() throws Exception {
@@ -138,22 +145,15 @@ public class ImageImportMenuScene extends SuperScene {
 
                 // 启动任务
                 new Thread(task).start();
-
-                StackPane root = new StackPane();
-                root.getChildren().add(vBox);
-                var scene = new VScene(VSceneRole.POPUP);
-                scene.enableAutoContentWidthHeight();
-                scene.getNode().setPrefWidth(350);
-                scene.getNode().setPrefHeight(50);
-                scene.getNode().setBackground(new Background(new BackgroundFill(
-                        Theme.current().subSceneBackgroundColor(),
-                        CornerRadii.EMPTY,
-                        Insets.EMPTY
-                )));
-                scene.getContentPane().getChildren().add(root);
-                FXUtils.observeWidthHeightCenter(scene.getContentPane(), root);
-                sceneGroupSup.get().addScene(scene, VSceneHideMethod.FADE_OUT);
-                FXUtils.runDelay(50, () -> sceneGroupSup.get().show(scene, VSceneShowMethod.FADE_IN));
+                VStage stage = new VStage();
+                stage.getStage().setResizable(false);
+                stage.getStage().setHeight(110);
+                stage.getStage().setWidth(500);
+                stage.getInitialScene().getContentPane().getChildren().add(vBox);
+                vBox.setAlignment(Pos.CENTER);
+                vBox.setLayoutX(50);
+                vBox.setLayoutY(25);
+                stage.show();
                 // 设置任务完成时的回调
                 task.setOnSucceeded(event -> {
                     // 在 JavaFX 线程上更新 UI
@@ -163,8 +163,9 @@ public class ImageImportMenuScene extends SuperScene {
                         // 清空之前选中的图片
                         selectedImages.clear();
                         System.out.println("图片全部传入成功");
-                        sceneGroupSup.get().hide(scene, VSceneHideMethod.FADE_OUT);
-                        FXUtils.runDelay(VScene.ANIMATION_DURATION_MILLIS, () -> sceneGroupSup.get().removeScene(scene));
+                        stage.close();
+                        sceneGroupSup.get().hide(this, VSceneHideMethod.TO_LEFT);
+                        FXUtils.runDelay(VScene.ANIMATION_DURATION_MILLIS, () -> sceneGroupSup.get().removeScene(this));
                     });
                 });
             }

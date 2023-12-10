@@ -38,7 +38,7 @@ public class ImageImportScene extends SuperScene {
 
     public ImageImportScene(Supplier<VSceneGroup> sceneGroupSup) {
         super(VSceneRole.MAIN);
-        menuScene = new ImageImportMenuScene( sceneGroupSup);
+        menuScene = new ImageImportMenuScene(sceneGroupSup);
         enableAutoContentWidthHeight();
         //创建左上角的menuButton
         var menuBtn = new FusionImageButton(ImportImageResource.getInstance().getImage("image/menu.png")) {{
