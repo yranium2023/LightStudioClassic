@@ -46,7 +46,7 @@ public class ImageClip {
      * @author missing
      * @updateTime 2023/12/4 10:59
      */
-    public static void imageClip(ImageObj editingImageObj, ImagePane imagePane, FusionPane modulePane) {
+    public static void imageClip(ImageObj editingImageObj, ImagePane imagePane) {
         Image image=editingImageObj.getEditingImage();
 
 
@@ -55,7 +55,7 @@ public class ImageClip {
 
         clip.setStrokeWidth(3);
         clip.setStrokeType(StrokeType.CENTERED);
-        clip.setStroke(Color.GREEN);
+        clip.setStroke(Color.rgb(189,200,191));
         clip.setFill(Color.TRANSPARENT);
 
         imageViewRect = new Rectangle(imageView.getX(), imageView.getY(), imageView.getFitWidth(), imageView.getFitHeight());
@@ -143,7 +143,9 @@ public class ImageClip {
         });
         //确认裁剪
         ImageClipScene.getAffirmButton().setOnAction(event->{
-            System.out.println("确认裁剪");
+            System.out.println("确认裁剪成功");
+            ImageClipScene.getCancelButton().setDisable(false);
+            ImageClipScene.getResetButton().setDisable(false);
             Image imageToClip;
             if(editingImageObj.getClipImages().isEmpty()){
                 imageToClip=editingImageObj.getOriginalImage();
@@ -197,6 +199,94 @@ public class ImageClip {
             imagePane.getChildren().set(indexOfDark, darkenedArea);
 
         });
+
+        //取消裁剪，回到裁剪前的图像
+        ImageClipScene.getCancelButton().setOnAction(event -> {
+            System.out.println("取消裁剪成功");
+            //获取上一张图片
+            Image preImage;
+            if(editingImageObj.getClipImages().size()>1){
+                int size=editingImageObj.getClipImages().size();
+                preImage=editingImageObj.getClipImages().get(size-2);
+            }else{
+                preImage=editingImageObj.getOriginalImage();
+            }
+            //删除上一次裁剪得到的图片
+            int lastIndex=editingImageObj.getClipImages().size()-1;
+            editingImageObj.getClipImages().remove(lastIndex);
+            //假如没有裁剪图片了，就设置disable
+            if(editingImageObj.getClipImages().isEmpty()){
+                ImageClipScene.getCancelButton().setDisable(true);
+                ImageClipScene.getResetButton().setDisable(true);
+            }
+            //生成和替换缩略图
+            Image newButtonImage=ImageObj.resizeButtonImage(preImage);
+            editingImageObj.setButtonImage(newButtonImage);
+            editingImageObj.renewButton();
+            //生成和替换压缩图片
+            Image newEditingImage=ImageObj.resizeNormalImage(preImage);
+            editingImageObj.setEditingImage(newEditingImage);
+            //将当前界面上的图片进行替换
+            int index=imagePane.getChildren().indexOf(imageView);
+            copyImageViewProperties(ImageScaler.getImageView(newEditingImage,imagePane),imageView,imagePane);
+            imagePane.getChildren().set(index,imageView);
+            clip.setX(imageView.getX());
+            clip.setY(imageView.getY());
+            clip.setWidth(3000);
+            clip.setHeight(3000);
+            enSureClipInRec();
+            initImageViewRect(imageViewRect,imageView);
+            int indexOfDark = imagePane.getChildren().indexOf(darkenedArea);
+            darkenedArea = Shape.subtract(imageViewRect, new Rectangle(
+                    clip.getX(),
+                    clip.getY(),
+                    clip.getWidth(),
+                    clip.getHeight()
+            ));
+            darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
+            imagePane.getChildren().set(indexOfDark, darkenedArea);
+        });
+
+        //复位按钮
+        ImageClipScene.getResetButton().setOnAction(event -> {
+            System.out.println("复位操作成功");
+            //获取原始图片
+            Image originImage=editingImageObj.getOriginalImage();
+            //清空裁剪List
+            if(!editingImageObj.getClipImages().isEmpty()){
+                editingImageObj.getClipImages().clear();
+            }
+            //设置复位和取消图标为不可用
+            ImageClipScene.getResetButton().setDisable(true);
+            ImageClipScene.getCancelButton().setDisable(true);
+            //生成和替换缩略图
+            Image newButtonImage=ImageObj.resizeButtonImage(originImage);
+            editingImageObj.setButtonImage(newButtonImage);
+            editingImageObj.renewButton();
+            //生成和替换压缩图片
+            Image newEditingImage=ImageObj.resizeNormalImage(originImage);
+            editingImageObj.setEditingImage(newEditingImage);
+            //将当前界面上的图片进行替换
+            int index=imagePane.getChildren().indexOf(imageView);
+            copyImageViewProperties(ImageScaler.getImageView(newEditingImage,imagePane),imageView,imagePane);
+            imagePane.getChildren().set(index,imageView);
+            clip.setX(imageView.getX());
+            clip.setY(imageView.getY());
+            clip.setWidth(3000);
+            clip.setHeight(3000);
+            enSureClipInRec();
+            initImageViewRect(imageViewRect,imageView);
+            int indexOfDark = imagePane.getChildren().indexOf(darkenedArea);
+            darkenedArea = Shape.subtract(imageViewRect, new Rectangle(
+                    clip.getX(),
+                    clip.getY(),
+                    clip.getWidth(),
+                    clip.getHeight()
+            ));
+            darkenedArea.setFill(Color.rgb(0, 0, 0, 0.5)); // 设置为半透明黑色
+            imagePane.getChildren().set(indexOfDark, darkenedArea);
+        });
+
     }
 
     /**

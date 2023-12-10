@@ -43,15 +43,35 @@ public class ImageClipScene extends SuperScene{
         setPrefHeight(50);
     }};
 
+    private static FusionButton cancelButton=new FusionButton("取消裁剪"){{
+        setDisable(true);
+        setPrefWidth(130);
+        setPrefHeight(50);
+    }};
+
+    private static FusionButton resetButton=new FusionButton("复位"){{
+        setDisable(true);
+        setPrefWidth(130);
+        setPrefHeight(50);
+    }};
+
     public ImageClipScene() {
         super(VSceneRole.MAIN);
         modulePane.getContentPane().getChildren().add(affirmButton);
+        modulePane.getContentPane().getChildren().add(cancelButton);
+        modulePane.getContentPane().getChildren().add(resetButton);
 
         modulePane.getNode().layoutXProperty().bind(clipImagePane.layoutXProperty().add(clipImagePane.widthProperty().add(30)));
         getContentPane().getChildren().add(clipImagePane);
         getContentPane().getChildren().add(modulePane.getNode());
 
-        FXUtils.observeWidthCenter(modulePane.getContentPane(),affirmButton);
+        FXUtils.observeWidthCenter(modulePane.getContentPane(),affirmButton);//使得确认按钮居中显示
+        FXUtils.observeWidthHeightCenter(modulePane.getContentPane(),cancelButton);//使得取消按钮居中显示
+        //使得取消按钮居中显示
+        resetButton.layoutYProperty().bind(modulePane.getContentPane().heightProperty().add(-30-50));
+        FXUtils.observeWidthCenter(modulePane.getContentPane(),resetButton);
+
+
         FXUtils.observeWidthHeight(LSMain.getStage().getInitialScene().getContentPane(),clipImagePane,-350,-200);
         FXUtils.observeHeight(LSMain.getStage().getInitialScene().getContentPane(),modulePane.getNode(),-200);
 
@@ -71,6 +91,14 @@ public class ImageClipScene extends SuperScene{
 
     public static FusionButton getAffirmButton() {
         return affirmButton;
+    }
+
+    public static FusionButton getCancelButton() {
+        return cancelButton;
+    }
+
+    public static FusionButton getResetButton() {
+        return resetButton;
     }
 
     @Override
