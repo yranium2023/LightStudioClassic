@@ -76,7 +76,7 @@ public class LSMain extends Application {
 
 
         //以下部分为测试所用，增加一个前往ImageImportScene的按钮
-        var imageImportScene = mainScenes.get(1);
+        ImageImportScene imageImportScene = (ImageImportScene) mainScenes.get(1);
         var imageEditScene = mainScenes.get(2);
 
         //读取css文件
@@ -107,6 +107,7 @@ public class LSMain extends Application {
 
         });
         InputButton.setOnAction(e -> {
+            StaticValues.importHistogramPane(imageImportScene.histogramPane);
             sceneGroup.show(imageImportScene, VSceneShowMethod.FROM_LEFT);
         });
         ImageEditButton.setOnAction(e -> {

@@ -10,11 +10,12 @@
     -fx-background-color: rgb(255,255,255,0); /* 设置默认背景色为透明 */
 }
 #histogramChart {
-    -fx-min-width: 300px; /* 设置最小宽度 */
-    -fx-min-height: 230px; /* 设置最小高度 */
-    -fx-max-width: 300px; /* 设置最大宽度 */
-    -fx-max-height: 230px; /* 设置最大高度 */
-    -fx-pref-width: 300px; /* 设置首选宽度 */
-    -fx-pref-height: 230px; /* 设置首选高度 */
+    -fx-min-width: 310px; /* 设置最小宽度 */
+    -fx-min-height: 220px; /* 设置最小高度 */
+    -fx-max-width: 310px; /* 设置最大宽度 */
+    -fx-max-height: 220px; /* 设置最大高度 */
+    -fx-pref-width: 310px; /* 设置首选宽度 */
+    -fx-pref-height: 220px; /* 设置首选高度 */
 }
+
 

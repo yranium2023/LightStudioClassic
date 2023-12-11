@@ -48,8 +48,8 @@ public class Histogram{
         Histogram.setHorizontalGridLinesVisible(false);
         Histogram.setLegendVisible(false);
         Histogram.setId("histogramChart");
-        Histogram.setLayoutX(-45);
-        Histogram.setLayoutY(-10);
+        Histogram.setLayoutX(-55-2);
+        Histogram.setLayoutY(-10-5);
         //将直方图加入pane中
         if(StaticValues.histogramPane.getScene()!=null){
             StaticValues.histogramPane.getStylesheets().add(Main.class.getResource("/CSS/histogram.css").toString());

@@ -33,7 +33,7 @@ import java.util.function.Supplier;
 public class ImageImportScene extends SuperScene {
 
     public static ImageImportMenuScene menuScene = null;
-    private static Pane histogramPane=new Pane();
+    public static Pane histogramPane=new Pane();
 
 
     public ImageImportScene(Supplier<VSceneGroup> sceneGroupSup) {

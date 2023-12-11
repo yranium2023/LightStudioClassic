@@ -2,6 +2,7 @@ package org.example.Scene;
 
 import io.vproxy.vfx.ui.scene.VScene;
 import io.vproxy.vfx.ui.scene.VSceneRole;
+import javafx.scene.layout.Pane;
 
 /**
  * @author 吴鹄远
@@ -9,6 +10,7 @@ import io.vproxy.vfx.ui.scene.VSceneRole;
  * @date 2023/12/3 19:58
  */
 public abstract class SuperScene extends VScene {
+
     public SuperScene(VSceneRole role) {
         super(role);
     }
