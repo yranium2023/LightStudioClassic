@@ -1,4 +1,4 @@
-package org.example.ImageModification;
+package org.example.ImageClip;
 
 
 import javafx.embed.swing.SwingFXUtils;
@@ -167,16 +167,10 @@ public class ImageClip {
             Image clippedImage = SwingFXUtils.toFXImage(SwingFXUtils.fromFXImage(snapshot, null), null);
             //把生成的Image加入clipImage的List中
             editingImageObj.getClipImages().add(clippedImage);
-            //生成和替换缩略图
-            Image newButtonImage=ImageObj.resizeButtonImage(clippedImage);
-            editingImageObj.setButtonImage(newButtonImage);
-            editingImageObj.renewButton();
-            //生成和替换压缩图片
-            Image newEditingImage=ImageObj.resizeNormalImage(clippedImage);
-            editingImageObj.setEditingImage(newEditingImage);
+            editingImageObj.renewAll(clippedImage);
             //将当前界面上的图片进行替换
             int index=imagePane.getChildren().indexOf(imageView);
-            copyImageViewProperties(ImageScaler.getImageView(newEditingImage,imagePane),imageView,imagePane);
+            copyImageViewProperties(ImageScaler.getImageView(editingImageObj.getEditingImage(),imagePane),imageView,imagePane);
             imagePane.getChildren().set(index,imageView);
             clip.setX(imageView.getX());
             clip.setY(imageView.getY());
@@ -218,14 +212,10 @@ public class ImageClip {
             }
             //生成和替换缩略图
             Image newButtonImage=ImageObj.resizeButtonImage(preImage);
-            editingImageObj.setButtonImage(newButtonImage);
-            editingImageObj.renewButton();
-            //生成和替换压缩图片
-            Image newEditingImage=ImageObj.resizeNormalImage(preImage);
-            editingImageObj.setEditingImage(newEditingImage);
+            editingImageObj.renewAll(preImage);
             //将当前界面上的图片进行替换
             int index=imagePane.getChildren().indexOf(imageView);
-            copyImageViewProperties(ImageScaler.getImageView(newEditingImage,imagePane),imageView,imagePane);
+            copyImageViewProperties(ImageScaler.getImageView(editingImageObj.getEditingImage(), imagePane),imageView,imagePane);
             imagePane.getChildren().set(index,imageView);
             clip.setX(imageView.getX());
             clip.setY(imageView.getY());
@@ -257,16 +247,10 @@ public class ImageClip {
             //设置复位和取消图标为不可用
             ImageClipScene.getResetButton().setDisable(true);
             ImageClipScene.getCancelButton().setDisable(true);
-            //生成和替换缩略图
-            Image newButtonImage=ImageObj.resizeButtonImage(originImage);
-            editingImageObj.setButtonImage(newButtonImage);
-            editingImageObj.renewButton();
-            //生成和替换压缩图片
-            Image newEditingImage=ImageObj.resizeNormalImage(originImage);
-            editingImageObj.setEditingImage(newEditingImage);
+            editingImageObj.renewAll(originImage);
             //将当前界面上的图片进行替换
             int index=imagePane.getChildren().indexOf(imageView);
-            copyImageViewProperties(ImageScaler.getImageView(newEditingImage,imagePane),imageView,imagePane);
+            copyImageViewProperties(ImageScaler.getImageView(editingImageObj.getEditingImage(),imagePane),imageView,imagePane);
             imagePane.getChildren().set(index,imageView);
             clip.setX(imageView.getX());
             clip.setY(imageView.getY());

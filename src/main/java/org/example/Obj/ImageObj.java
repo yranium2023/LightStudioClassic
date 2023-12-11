@@ -4,7 +4,9 @@ import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.button.FusionImageButton;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
+import org.example.StaticValues;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -212,12 +214,29 @@ public class ImageObj {
      * @author 张喆宇
      * @date 2023/12/10 0:32
     **/
-    public void renewButton(){
+    private void renewButton(){
         this.imageButton.getImageView().setImage(buttonImage);
         this.imageButton.getImageView().setLayoutX((80 - buttonImage.getWidth()) / 2);
         this.imageButton.getImageView().setLayoutY((80 - buttonImage.getHeight()) / 2);
         this.copyButton.getImageView().setImage(buttonImage);
         this.copyButton.getImageView().setLayoutX((80 - buttonImage.getWidth()) / 2);
         this.copyButton.getImageView().setLayoutY((80 - buttonImage.getHeight()) / 2);
+    }
+    /**
+     * @Description  这个类用来生成新的压缩图片、图标图片、直方图
+     * @param nowImage
+     * @author 吴鹄远
+     * @date 2023/12/11 15:24
+    **/
+
+    public void renewAll(Image nowImage){
+        //生成和替换缩略图
+        Image newButtonImage=ImageObj.resizeButtonImage(nowImage);
+        setButtonImage(newButtonImage);
+        renewButton();
+        //生成和替换压缩图片
+        Image newEditingImage=ImageObj.resizeNormalImage(nowImage);
+        setEditingImage(newEditingImage);
+        Histogram.drawHistogram(newEditingImage);
     }
 }

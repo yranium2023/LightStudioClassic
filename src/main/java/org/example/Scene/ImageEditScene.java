@@ -4,6 +4,8 @@ import io.vproxy.vfx.control.scroll.ScrollDirection;
 import io.vproxy.vfx.control.scroll.VScrollPane;
 import io.vproxy.vfx.theme.Theme;
 import io.vproxy.vfx.ui.button.FusionButton;
+import io.vproxy.vfx.ui.button.FusionImageButton;
+import io.vproxy.vfx.ui.button.ImageButton;
 import io.vproxy.vfx.ui.layout.HPadding;
 import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.*;
@@ -11,13 +13,18 @@ import io.vproxy.vfx.util.FXUtils;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
-import org.example.ImageModification.ImageClip;
+import org.example.ImageClip.ImageClip;
+import org.example.ImageTools.ImageScaler;
+import org.example.ImageTools.ImageTransfer;
+import org.example.ImageTools.ImportImageResource;
 import org.example.LSMain;
+import org.example.Pane.ImagePane;
 import org.example.StaticValues;
 
 import java.util.List;
@@ -30,6 +37,15 @@ import java.util.function.Supplier;
  */
 public class ImageEditScene extends SuperScene{
     private ImageClipScene imageClipScene=new ImageClipScene();
+    //新建一个pane，用于存放直方图
+    public static Pane histogramPane=new Pane();
+    //新建一个pane，用于展示图片
+    private static ImagePane editImagePane=new ImagePane(){{
+        setWidth(900);
+        setHeight(550);
+        setLayoutX(60);
+        setLayoutY(100);
+    }};
 
     VScene scene = new VScene(VSceneRole.DRAWER_HORIZONTAL);
 
@@ -37,31 +53,28 @@ public class ImageEditScene extends SuperScene{
         super(VSceneRole.MAIN);
 
         enableAutoContentWidthHeight();
-        //新建一个pane，用于展示图片
-        Pane ImagePane=new Pane(){{
-           setPrefWidth(900);
-           setPrefHeight(550);
-           setLayoutX(100);
-           setLayoutY(100);
-        }};
-        getContentPane().getChildren().add(ImagePane);
-
-        //创建一个矩形，用来包裹ImagePane
-        Rectangle ImagePaneRec=new Rectangle(0,0,ImagePane.getPrefWidth()-2,ImagePane.getPrefHeight()-2){{
-           setFill(Color.TRANSPARENT);
-           setStroke(Color.WHITE);
-           setStrokeType(StrokeType.INSIDE);
-        }};
-        ImagePane.getChildren().add(ImagePaneRec);
+        FXUtils.observeWidthHeight(LSMain.getStage().getInitialScene().getContentPane(),editImagePane,-350,-200);
+        getContentPane().getChildren().add(editImagePane);
+        //绑定直方图和editImagePane的距离关系
+        //绑定layoutX
+        histogramPane.layoutXProperty().bind(editImagePane.layoutXProperty().add(editImagePane.widthProperty().add(30)));
+        //绑定layoutY
+        histogramPane.layoutYProperty().bind(editImagePane.layoutYProperty());
 
         //新建一个滑动窗口，用来存放所有的效果控件
         VScrollPane editingPane=new VScrollPane(){{
            enableAutoContentWidthHeight();
-           getNode().setPrefWidth(250);
+           getNode().setPrefWidth(220);
            getNode().setPrefHeight(550);
            getNode().setLayoutX(1050-50);
-           getNode().setLayoutY(100);
+           getNode().setLayoutY(300);
         }};
+        //绑定滑动窗口和histogramPane的距离
+        editingPane.getNode().layoutYProperty().bind(histogramPane.layoutYProperty().add(200));
+        //绑定和editImagePane的距离
+        editingPane.getNode().layoutXProperty().bind(histogramPane.layoutXProperty());
+        //绑定和界面下端的距离
+        FXUtils.observeHeight(LSMain.getStage().getInitialScene().getContentPane(),editingPane.getNode(),-400);
         //创建一个矩形用来包裹editingPane
         Rectangle editingPaneRec=new Rectangle(
                 editingPane.getNode().getLayoutX(),
@@ -69,27 +82,34 @@ public class ImageEditScene extends SuperScene{
                 editingPane.getNode().getPrefWidth(),
                 editingPane.getNode().getPrefHeight()
         ){{
+            xProperty().bind(editingPane.getNode().layoutXProperty());
+            yProperty().bind(editingPane.getNode().layoutYProperty());
+            widthProperty().bind(editingPane.getNode().widthProperty());
+            heightProperty().bind(editingPane.getNode().heightProperty());
             setFill(Color.TRANSPARENT);
             setStroke(Color.WHITE);
             setStrokeType(StrokeType.INSIDE);
         }};
         //创建一个fusionPane用于包裹fusionButton
-        FusionPane imageClipPane=new FusionPane(){{
+        FusionPane littleModulePane=new FusionPane(){{
             enableAutoContentWidthHeight();
             getNode().setPrefWidth(editingPane.getNode().getPrefWidth()-50);
-            getNode().setPrefHeight(60);
+            getNode().setPrefHeight(45);
             getNode().setLayoutY(20);
         }};
         //创建绑定，使得ImageClipPane始终位于editingPane中间
-        FXUtils.observeWidthCenter(editingPane.getNode(),imageClipPane.getNode());
+        FXUtils.observeWidthCenter(editingPane.getNode(),littleModulePane.getNode());
         //创建一个fusionButton用于前往图像裁剪
-        FusionButton imageClipButton=new FusionButton("裁剪图像"){{
-            setPrefWidth(100);
-            setPrefHeight(imageClipPane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);
+        FusionButton imageClipButton=new FusionImageButton(ImportImageResource.getInstance().getImage("image/clip.png")){{
+            setPrefWidth(25);
+            setPrefHeight(25);
             setOnlyAnimateWhenNotClicked(true);
-            setLayoutX(imageClipPane.getNode().getPrefWidth()/2-50);
+            setLayoutX(10);
+            getImageView().setFitHeight(15);
         }};
-//        FXUtils.observeWidth(imageClipPane.getNode(),imageClipButton,-imageClipButton.getWidth()/2);
+        //使得按钮在pane的高度中间
+        FXUtils.observeHeightCenter(littleModulePane.getContentPane(),imageClipButton);
+        //设置按下后的动作
         imageClipButton.setOnAction(e->{
             if(!sceneGroupSup.get().getScenes().contains(imageClipScene)){
                 sceneGroupSup.get().addScene(imageClipScene);
@@ -102,10 +122,11 @@ public class ImageEditScene extends SuperScene{
                 ImageClip.enSureClipInRec();
             }
         });
-        imageClipPane.getContentPane().getChildren().add(imageClipButton);
+        littleModulePane.getContentPane().getChildren().add(imageClipButton);
         getContentPane().getChildren().add(editingPaneRec);
         getContentPane().getChildren().add(editingPane.getNode());
-        editingPane.setContent(imageClipPane.getNode());
+        editingPane.setContent(littleModulePane.getNode());
+        getContentPane().getChildren().add(histogramPane);
 
         //生成下方pane
         var navigatePane = new FusionPane();{
@@ -115,9 +136,10 @@ public class ImageEditScene extends SuperScene{
         navigatePane.getNode().layoutYProperty().bind(LSMain.getStage().getInitialScene().getContentPane().heightProperty().add(-50));
         getContentPane().getChildren().add(navigatePane.getNode());
         FXUtils.observeWidthCenter(LSMain.getStage().getInitialScene().getContentPane(),navigatePane.getNode());
-        var fromBottomButton = new FusionButton("选择编辑图片") {{
+        var fromBottomButton = new FusionImageButton(ImportImageResource.getInstance().getImage("image/upArrow.png")) {{
             setPrefWidth(1200);
             setPrefHeight(30);
+            getImageView().setFitHeight(20);
         }};
 
         // 在初始化部分定义一个 Timeline 用于刷新添加按钮
@@ -183,6 +205,12 @@ public class ImageEditScene extends SuperScene{
             refreshTimeline.play();
         });
         navigatePane.getContentPane().getChildren().add(fromBottomButton);
+    }
+
+    public void initEditImagePane(){
+        editImagePane.InitImagePane();
+        ImageView nowImageView= ImageScaler.getImageView(StaticValues.editingImageObj.getEditingImage(),editImagePane);
+        editImagePane.getChildren().add(nowImageView);
     }
 
     @Override

@@ -57,10 +57,12 @@ public class ImageClipScene extends SuperScene{
         modulePane.getContentPane().getChildren().add(resetButton);
         //绑定和imagePane的间隔
         modulePane.getNode().layoutXProperty().bind(clipImagePane.layoutXProperty().add(clipImagePane.widthProperty().add(30)));
+        modulePane.getNode().layoutYProperty().bind(clipImagePane.layoutYProperty().add(250));
+        //绑定layoutX
         histogramPane.layoutXProperty().bind(clipImagePane.layoutXProperty().add(clipImagePane.widthProperty().add(30)));
         //绑定layoutY
         histogramPane.layoutYProperty().bind(clipImagePane.layoutYProperty());
-        modulePane.getNode().layoutYProperty().bind(clipImagePane.layoutYProperty().add(250));
+
 
         FXUtils.observeWidthCenter(modulePane.getContentPane(),affirmButton);//使得确认按钮居中显示
         FXUtils.observeWidthHeightCenter(modulePane.getContentPane(),cancelButton);//使得取消按钮居中显示
