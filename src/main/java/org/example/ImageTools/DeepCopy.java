@@ -18,9 +18,6 @@ public class DeepCopy {
 
     }
 
-
-
-
         @SuppressWarnings("unchecked")
         public static <T extends Serializable> T clone(T src){
             T cloneObj = null;

@@ -6,7 +6,6 @@ package org.example.ImageModification;
  * @date 2023/12/9 15:00
  */
 
-import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
@@ -16,16 +15,14 @@ import javafx.stage.Stage;
 import org.example.ImageTools.ImageTransfer;
 
 import java.awt.image.BufferedImage;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class ImageSaturationAdjustment extends Application {
-    private ImageView imageView;
-    private BufferedImage bufferedImage;
-    private BufferedImage processedImage;
+public class ImageSaturationAdjustment extends ImageAdjustment {
+
     private double lastValue=1;
     private double saturationValue;
 
-    @Override
     public void start(Stage primaryStage) {
         Image originalImage = new Image(getClass().getResource("/image/a.jpg").toString());
         imageView = new ImageView(originalImage);
@@ -56,55 +53,25 @@ public class ImageSaturationAdjustment extends Application {
 
         ExecutorService executor = Executors.newCachedThreadPool();
         executor.submit(() -> {
-            ForkJoinPool forkJoinPool=new ForkJoinPool();
-            forkJoinPool.invoke(new SaturationTask(0,0,bufferedImage.getWidth(),bufferedImage.getHeight()));
+            new ThreadProcess(bufferedImage,processedImage){
+                @Override
+                public int calculateRGB(int rgb) {
+                    int alpha = (rgb >> 24) & 0xFF;
+                    int red = (rgb >> 16) & 0xFF;
+                    int green = (rgb >> 8) & 0xFF;
+                    int blue = rgb & 0xFF;
+                    double[] hsl = rgbToHsl(red, green, blue);
+                    hsl[1] *= saturationValue;
+                    hsl[1] = Math.max(0, Math.min(1, hsl[1]));
+                    return hslToRgb(hsl[0], hsl[1], hsl[2], alpha);
+                }
+            }.run();
             javafx.application.Platform.runLater(() -> {
                 Image adjustedImage =ImageTransfer.toJavaFXImage(processedImage);
                 imageView.setImage(adjustedImage);
             });
-            bufferedImage.flush();
-            processedImage.flush();
-            forkJoinPool.shutdown();
         });
         executor.shutdown();
-    }
-
-    class SaturationTask extends RecursiveAction{
-        private static final int Max =200000;
-        private final int startX, startY, endX, endY;
-        SaturationTask(int startX, int startY, int endX, int endY){
-            this.startX = startX;
-            this.startY = startY;
-            this.endX = endX;
-            this.endY = endY;
-        }
-        @Override
-        protected void compute() {
-            if((endX-startX)*(endY-startY)<Max){
-                for (int x = startX; x<endX;x++) {
-                    for (int y=startY;y<endY;y++) {
-                        int rgb = bufferedImage.getRGB(x, y);
-                        int alpha = (rgb >> 24) & 0xFF;
-                        int red = (rgb >> 16) & 0xFF;
-                        int green = (rgb >> 8) & 0xFF;
-                        int blue = rgb & 0xFF;
-                        double[] hsl = rgbToHsl(red, green, blue);
-                        hsl[1] *= saturationValue;
-                        hsl[1] = Math.max(0, Math.min(1, hsl[1]));
-                        rgb = hslToRgb(hsl[0], hsl[1], hsl[2], alpha);
-                        processedImage.setRGB(x, y, rgb);
-                    }
-                }
-            }else{
-                int midX=(startX+endX)/2;
-                int midY=(startY+endY)/2;
-                ForkJoinTask<Void> A=new SaturationTask(startX, startY, midX, midY).fork();
-                ForkJoinTask<Void> B=new SaturationTask(midX, startY, endX, midY).fork();
-                ForkJoinTask<Void> C=new SaturationTask(startX, midY, midX, endY).fork();
-                ForkJoinTask<Void> D=new SaturationTask(midX, midY, endX, endY).fork();
-                A.join();B.join();C.join();D.join();
-            }
-        }
     }
 
     // 将 RGB 转换为 HSL
@@ -198,9 +165,6 @@ public class ImageSaturationAdjustment extends Application {
         return (v1);
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 
 }
 

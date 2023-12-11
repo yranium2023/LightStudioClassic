@@ -77,39 +77,9 @@ public class AutoWhiteBalance {
     private static void WhiteBalance(ImageObj editingImageObj){
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
-            ForkJoinPool forkJoinPool=new ForkJoinPool();
-            forkJoinPool.invoke(new AutoWhiteBalanceTask(0,0,bufferedImage.getWidth(),bufferedImage.getHeight()));
-            forkJoinPool.shutdown();
-            javafx.application.Platform.runLater(() -> {
-                Image adjustedImage = SwingFXUtils.toFXImage(processedImage, null);
-                //设置新图像
-                editingImageObj.getEditImages().add(adjustedImage);
-                editingImageObj.renewAll(adjustedImage);
-                //刷新显示的图像
-                ImageEditScene.initEditImagePane();
-                // 释放资源
-                bufferedImage.flush();
-                processedImage.flush();
-            });
-        });
-        executor.shutdown();
-    }
-    private static class AutoWhiteBalanceTask extends RecursiveAction{
-        private static final int Max =200000;
-        private final int startX, startY, endX, endY;
-        AutoWhiteBalanceTask(int startX, int startY, int endX, int endY){
-            this.startX = startX;
-            this.startY = startY;
-            this.endX = endX;
-            this.endY = endY;
-        }
-
-        @Override
-        protected void compute() {
-            if((endX-startX)*(endY-startY)<Max){
-                for (int x = startX; x<endX;x++) {
-                    for (int y=startY;y<endY;y++) {
-                    int rgb = bufferedImage.getRGB(x, y);
+            new ThreadProcess(bufferedImage, processedImage) {
+                @Override
+                public int calculateRGB(int rgb) {
                     int alpha = (rgb >> 24) & 0xFF;
                     int red = (int) (((rgb >> 16) & 0xFF) * redGain);
                     int green = (int) (((rgb >> 8) & 0xFF) * greenGain);
@@ -119,20 +89,20 @@ public class AutoWhiteBalance {
                     green = Math.min(255, Math.max(0, green));
                     blue = Math.min(255, Math.max(0, blue));
                     // 更新调整后的颜色值
-                    int adjustedRGB = (alpha << 24)|(red << 16) | (green << 8) | blue;
-                    processedImage.setRGB(x, y, adjustedRGB);
-                   }
+                    return  (alpha << 24)|(red << 16) | (green << 8) | blue;
                 }
-            }else{
-                int midX=(startX+endX)/2;
-                int midY=(startY+endY)/2;
-                ForkJoinTask<Void> A=new AutoWhiteBalanceTask(startX, startY, midX, midY).fork();
-                ForkJoinTask<Void> B=new AutoWhiteBalanceTask(midX, startY, endX, midY).fork();
-                ForkJoinTask<Void> C=new AutoWhiteBalanceTask(startX, midY, midX, endY).fork();
-                ForkJoinTask<Void>  D=new AutoWhiteBalanceTask(midX, midY, endX, endY).fork();
-                A.join();B.join();C.join();D.join();
-            }
-        }
+            }.run();
+            javafx.application.Platform.runLater(() -> {
+                Image adjustedImage = SwingFXUtils.toFXImage(processedImage, null);
+                //设置新图像
+                editingImageObj.getEditImages().add(adjustedImage);
+                editingImageObj.renewAll(adjustedImage);
+                //刷新显示的图像
+                ImageEditScene.initEditImagePane();
+            });
+        });
+        executor.shutdown();
     }
+
 }
 

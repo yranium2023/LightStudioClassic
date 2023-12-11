@@ -1,7 +1,5 @@
 package org.example.ImageModification;
 
-import io.vproxy.vfx.ui.slider.VSlider;
-import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.Slider;
@@ -10,21 +8,18 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.ImageTools.ImageTransfer;
-import org.example.Obj.ImageObj;
 
 import java.awt.image.BufferedImage;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class ImageContrastAdjustment extends Application {
+public class ImageContrastAdjustment extends ImageAdjustment {
 
-    private ImageView imageView;
     private Slider contrastSlider;
-    private static BufferedImage bufferedImage;
-    private static BufferedImage processedImage;
-    private static double lastValue = 0.0;
-    private static double contrastValue;
 
-    @Override
+    private double lastValue = 0.0;
+    private double contrastValue;
+
     public void start(Stage primaryStage) {
         Image originalImage = new Image(getClass().getResource("/image/a.jpg").toString());
         imageView = new ImageView(originalImage);
@@ -52,93 +47,37 @@ public class ImageContrastAdjustment extends Application {
         primaryStage.show();
     }
 
-    public static void contrastAdjustBind(ImageObj imageObj,VSlider slider){
-        bufferedImage=ImageTransfer.toBufferedImage(imageObj.getEditingImage());
-        processedImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        double threshold = 0.1; // 定义阈值，每次滑动长度大于该值时认为值发生改变
-        slider.setOnMouseDragged(event->{
-            double newValue = 0.2+slider.getPercentage()*1.6;
-            if (Math.abs(newValue - lastValue) > threshold) {
-                contrastValue = 2-newValue;
-                adjustContrastAsync();
-                // Update the ImageView with the adjusted image
-                lastValue = newValue;
-            }
-        });
-    }
 
-
-    private static void adjustContrastAsync() {
+    private void adjustContrastAsync() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
-            ForkJoinPool forkJoinPool = new ForkJoinPool();
-            forkJoinPool.invoke(new ContrastTask(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight()));
-            forkJoinPool.shutdown();
+            new ThreadProcess(bufferedImage, processedImage) {
+                @Override
+                public int calculateRGB(int rgb) {
+                    int alpha = (rgb >> 24) & 0xFF;
+                    int red = (rgb >> 16) & 0xFF;
+                    int green = (rgb >> 8) & 0xFF;
+                    int blue = rgb & 0xFF;
+
+                    // Adjust the contrast
+                    red = (int) (Math.pow(red / 255.0, 1.0 / contrastValue) * 255.0);
+                    green = (int) (Math.pow(green / 255.0, 1.0 / contrastValue) * 255.0);
+                    blue = (int) (Math.pow(blue / 255.0, 1.0 / contrastValue) * 255.0);
+                    // Clamp the values to the valid range [0, 255]
+                    red = Math.max(0, Math.min(255, red));
+                    green = Math.max(0, Math.min(255, green));
+                    blue = Math.max(0, Math.min(255, blue));
+                    // Compose the adjusted color
+                    return (alpha << 24) | (red << 16) | (green << 8) | blue;
+                }
+            }.run();
             javafx.application.Platform.runLater(() -> {
                 Image adjustedImage = SwingFXUtils.toFXImage(processedImage, null);
-
-                // 释放资源
-                bufferedImage.flush();
-                processedImage.flush();
+                imageView.setImage(adjustedImage);
             });
         });
         executor.shutdown();
     }
 
-    private static class ContrastTask extends RecursiveAction {
-        private static final int Max = 10000;
-        private final int startX, startY, endX, endY;
 
-        ContrastTask(int startX, int startY, int endX, int endY) {
-            this.startX = startX;
-            this.startY = startY;
-            this.endX = endX;
-            this.endY = endY;
-        }
-
-        @Override
-        protected void compute() {
-            if ((endX - startX) * (endY - startY) < Max) {
-                for (int x = startX; x < endX; x++) {
-                    for (int y = startY; y < endY; y++) {
-                        int rgb = bufferedImage.getRGB(x, y);
-                        // Extract individual color components
-                        int alpha = (rgb >> 24) & 0xFF;
-                        int red = (rgb >> 16) & 0xFF;
-                        int green = (rgb >> 8) & 0xFF;
-                        int blue = rgb & 0xFF;
-
-                        // Adjust the contrast
-                        red = (int) (Math.pow(red / 255.0, 1.0 / contrastValue) * 255.0);
-                        green = (int) (Math.pow(green / 255.0, 1.0 / contrastValue) * 255.0);
-                        blue = (int) (Math.pow(blue / 255.0, 1.0 / contrastValue) * 255.0);
-                        // Clamp the values to the valid range [0, 255]
-                        red = Math.max(0, Math.min(255, red));
-                        green = Math.max(0, Math.min(255, green));
-                        blue = Math.max(0, Math.min(255, blue));
-
-                        // Compose the adjusted color
-                        int adjustedRgb = (alpha << 24) | (red << 16) | (green << 8) | blue;
-                        // Set the adjusted color to the pixel
-                        processedImage.setRGB(x, y, adjustedRgb);
-                    }
-                }
-            } else {
-                int midX = (startX + endX) / 2;
-                int midY = (startY + endY) / 2;
-                ForkJoinTask<Void> A = new ContrastTask(startX, startY, midX, midY).fork();
-                ForkJoinTask<Void> B = new ContrastTask(midX, startY, endX, midY).fork();
-                ForkJoinTask<Void> C = new ContrastTask(startX, midY, midX, endY).fork();
-                ForkJoinTask<Void> D = new ContrastTask(midX, midY, endX, endY).fork();
-                A.join();
-                B.join();
-                C.join();
-                D.join();
-            }
-        }
-    }
-
-    public static void main(String[] args) {
-        launch(args);
-    }
 }
