@@ -23,27 +23,23 @@ public class ImageClipScene extends SuperScene{
             setLayoutX(60);
             setLayoutY(100);
     }};
-
     private static FusionPane modulePane=new FusionPane(){{
         getNode().setPrefWidth(220);
         getNode().setPrefHeight(550);
         getNode().setLayoutX(1100);
         getNode().setLayoutY(350);
     }};
-
     //创建确认按钮
     private static FusionButton affirmButton=new FusionButton("确认裁剪"){{
         setLayoutY(30);
         setPrefWidth(130);
         setPrefHeight(50);
     }};
-
     private static FusionButton cancelButton=new FusionButton("取消裁剪"){{
         setDisable(true);
         setPrefWidth(130);
         setPrefHeight(50);
     }};
-
     private static FusionButton resetButton=new FusionButton("复位"){{
         setDisable(true);
         setPrefWidth(130);

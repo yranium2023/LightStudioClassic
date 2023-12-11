@@ -16,6 +16,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.example.ImageModification.AutoWhiteBalance;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ImportImageResource;
 import org.example.Scene.*;
@@ -78,8 +79,6 @@ public class LSMain extends Application {
         //以下部分为测试所用，增加一个前往ImageImportScene的按钮
         ImageImportScene imageImportScene = (ImageImportScene) mainScenes.get(1);
         ImageEditScene imageEditScene = (ImageEditScene) mainScenes.get(2);
-
-        //读取css文件
 
         var InputButton = new FusionButton("图库") {{
             setPrefWidth(100);

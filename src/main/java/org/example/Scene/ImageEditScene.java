@@ -7,12 +7,16 @@ import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.button.FusionImageButton;
 import io.vproxy.vfx.ui.button.ImageButton;
 import io.vproxy.vfx.ui.layout.HPadding;
+import io.vproxy.vfx.ui.layout.VPadding;
 import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.*;
+import io.vproxy.vfx.ui.slider.SliderDirection;
+import io.vproxy.vfx.ui.slider.VSlider;
 import io.vproxy.vfx.util.FXUtils;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -20,6 +24,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 import org.example.ImageClip.ImageClip;
+import org.example.ImageModification.AutoWhiteBalance;
 import org.example.ImageTools.ImageScaler;
 import org.example.ImageTools.ImageTransfer;
 import org.example.ImageTools.ImportImageResource;
@@ -75,6 +80,11 @@ public class ImageEditScene extends SuperScene{
         editingPane.getNode().layoutXProperty().bind(histogramPane.layoutXProperty());
         //绑定和界面下端的距离
         FXUtils.observeHeight(LSMain.getStage().getInitialScene().getContentPane(),editingPane.getNode(),-400);
+        //穿件一个pane来包含各种组件
+        Pane prePane=new Pane(){{
+            setPrefWidth(220);
+//            setPrefHeight(550);
+        }};
         //创建一个矩形用来包裹editingPane
         Rectangle editingPaneRec=new Rectangle(
                 editingPane.getNode().getLayoutX(),
@@ -97,10 +107,11 @@ public class ImageEditScene extends SuperScene{
             getNode().setPrefHeight(45);
             getNode().setLayoutY(20);
         }};
-        //创建绑定，使得ImageClipPane始终位于editingPane中间
-        FXUtils.observeWidthCenter(editingPane.getNode(),littleModulePane.getNode());
-        //创建一个fusionButton用于前往图像裁剪
-        FusionButton imageClipButton=new FusionImageButton(ImportImageResource.getInstance().getImage("image/clip.png")){{
+        //创建绑定，使得ImageClipPane始终位于Pane中间
+        FXUtils.observeWidthCenter(prePane,littleModulePane.getNode());
+        prePane.getChildren().add(littleModulePane.getNode());
+        //创建一个Button用于前往图像裁剪
+        FusionImageButton imageClipButton=new FusionImageButton(ImportImageResource.getInstance().getImage("image/clip.png")){{
             setPrefWidth(25);
             setPrefHeight(25);
             setOnlyAnimateWhenNotClicked(true);
@@ -123,10 +134,72 @@ public class ImageEditScene extends SuperScene{
             }
         });
         littleModulePane.getContentPane().getChildren().add(imageClipButton);
+
+        //创建滑动条
+        var ContrastSlider=new VSlider(SliderDirection.LEFT_TO_RIGHT){{
+            setLength(150);
+            setValueTransform(value -> {
+                double mappedValue = value * 2 - 1; // 将百分比值映射到 [-1, 1] 范围
+                return String.format("%.2f", mappedValue);});
+            layoutYProperty().bind(littleModulePane.getNode().layoutYProperty()
+                    .add(littleModulePane.getNode().heightProperty()
+                            .add(20)));
+        }};
+        //设置居中
+        FXUtils.observeWidthCenter(prePane,ContrastSlider);
+
+        //创建一个button用于前往滑动条调整
+        var sliderEditButton=new FusionImageButton(
+                ImportImageResource.getInstance().getImage("image/slider.png")
+        ){{
+            setPrefWidth(25);
+            setPrefHeight(25);
+            setOnlyAnimateWhenNotClicked(true);
+            setLayoutX(10+25+15);
+            getImageView().setFitHeight(15);
+        }};
+        sliderEditButton.setOnAction(event -> {
+            prePane.getChildren().clear();
+            prePane.getChildren().addAll(littleModulePane.getNode(),ContrastSlider);
+        });
+        FXUtils.observeHeightCenter(littleModulePane.getContentPane(),sliderEditButton);
+        littleModulePane.getContentPane().getChildren().add(sliderEditButton);
+
+        //新建一个button用于自动白平衡
+        var awbButton=new FusionImageButton(
+                ImportImageResource.getInstance().getImage("/image/AWB.png")
+        ){{
+            setPrefWidth(25);
+            setPrefHeight(25);
+            setOnlyAnimateWhenNotClicked(true);
+            setLayoutX(10+25+15+25+15);
+            getImageView().setFitHeight(15);
+        }};
+        FXUtils.observeHeightCenter(littleModulePane.getContentPane(),awbButton);
+        littleModulePane.getContentPane().getChildren().add(awbButton);
+        //设置按钮按下后的动作
+        awbButton.setOnAction(event -> {
+            if(StaticValues.editingImageObj!=null){
+                AutoWhiteBalance.autoWhiteBalance(StaticValues.editingImageObj);
+            }
+        });
+
+
+
+
+
+
         getContentPane().getChildren().add(editingPaneRec);
         getContentPane().getChildren().add(editingPane.getNode());
-        editingPane.setContent(littleModulePane.getNode());
+        editingPane.setContent(prePane);
         getContentPane().getChildren().add(histogramPane);
+
+
+
+
+
+
+
 
         //生成下方pane
         var navigatePane = new FusionPane();{
@@ -207,10 +280,12 @@ public class ImageEditScene extends SuperScene{
         navigatePane.getContentPane().getChildren().add(fromBottomButton);
     }
 
-    public void initEditImagePane(){
+    public static void initEditImagePane(){
         editImagePane.InitImagePane();
-        ImageView nowImageView= ImageScaler.getImageView(StaticValues.editingImageObj.getEditingImage(),editImagePane);
-        editImagePane.getChildren().add(nowImageView);
+        if(StaticValues.editingImageObj!=null){
+            ImageView nowImageView= ImageScaler.getImageView(StaticValues.editingImageObj.getEditingImage(),editImagePane);
+            editImagePane.getChildren().add(nowImageView);
+        }
     }
 
     @Override

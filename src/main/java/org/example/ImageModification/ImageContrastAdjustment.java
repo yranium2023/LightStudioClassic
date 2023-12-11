@@ -1,5 +1,6 @@
 package org.example.ImageModification;
 
+import io.vproxy.vfx.ui.slider.VSlider;
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
@@ -9,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.ImageTools.ImageTransfer;
+import org.example.Obj.ImageObj;
 
 import java.awt.image.BufferedImage;
 import java.util.concurrent.*;
@@ -17,10 +19,10 @@ public class ImageContrastAdjustment extends Application {
 
     private ImageView imageView;
     private Slider contrastSlider;
-    private BufferedImage bufferedImage;
-    private BufferedImage processedImage;
-    private double lastValue = 0.0;
-    private double contrastValue;
+    private static BufferedImage bufferedImage;
+    private static BufferedImage processedImage;
+    private static double lastValue = 0.0;
+    private static double contrastValue;
 
     @Override
     public void start(Stage primaryStage) {
@@ -50,8 +52,23 @@ public class ImageContrastAdjustment extends Application {
         primaryStage.show();
     }
 
+    public static void contrastAdjustBind(ImageObj imageObj,VSlider slider){
+        bufferedImage=ImageTransfer.toBufferedImage(imageObj.getEditingImage());
+        processedImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+        double threshold = 0.1; // 定义阈值，每次滑动长度大于该值时认为值发生改变
+        slider.setOnMouseDragged(event->{
+            double newValue = 0.2+slider.getPercentage()*1.6;
+            if (Math.abs(newValue - lastValue) > threshold) {
+                contrastValue = 2-newValue;
+                adjustContrastAsync();
+                // Update the ImageView with the adjusted image
+                lastValue = newValue;
+            }
+        });
+    }
 
-    private void adjustContrastAsync() {
+
+    private static void adjustContrastAsync() {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             ForkJoinPool forkJoinPool = new ForkJoinPool();
@@ -59,7 +76,7 @@ public class ImageContrastAdjustment extends Application {
             forkJoinPool.shutdown();
             javafx.application.Platform.runLater(() -> {
                 Image adjustedImage = SwingFXUtils.toFXImage(processedImage, null);
-                imageView.setImage(adjustedImage);
+
                 // 释放资源
                 bufferedImage.flush();
                 processedImage.flush();
@@ -68,7 +85,7 @@ public class ImageContrastAdjustment extends Application {
         executor.shutdown();
     }
 
-    class ContrastTask extends RecursiveAction {
+    private static class ContrastTask extends RecursiveAction {
         private static final int Max = 10000;
         private final int startX, startY, endX, endY;
 

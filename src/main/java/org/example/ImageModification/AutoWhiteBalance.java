@@ -16,6 +16,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.ImageTools.ImageTransfer;
 import org.example.Obj.ImageObj;
+import org.example.Scene.ImageEditScene;
 
 import java.awt.image.BufferedImage;
 import java.util.concurrent.*;
@@ -23,31 +24,11 @@ import java.util.concurrent.*;
 
 public class AutoWhiteBalance {
     private ImageView imageView;
-    private BufferedImage bufferedImage;
-    private BufferedImage processedImage;//处理完的图形
-    private double  redGain,greenGain,blueGain;
+    private static BufferedImage bufferedImage;
+    private static BufferedImage processedImage;//处理完的图形
+    private static double  redGain,greenGain,blueGain;
 
-//    @Override
-//    public void start(Stage  primaryStage)  {
-//        Image originalImage = new Image(getClass().getResource("/image/c.jpg").toString());
-//        imageView = new ImageView(originalImage);
-//        imageView.setFitWidth(400);
-//        imageView.setFitHeight(300);
-//        bufferedImage = ImageTransfer.toBufferedImage(imageView.getImage());
-//        processedImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-//        VBox root = new VBox(10);
-//        Button button=new Button("白平衡");
-//        button.setOnAction(e->{
-//            calculateRGBGain();
-//            WhiteBalance();
-//        });
-//        root.getChildren().addAll(imageView,button);
-//        Scene scene = new Scene(root, 600, 400);
-//        primaryStage.setTitle("Image Exposure Adjustment");
-//        primaryStage.setScene(scene);
-//        primaryStage.show();
-//
-//    }
+
     /**
      * @Description  该方法用于实现按钮对图片进行自动白平衡调整
      * @param editingImageObj
@@ -55,14 +36,14 @@ public class AutoWhiteBalance {
      * @date 2023/12/11 15:26
     **/
 
-    public void autoWhiteBalance(ImageObj editingImageObj){
+    public static void autoWhiteBalance(ImageObj editingImageObj){
         bufferedImage=ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
         processedImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
         calculateRGBGain();
         WhiteBalance(editingImageObj);
     }
 
-    private void calculateRGBGain(){
+    private static void calculateRGBGain(){
         // 计算图像的红色、绿色和蓝色通道的平均值
         double totalRed = 0.0, totalGreen = 0.0, totalBlue = 0.0;
         int width = bufferedImage.getWidth();
@@ -93,7 +74,7 @@ public class AutoWhiteBalance {
         blueGain = grayValue / averageBlue;
     }
 
-    private void WhiteBalance(ImageObj editingImageObj){
+    private static void WhiteBalance(ImageObj editingImageObj){
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             ForkJoinPool forkJoinPool=new ForkJoinPool();
@@ -104,6 +85,8 @@ public class AutoWhiteBalance {
                 //设置新图像
                 editingImageObj.getEditImages().add(adjustedImage);
                 editingImageObj.renewAll(adjustedImage);
+                //刷新显示的图像
+                ImageEditScene.initEditImagePane();
                 // 释放资源
                 bufferedImage.flush();
                 processedImage.flush();
@@ -111,7 +94,7 @@ public class AutoWhiteBalance {
         });
         executor.shutdown();
     }
-    class AutoWhiteBalanceTask extends RecursiveAction{
+    private static class AutoWhiteBalanceTask extends RecursiveAction{
         private static final int Max =200000;
         private final int startX, startY, endX, endY;
         AutoWhiteBalanceTask(int startX, int startY, int endX, int endY){
