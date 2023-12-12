@@ -111,7 +111,7 @@ public class LSMain extends Application {
         });
         ImageEditButton.setOnAction(e -> {
             StaticValues.importHistogramPane(imageEditScene.histogramPane);
-            imageEditScene.initEditImagePane();
+            imageEditScene.initImageEditScene();
             sceneGroup.show(imageEditScene, VSceneShowMethod.FROM_RIGHT);
         });
 

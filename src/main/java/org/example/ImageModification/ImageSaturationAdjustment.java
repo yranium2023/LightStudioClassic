@@ -6,6 +6,9 @@ package org.example.ImageModification;
  * @date 2023/12/9 15:00
  */
 
+import io.vproxy.vfx.ui.slider.VSlider;
+import javafx.beans.value.ChangeListener;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
@@ -13,6 +16,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.ImageTools.ImageTransfer;
+import org.example.Obj.ImageObj;
+import org.example.Scene.ImageEditScene;
+import org.example.StaticValues;
 
 import java.awt.image.BufferedImage;
 import java.util.concurrent.ExecutorService;
@@ -20,36 +26,53 @@ import java.util.concurrent.Executors;
 
 public class ImageSaturationAdjustment extends ImageAdjustment {
 
-    private double lastValue=1;
-    private double saturationValue;
+    private static double lastValue=1;
+    private static double saturationValue;
+    private static ChangeListener<Number> SliderListener;
 
-    public void start(Stage primaryStage) {
-        Image originalImage = new Image(getClass().getResource("/image/a.jpg").toString());
-        imageView = new ImageView(originalImage);
-        imageView.setFitWidth(400);
-        imageView.setFitHeight(300);
-        bufferedImage = ImageTransfer.toBufferedImage(imageView.getImage());
-        processedImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Slider saturationSlider = new Slider(0.0, 2, 1);
-        double threshold =0.1;
-        saturationSlider.setOnMouseDragged(event -> {
-            double newValue=saturationSlider.getValue();
-            if(Math.abs(newValue-lastValue)>threshold){
-                saturationValue=saturationSlider.getValue();
-                adjustSaturationAsync();
-                lastValue=newValue;
+
+    /**
+     * @Description  该方法用于绑定饱和度调整滑动条
+     * @param saturationSlider
+     * @param editingImageObj
+     * @author 吴鹄远
+     * @date 2023/12/12 16:44
+    **/
+
+    public static void saturationAdjustBind(VSlider saturationSlider, ImageObj editingImageObj){
+        if(editingImageObj!=null){
+            System.out.println("bind success");
+            bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
+            processedImage = new BufferedImage(
+                    bufferedImage.getWidth(),
+                    bufferedImage.getHeight(),
+                    BufferedImage.TYPE_INT_ARGB);
+            // 移除之前的监听器
+            if (SliderListener != null) {
+                saturationSlider.percentageProperty().removeListener(SliderListener);
             }
-        });
-
-        VBox root = new VBox(10);
-        root.getChildren().addAll(imageView, saturationSlider);
-        Scene scene = new Scene(root, 600, 400);
-        primaryStage.setTitle("Image Saturation Adjustment");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+            saturationSlider.setPercentage(StaticValues.editingImageObj.getSaturationPercent());
+            double threshold = 0.1; // 定义阈值，每次滑动长度大于该值时认为值发生改变
+            lastValue=1;
+            // 创建新的监听器
+            SliderListener = (obs, old, now) -> {
+                if (old == now) return;
+                double newValue = 0 + saturationSlider.getPercentage() * 2;//0 1 2
+                if (Math.abs(newValue - lastValue) > threshold) {
+                    saturationValue = newValue;
+                    adjustSaturationAsync(editingImageObj);
+                    lastValue = newValue;
+                }
+            };
+            // 添加新的监听器
+            saturationSlider.percentageProperty().addListener(SliderListener);
+            saturationSlider.setOnMouseReleased(e->{
+                editingImageObj.setSaturationPercent(saturationSlider.getPercentage());
+            });
+        }
     }
 
-    private void adjustSaturationAsync() {
+    private static void adjustSaturationAsync(ImageObj editingImageObj) {
 
         ExecutorService executor = Executors.newCachedThreadPool();
         executor.submit(() -> {
@@ -67,8 +90,13 @@ public class ImageSaturationAdjustment extends ImageAdjustment {
                 }
             }.run();
             javafx.application.Platform.runLater(() -> {
-                Image adjustedImage =ImageTransfer.toJavaFXImage(processedImage);
-                imageView.setImage(adjustedImage);
+                Image adjustedImage = SwingFXUtils.toFXImage(processedImage, null);
+                //设置新图像
+                editingImageObj.getEditImages().add(adjustedImage);
+                editingImageObj.renewAll(adjustedImage);
+                //刷新显示的图像
+                ImageEditScene.initEditImagePane();
+                System.out.println("饱和度调整成功");
             });
         });
         executor.shutdown();

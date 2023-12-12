@@ -23,7 +23,7 @@ import java.util.concurrent.*;
 
 
 public class AutoWhiteBalance {
-    private ImageView imageView;
+
     private static BufferedImage bufferedImage;
     private static BufferedImage processedImage;//处理完的图形
     private static double  redGain,greenGain,blueGain;

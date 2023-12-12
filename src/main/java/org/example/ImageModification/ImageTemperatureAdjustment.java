@@ -1,6 +1,9 @@
 package org.example.ImageModification;
 
 
+import io.vproxy.vfx.ui.slider.VSlider;
+import javafx.beans.value.ChangeListener;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
@@ -8,6 +11,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.ImageTools.ImageTransfer;
+import org.example.Obj.ImageObj;
+import org.example.Scene.ImageEditScene;
+import org.example.StaticValues;
 
 import java.awt.image.BufferedImage;
 import java.util.concurrent.ExecutorService;
@@ -16,51 +22,53 @@ import java.util.concurrent.Executors;
 
 /**
  * @author 申雄全
- * @Description 该类实现色相调整
+ * @Description 该类实现色温调整
  * @date 2023/12/8 22:38
  */
 public class ImageTemperatureAdjustment extends ImageAdjustment {
-    private double lastValue;
-    private double Temperature;//色温
-    private double originalTemperature;//初始色温
-    private double redStrength, greenStrength, blueStrength;
+    private static double lastValue;
+    private static double Temperature;//色温
+    private static double originalTemperature;//初始色温
+    private static double redStrength, greenStrength, blueStrength;
+    private static ChangeListener<Number> SliderListener;
 
-    public void start(Stage primaryStage) {
-        Image originalImage = new Image(getClass().getResource("/image/a.jpg").toString());
-        imageView = new ImageView(originalImage);
-        imageView.setFitWidth(400);
-        imageView.setFitHeight(300);
-        bufferedImage = ImageTransfer.toBufferedImage(imageView.getImage());
-        processedImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        Slider temperatureSlider = getTemperatureSlider();
-        VBox root = new VBox(10);
-        root.getChildren().addAll(imageView, temperatureSlider);
-        Scene scene = new Scene(root, 600, 400);
-        primaryStage.setTitle("Image Exposure Adjustment");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-    private Slider getTemperatureSlider() {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
-           originalTemperature = calculateColorTemperature();
-        });
-        executor.shutdown();
-        lastValue=5;
-        Slider temperatureSlider = new Slider(0.15,1.85,1);
-        double threshold =0.1; // 定义阈值，每次滑动长度大于该值时认为值发生改变
-        temperatureSlider.setOnMouseDragged(event-> {
-            // Update the exposure when the slider value changes
-            double newValue=temperatureSlider.getValue();
-            if(Math.abs(newValue-lastValue)>threshold){
-                Temperature =originalTemperature*(2-newValue);
-                adjustExposureAsync();
-                lastValue=newValue;
+    public static void temperatureAdjustBind(VSlider temperatureSlider, ImageObj editingImageObj){
+        if(editingImageObj!=null){
+            System.out.println("bind success");
+            bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
+            processedImage = new BufferedImage(
+                    bufferedImage.getWidth(),
+                    bufferedImage.getHeight(),
+                    BufferedImage.TYPE_INT_ARGB);
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.submit(() -> {
+                originalTemperature = calculateColorTemperature();
+            });
+            // 移除之前的监听器
+            if (SliderListener != null) {
+                temperatureSlider.percentageProperty().removeListener(SliderListener);
             }
-        });
-        return temperatureSlider;
+            temperatureSlider.setPercentage(StaticValues.editingImageObj.getTemperaturePercent());
+            double threshold = 0.04; // 定义阈值，每次滑动长度大于该值时认为值发生改变
+            lastValue=1;
+            // 创建新的监听器
+            SliderListener = (obs, old, now) -> {
+                if (old == now) return;
+                double newValue = 0.15 + temperatureSlider.getPercentage() * 1.7;//0.15 1 1.85
+                if (Math.abs(newValue - lastValue) > threshold) {
+                    Temperature =originalTemperature*(2-newValue);
+                    adjustTemperatureAsync(editingImageObj);
+                    lastValue = newValue;
+                }
+            };
+            // 添加新的监听器
+            temperatureSlider.percentageProperty().addListener(SliderListener);
+            temperatureSlider.setOnMouseReleased(e->{
+                editingImageObj.setTemperaturePercent(temperatureSlider.getPercentage());
+            });
+        }
     }
-    private void adjustExposureAsync() {
+    private static void adjustTemperatureAsync(ImageObj editingImageObj) {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
@@ -82,12 +90,17 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
                 }
             }.run();
             javafx.application.Platform.runLater(() -> {
-                Image adjustedImage =ImageTransfer.toJavaFXImage(processedImage);
-                imageView.setImage(adjustedImage);
+                Image adjustedImage = SwingFXUtils.toFXImage(processedImage, null);
+                //设置新图像
+                editingImageObj.getEditImages().add(adjustedImage);
+                editingImageObj.renewAll(adjustedImage);
+                //刷新显示的图像
+                ImageEditScene.initEditImagePane();
+                System.out.println("色温调整成功");
             });
         });
     }
-    private double calculateColorTemperature() {
+    private static double calculateColorTemperature() {
         int totalPixels = bufferedImage.getWidth() * bufferedImage.getHeight();
         int width= bufferedImage.getWidth(),height= bufferedImage.getHeight();
         int redTotal = 0;
@@ -115,7 +128,7 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
     }
 
 
-    private void calculateRGBStrength(){
+    private static void calculateRGBStrength(){
         double kelvin = Temperature / 100;
         if (kelvin < 66) {
             redStrength = 255;
