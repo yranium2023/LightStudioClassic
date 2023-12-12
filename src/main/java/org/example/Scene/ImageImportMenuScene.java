@@ -3,6 +3,7 @@ package org.example.Scene;
 import io.vproxy.vfx.theme.Theme;
 import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.button.FusionImageButton;
+import io.vproxy.vfx.ui.layout.HPadding;
 import io.vproxy.vfx.ui.layout.VPadding;
 import io.vproxy.vfx.ui.loading.VProgressBar;
 import io.vproxy.vfx.ui.pane.FusionPane;
@@ -15,13 +16,10 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
 import org.example.Obj.ImageObj;
@@ -41,10 +39,10 @@ import java.util.function.Supplier;
 public class ImageImportMenuScene extends SuperScene {
     //所有所选中的图片
     private List<ImageObj> selectedImages = new ArrayList<>();
-    private List<ImageObj> totalImages = new ArrayList<>();
+    public static List<ImageObj> totalImages = new ArrayList<>();
     private List<VBox> fusionImageButtonsVbox = null;
 
-    private List<FusionButton> fusionImageButtons = new ArrayList<>();
+    public static List<VBox> copyImageButtonsVbox = new ArrayList<>();
 
     public ImageImportMenuScene(Supplier<VSceneGroup> sceneGroupSup) {
 
@@ -132,9 +130,11 @@ public class ImageImportMenuScene extends SuperScene {
                                 Image compressedEditorImage = ConvertUtil.ConvertToFxImage(compressedEditorBufferedImage);
                                 imageObj.setEditingImage(compressedEditorImage);
                                 selectedImages.add(imageObj);
+                                totalImages.add(imageObj);
                             } else {
                                 imageObj.setEditingImage(selectedImage);
                                 selectedImages.add(imageObj);
+                                totalImages.add(imageObj);
                             }
 
                             // 更新进度
@@ -231,9 +231,13 @@ public class ImageImportMenuScene extends SuperScene {
             copy.getImageView().setLayoutX((80 - buttonWidth) / 2);
             copy.getImageView().setLayoutY((80 - buttonHeight) / 2);
             // 将按钮添加到列表 同时添加一个拷贝
-            fusionImageButtons.add(copy);
+            VBox copyVox = new VBox();
+            copyVox.getChildren().add(copy);
+            copyVox.getChildren().add(new HPadding(100));
+            copyImageButtonsVbox.add(copyVox);
             imageObj.setImageButton(button);
             imageObj.setCopyButton(copy);
+            imageObj.setCopyVBox(copyVox);
             Label descriptionLabel = new Label(Integer.toString((int) imageObj.getOriginalImage().getWidth()) + '×' + (int) imageObj.getOriginalImage().getHeight());
             descriptionLabel.setTextFill(Color.WHITE);
             VBox buttonVBox = new VBox();
@@ -241,6 +245,7 @@ public class ImageImportMenuScene extends SuperScene {
             buttonVBox.setSpacing(5);
             buttonVBox.getChildren().add(button);
             buttonVBox.getChildren().add(descriptionLabel);
+            imageObj.setButtonVBox(buttonVBox);
             buttonBoxs.add(buttonVBox);
         }
 
@@ -287,8 +292,8 @@ public class ImageImportMenuScene extends SuperScene {
      * @date 2023/12/9 19:18
      **/
 
-    public List<FusionButton> getFusionImageButtons() {
-        return fusionImageButtons;
+    public List<VBox> getCopyImageButtonsVboxButtons() {
+        return copyImageButtonsVbox;
     }
 
     /***
@@ -298,7 +303,7 @@ public class ImageImportMenuScene extends SuperScene {
      **/
 
     public void clearImageButtons() {
-        fusionImageButtons.clear();
+        copyImageButtonsVbox.clear();
     }
 
     @Override

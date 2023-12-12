@@ -1,11 +1,14 @@
 package org.example.Obj;
 
-import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.button.FusionImageButton;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
+import org.example.Scene.ImageEditScene;
+import org.example.Scene.ImageImportMenuScene;
+import org.example.Scene.ImageImportScene;
 import org.example.StaticValues;
 
 import java.awt.image.BufferedImage;
@@ -23,132 +26,137 @@ public class ImageObj {
     //压缩到80*80的小图片
     private Image buttonImage = null;
     //压缩到2k的大图片
-    private Image editingImage =null;
+    private Image editingImage = null;
     //裁减过程中产生的图片列表
     private List<Image> clipImages = new ArrayList<>();
     //编辑过程中产生的图片列表
     private List<Image> editImages = new ArrayList<>();
     //传入图片的路径
     String imagePath = null;
+    //图库中整个vbox
+    private VBox buttonVBox = null;
     //图库中按钮
     private FusionImageButton imageButton = null;
     //横板按钮
-    private FusionImageButton  copyButton = null;
+    private FusionImageButton copyButton = null;
+    //横版中整个vbox
+    private VBox copyVBox = null;
     //对比度滑动条，初始化为0.5
-    private double contrastPercent=0.5;
+    private double contrastPercent = 0.5;
     //曝光度滑动条，初始化为0.5
-    private double exposurePercent=0.5;
+    private double exposurePercent = 0.5;
     //饱和度滑动条，初始化为0.5
-    private double saturationPercent=0.5;
+    private double saturationPercent = 0.5;
     //色温滑动条，初始化为0.5
-    private double temperaturePercent=0.5;
+    private double temperaturePercent = 0.5;
 
     /***
-     * @Description  构造函数 用于构建Image对象
+     * @Description 构造函数 用于构建Image对象
      * @param originalImage
      * @return null
      * @author 张喆宇
      * @date 2023/12/9 11:09
-    **/
+     **/
 
     public ImageObj(Image originalImage) {
         this.originalImage = originalImage;
-        this.imagePath=originalImage.getUrl();
+        this.imagePath = originalImage.getUrl();
     }
+
     /***
-     * @Description  传入按钮图片
+     * @Description 传入按钮图片
      * @param buttonImage
      * @author 张喆宇
      * @date 2023/12/9 11:13
-    **/
+     **/
 
     public void setButtonImage(Image buttonImage) {
         this.buttonImage = buttonImage;
     }
 
     /***
-     * @Description  传入编辑用图片
+     * @Description 传入编辑用图片
      * @param editingImage
      * @author 张喆宇
      * @date 2023/12/9 11:13
-    **/
+     **/
 
     public void setEditingImage(Image editingImage) {
         this.editingImage = editingImage;
     }
 
     /***
-     * @Description  获取原图
+     * @Description 获取原图
      * @return javafx.scene.image.Image
      * @author 张喆宇
      * @date 2023/12/9 11:14
-    **/
+     **/
 
     public Image getOriginalImage() {
         return originalImage;
     }
 
     /***
-     * @Description  获取按钮图片
+     * @Description 获取按钮图片
      * @return javafx.scene.image.Image
      * @author 张喆宇
      * @date 2023/12/9 11:14
-    **/
+     **/
 
     public Image getButtonImage() {
         return buttonImage;
     }
 
     /***
-     * @Description  获取编辑中图片
+     * @Description 获取编辑中图片
      * @return javafx.scene.image.Image
      * @author 张喆宇
      * @date 2023/12/9 11:14
-    **/
+     **/
 
     public Image getEditingImage() {
         return editingImage;
     }
 
     /***
-     * @Description  获取图片路径
+     * @Description 获取图片路径
      * @return java.lang.String
      * @author 张喆宇
      * @date 2023/12/9 11:14
-    **/
+     **/
 
     public String getImagePath() {
         return imagePath;
     }
 
     /***
-     * @Description  获取裁剪图片列表
+     * @Description 获取裁剪图片列表
      * @author 张喆宇
      * @date 2023/12/9 11:26
-    **/
+     **/
 
     public List<Image> getClipImages() {
         return clipImages;
     }
 
     /***
-     * @Description  获取编辑图片列表
+     * @Description 获取编辑图片列表
      * @author 张喆宇
      * @date 2023/12/9 11:28
-    **/
+     **/
     public List<Image> getEditImages() {
         return editImages;
     }
 
     /***
-     * @Description  用于压缩图片 普通压缩
+     * @Description 用于压缩图片 普通压缩
      * @param image
      * @return javafx.scene.image.Image
      * @author 张喆宇
      * @date 2023/12/9 21:47
-    **/
+     **/
 
-    public static Image resizeNormalImage(Image image){
+    public static Image resizeNormalImage(Image image) {
         BufferedImage bufferedImage = SwingFXUtils.fromFXImage(image, null);
         double imageHeight = image.getHeight();
         double imageWidth = image.getWidth();
@@ -170,14 +178,14 @@ public class ImageObj {
     }
 
     /***
-     * @Description  用于压缩图片 按钮级别压缩
+     * @Description 用于压缩图片 按钮级别压缩
      * @param image
      * @return javafx.scene.image.Image
      * @author 张喆宇
      * @date 2023/12/9 21:49
-    **/
+     **/
 
-    public static Image resizeButtonImage(Image image){
+    public static Image resizeButtonImage(Image image) {
         double imageHeight = image.getHeight();
         double imageWidth = image.getWidth();
         double rate = imageHeight / imageWidth;
@@ -195,24 +203,32 @@ public class ImageObj {
     }
 
     /***
-     * @Description  存入图库中按钮
+     * @Description 存入图库中按钮
      * @param imageButton
      * @author 张喆宇
      * @date 2023/12/10 0:30
-    **/
+     **/
 
-    public void setImageButton(FusionImageButton  imageButton) {
+    public void setImageButton(FusionImageButton imageButton) {
         this.imageButton = imageButton;
     }
 
+    public void setButtonVBox(VBox buttonVBox) {
+        this.buttonVBox = buttonVBox;
+    }
+
+    public void setCopyVBox(VBox copyVBox) {
+        this.copyVBox = copyVBox;
+    }
+
     /***
-     * @Description  存入横版按钮
+     * @Description 存入横版按钮
      * @param copyButton
      * @author 张喆宇
      * @date 2023/12/10 0:30
-    **/
+     **/
 
-    public void setCopyButton(FusionImageButton  copyButton) {
+    public void setCopyButton(FusionImageButton copyButton) {
         this.copyButton = copyButton;
     }
 
@@ -221,8 +237,8 @@ public class ImageObj {
      * @return null
      * @author 张喆宇
      * @date 2023/12/10 0:32
-    **/
-    private void renewButton(){
+     **/
+    private void renewButton() {
         this.imageButton.getImageView().setImage(buttonImage);
         this.imageButton.getImageView().setLayoutX((80 - buttonImage.getWidth()) / 2);
         this.imageButton.getImageView().setLayoutY((80 - buttonImage.getHeight()) / 2);
@@ -230,25 +246,42 @@ public class ImageObj {
         this.copyButton.getImageView().setLayoutX((80 - buttonImage.getWidth()) / 2);
         this.copyButton.getImageView().setLayoutY((80 - buttonImage.getHeight()) / 2);
     }
+
     /**
-     * @Description  这个类用来生成新的压缩图片、图标图片、直方图
      * @param nowImage
+     * @Description 这个类用来生成新的压缩图片、图标图片、直方图
      * @author 吴鹄远
      * @date 2023/12/11 15:24
-    **/
+     **/
 
-    public void renewAll(Image nowImage){
+    public void renewAll(Image nowImage) {
         //生成和替换缩略图
-        Image newButtonImage=ImageObj.resizeButtonImage(nowImage);
+        Image newButtonImage = ImageObj.resizeButtonImage(nowImage);
         setButtonImage(newButtonImage);
         renewButton();
         //生成和替换压缩图片
-        Image newEditingImage=ImageObj.resizeNormalImage(nowImage);
+        Image newEditingImage = ImageObj.resizeNormalImage(nowImage);
         setEditingImage(newEditingImage);
         Histogram.drawHistogram(newEditingImage);
     }
 
-    public  double getContrastPercent() {
+    /***
+     * @Description  用于从两个图片按钮以及总图片中移除所有产生的按钮
+     * @author 张喆宇
+     * @date 2023/12/12 22:17
+    **/
+
+    public void delete(){
+        ImageImportMenuScene.totalImages.remove(this);
+        ImageImportScene.flowImportPane.getChildren().remove(this.buttonVBox);
+        ImageEditScene.hEditBox.getChildren().remove(this.copyVBox);
+        if(!ImageImportMenuScene.totalImages.isEmpty())
+            StaticValues.editingImageObj=ImageImportMenuScene.totalImages.get(0);
+        Histogram.drawHistogram(StaticValues.editingImageObj.getEditingImage());
+        ImageEditScene.initEditImagePane();
+    }
+
+    public double getContrastPercent() {
         return contrastPercent;
     }
 

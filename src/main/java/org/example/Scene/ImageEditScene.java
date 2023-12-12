@@ -6,9 +6,7 @@ import io.vproxy.vfx.manager.font.FontManager;
 import io.vproxy.vfx.theme.Theme;
 import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.button.FusionImageButton;
-import io.vproxy.vfx.ui.button.ImageButton;
 import io.vproxy.vfx.ui.layout.HPadding;
-import io.vproxy.vfx.ui.layout.VPadding;
 import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.*;
 import io.vproxy.vfx.ui.slider.SliderDirection;
@@ -18,7 +16,6 @@ import io.vproxy.vfx.util.FXUtils;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -28,7 +25,6 @@ import javafx.util.Duration;
 import org.example.ImageClip.ImageClip;
 import org.example.ImageModification.*;
 import org.example.ImageTools.ImageScaler;
-import org.example.ImageTools.ImageTransfer;
 import org.example.ImageTools.ImportImageResource;
 import org.example.LSMain;
 import org.example.Pane.ImagePane;
@@ -64,6 +60,22 @@ public class ImageEditScene extends SuperScene{
         getNode().setLayoutY(20);
     }};
     VScene scene = new VScene(VSceneRole.DRAWER_HORIZONTAL);
+
+    public static VScrollPane scrollEditFlowPane = new VScrollPane(ScrollDirection.HORIZONTAL) {{
+        getNode().setLayoutX(0);
+        getNode().setLayoutY(0);
+        getNode().setPrefWidth(1275);
+        getNode().setPrefHeight(100);
+    }};
+
+    // 创建 FlowPane 用于放图片按钮
+    public static HBox hEditBox = new HBox() {{
+        setLayoutX(10);
+        setLayoutY(0);
+        setPrefHeight(scrollEditFlowPane.getNode().getPrefHeight());
+        setPrefWidth(scrollEditFlowPane.getNode().getPrefWidth());
+        // 设置行间距
+    }};
 
     public ImageEditScene(Supplier<VSceneGroup> sceneGroupSup) {
         super(VSceneRole.MAIN);
@@ -296,33 +308,19 @@ public class ImageEditScene extends SuperScene{
                 Insets.EMPTY
         )));
         //新建VScrollPane用于生成滑动窗口，并存放flowPane
-        VScrollPane scrollFlowPane = new VScrollPane(ScrollDirection.HORIZONTAL) {{
-            getNode().setLayoutX(0);
-            getNode().setLayoutY(0);
-            getNode().setPrefWidth(1275);
-            getNode().setPrefHeight(100);
-        }};
-        FXUtils.observeWidthHeight(scene.getContentPane(),scrollFlowPane.getNode());
-        // 创建 FlowPane 用于放图片按钮
-        HBox hBox = new HBox() {{
-            setLayoutX(10);
-            setLayoutY(0);
-            setPrefHeight(scrollFlowPane.getNode().getPrefHeight());
-            setPrefWidth(scrollFlowPane.getNode().getPrefWidth());
-            // 设置行间距
-        }};
+        FXUtils.observeWidthHeight(scene.getContentPane(), scrollEditFlowPane.getNode());
         //绑定两个pane的宽和高
-        FXUtils.observeWidthHeight(scrollFlowPane.getNode(), hBox);
+        FXUtils.observeWidthHeight(scrollEditFlowPane.getNode(), hEditBox);
         // 创建一个矩形用于显示flowPane的边框
-        Rectangle flowPaneRec = new Rectangle(scrollFlowPane.getNode().getLayoutX() , scrollFlowPane.getNode().getLayoutY() , hBox.getPrefWidth() , hBox.getPrefHeight() ) {{
+        Rectangle flowPaneRec = new Rectangle(scrollEditFlowPane.getNode().getLayoutX() , scrollEditFlowPane.getNode().getLayoutY() , hEditBox.getPrefWidth() , hEditBox.getPrefHeight() ) {{
             setFill(Color.TRANSPARENT);
             setStroke(Color.WHITE); // 设置矩形的边框颜色
             setStrokeType(StrokeType.INSIDE);//边框为内嵌式，不会超出pane的范围
         }};
-        flowPaneRec.heightProperty().bind(scrollFlowPane.getNode().heightProperty());
+        flowPaneRec.heightProperty().bind(scrollEditFlowPane.getNode().heightProperty());
         scene.getContentPane().getChildren().add(flowPaneRec);
-        scene.getContentPane().getChildren().add(scrollFlowPane.getNode());
-        scrollFlowPane.setContent(hBox);
+        scene.getContentPane().getChildren().add(scrollEditFlowPane.getNode());
+        scrollEditFlowPane.setContent(hEditBox);
         fromBottomButton.setOnAction(e -> {
             if (!sceneGroupSup.get().getScenes().contains(scene)) {
                 sceneGroupSup.get().addScene(scene, VSceneHideMethod.TO_BOTTOM);
@@ -332,12 +330,11 @@ public class ImageEditScene extends SuperScene{
             refreshTimeline.stop();  // 停止之前的定时器，以免叠加
             //50ms刷新一次
             refreshTimeline.getKeyFrames().setAll(new KeyFrame(Duration.millis(50), event -> {
-                List<FusionButton> fusionImageButtons = ImageImportScene.menuScene.getFusionImageButtons();
+                List<VBox> fusionImageButtons = ImageImportScene.menuScene.getCopyImageButtonsVboxButtons();
                 if (fusionImageButtons != null && !fusionImageButtons.isEmpty()) {
                     // 将按钮添加到 hBox
-                    for(FusionButton fusionButton:fusionImageButtons){
-                        hBox.getChildren().add(fusionButton);
-                        hBox.getChildren().add(new HPadding(100));
+                    for(VBox fusionButton:fusionImageButtons){
+                        hEditBox.getChildren().add(fusionButton);
                     }
                     //清空生成的按钮
                     ImageImportScene.menuScene.clearImageButtons();

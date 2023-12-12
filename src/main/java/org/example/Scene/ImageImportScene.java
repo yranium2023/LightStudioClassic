@@ -1,7 +1,9 @@
 package org.example.Scene;
 
 import io.vproxy.vfx.control.scroll.VScrollPane;
+import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.button.FusionImageButton;
+import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.VSceneGroup;
 import io.vproxy.vfx.ui.scene.VSceneHideMethod;
 import io.vproxy.vfx.ui.scene.VSceneRole;
@@ -18,8 +20,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 import org.example.ImageTools.ImportImageResource;
-import org.example.Main;
-import org.example.Pane.HistogramPane;
 import org.example.StaticValues;
 
 import java.util.List;
@@ -35,6 +35,23 @@ public class ImageImportScene extends SuperScene {
     public static ImageImportMenuScene menuScene = null;
     public static Pane histogramPane=new Pane();
 
+    public static VScrollPane scrollImportFlowPane = new VScrollPane() {{
+        getNode().setLayoutX(100);
+        getNode().setLayoutY(100);
+        getNode().setPrefWidth(850);
+        getNode().setPrefHeight(550);
+    }};
+
+    // 创建 FlowPane 用于放图片按钮
+    public static FlowPane flowImportPane = new FlowPane() {{
+        setLayoutX(0);
+        setLayoutY(0);
+        setPrefHeight(scrollImportFlowPane.getNode().getPrefHeight());
+        setPrefWidth(scrollImportFlowPane.getNode().getPrefWidth());
+        // 设置行列间距
+        setHgap(50);
+        setVgap(25);
+    }};
 
     public ImageImportScene(Supplier<VSceneGroup> sceneGroupSup) {
         super(VSceneRole.MAIN);
@@ -49,29 +66,13 @@ public class ImageImportScene extends SuperScene {
             setLayoutY(-1);
         }};
         //新建VScrollPane用于生成滑动窗口，并存放flowPane
-        VScrollPane scrollFlowPane = new VScrollPane() {{
-            getNode().setLayoutX(100);
-            getNode().setLayoutY(100);
-            getNode().setPrefWidth(850);
-            getNode().setPrefHeight(550);
-        }};
 
-        // 创建 FlowPane 用于放图片按钮
-        FlowPane flowPane = new FlowPane() {{
-            setLayoutX(0);
-            setLayoutY(0);
-            setPrefHeight(scrollFlowPane.getNode().getPrefHeight());
-            setPrefWidth(scrollFlowPane.getNode().getPrefWidth());
-            // 设置行列间距
-            setHgap(50);
-            setVgap(25);
-        }};
         //绑定两个pane的宽和高
-        FXUtils.observeWidthHeight(scrollFlowPane.getNode(), flowPane);
+        FXUtils.observeWidthHeight(scrollImportFlowPane.getNode(), flowImportPane);
 
 
         // 创建一个矩形用于显示flowPane的边框
-        Rectangle flowPaneRec = new Rectangle(scrollFlowPane.getNode().getLayoutX() - 20, scrollFlowPane.getNode().getLayoutY() - 10, flowPane.getPrefWidth() + 20, flowPane.getPrefHeight() + 10) {{
+        Rectangle flowPaneRec = new Rectangle(scrollImportFlowPane.getNode().getLayoutX() - 20, scrollImportFlowPane.getNode().getLayoutY() - 10, flowImportPane.getPrefWidth() + 20, flowImportPane.getPrefHeight() + 10) {{
             setFill(Color.TRANSPARENT);
             setStroke(Color.WHITE); // 设置矩形的边框颜色
             setStrokeType(StrokeType.INSIDE);//边框为内嵌式，不会超出pane的范围
@@ -93,7 +94,7 @@ public class ImageImportScene extends SuperScene {
                 List<VBox> fusionImageButtons = menuScene.getFusionImageButtonsVbox();
                 if (fusionImageButtons != null && !fusionImageButtons.isEmpty()) {
                     // 将按钮添加到 FlowPane
-                    flowPane.getChildren().addAll(fusionImageButtons);
+                    flowImportPane.getChildren().addAll(fusionImageButtons);
                     //清空生成的按钮
                     menuScene.clearImageButtonsVbox();
                     refreshTimeline.stop();
@@ -103,15 +104,40 @@ public class ImageImportScene extends SuperScene {
             refreshTimeline.play();
         });
 
-        histogramPane.layoutXProperty().bind(scrollFlowPane.getNode().layoutXProperty().add(scrollFlowPane.getNode().widthProperty().add(60)));
-        histogramPane.layoutYProperty().bind(scrollFlowPane.getNode().layoutYProperty());
+        histogramPane.layoutXProperty().bind(scrollImportFlowPane.getNode().layoutXProperty().add(scrollImportFlowPane.getNode().widthProperty().add(60)));
+        histogramPane.layoutYProperty().bind(scrollImportFlowPane.getNode().layoutYProperty());
         StaticValues.importHistogramPane(histogramPane);
 
         getContentPane().getChildren().add(histogramPane);
+
+        //新建一个opPane用于存放文件操作按钮
+        FusionPane opPane=new FusionPane(){{
+            getNode().setPrefWidth(220);
+            getNode().setPrefHeight(370);
+            getNode().setLayoutY(280);
+            getNode().setLayoutX(1010);
+        }};
+        //删除按钮 用于删除图像
+        var deleteBUtton = new FusionButton("删除图片") {{
+            setLayoutX(40);
+            setPrefWidth(125);
+            setPrefHeight(50);
+            setOnlyAnimateWhenNotClicked(true);
+        }};
+
+        deleteBUtton.setOnAction(e -> {
+           if(StaticValues.editingImageObj!=null){
+                StaticValues.editingImageObj.delete();
+               System.out.println("删除成功");
+           }
+        });
+
+        opPane.getContentPane().getChildren().add(deleteBUtton);
+        getContentPane().getChildren().add(opPane.getNode());
         getContentPane().getChildren().add(flowPaneRec);
         getContentPane().getChildren().add(menuBtn);
-        getContentPane().getChildren().add(scrollFlowPane.getNode());
-        scrollFlowPane.setContent(flowPane);
+        getContentPane().getChildren().add(scrollImportFlowPane.getNode());
+        scrollImportFlowPane.setContent(flowImportPane);
 
     }
 
