@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
  */
 public class ImageTemperatureAdjustment extends ImageAdjustment {
     private static double lastValue;
-    private static double Temperature;//色温
+    private static double kelvin;//色温
     private static double originalTemperature;//初始色温
     private static double redStrength, greenStrength, blueStrength;
     private static ChangeListener<Number> SliderListener;
@@ -35,10 +35,10 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
     public static void temperatureAdjustBind(VSlider temperatureSlider, ImageObj editingImageObj){
         if(editingImageObj!=null){
             System.out.println("bind success");
-            ExecutorService executor = Executors.newSingleThreadExecutor();
+           /* ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.submit(() -> {
                 originalTemperature = calculateColorTemperature();
-            });
+            });*/
             // 移除之前的监听器
             if (SliderListener != null) {
                 temperatureSlider.percentageProperty().removeListener(SliderListener);
@@ -57,9 +57,9 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
                             BufferedImage.TYPE_INT_ARGB);
                     editingImageObj.setNowSlider_1(ImageObj.sliderType_1.TEMPERATURE);
                 }
-                double newValue = 0.15 + temperatureSlider.getPercentage() * 1.7;//0.15 1 1.85
+                double newValue = temperatureSlider.getPercentage() * 1.95;//0.15 1 1.85
                 if (Math.abs(newValue - lastValue) > threshold) {
-                    Temperature =originalTemperature*(2-newValue);
+                    kelvin =20000*(2-newValue)+1000;
                     adjustTemperatureAsync(editingImageObj);
                     lastValue = newValue;
                 }
@@ -75,7 +75,7 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
-            calculateRGBStrength();
+            TemperatureToRGB();
             new ThreadProcess(bufferedImage, processedImage) {
                 @Override
                 public int calculateRGB(int rgb) {
@@ -89,7 +89,6 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
                     blue = (int) (blue * (blueStrength / 255));
                     // Compose the adjusted color
                     return (alpha << 24) | (red << 16) | (green << 8) | blue;
-
                 }
             }.run();
             javafx.application.Platform.runLater(() -> {
@@ -103,63 +102,72 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
             });
         });
     }
-    private static double calculateColorTemperature() {
-        int totalPixels = bufferedImage.getWidth() * bufferedImage.getHeight();
-        int width= bufferedImage.getWidth(),height= bufferedImage.getHeight();
-        int redTotal = 0;
-        int greenTotal = 0;
-        int blueTotal = 0;
+    private static double calculateColorTemperature( ){
+
+        // 计算图像的红色、绿色和蓝色通道的平均值
+        double totalRed = 0.0, totalGreen = 0.0, totalBlue = 0.0;
+        int width = bufferedImage.getWidth();
+        int height = bufferedImage.getHeight();
+        int totalPixels = width * height;
+        // 遍历图像的每个像素
+        double maxRed=0,maxGreen=0,maxBlue=0;
         for (int x = 0; x < width; x++) {
-            for (int y= 0; y < height; y++) {
+            for (int y = 0; y < height; y++) {
                 int rgb = bufferedImage.getRGB(x, y);
                 int red = (rgb >> 16) & 0xFF;
                 int green = (rgb >> 8) & 0xFF;
                 int blue = rgb & 0xFF;
-                redTotal += red;
-                greenTotal += green;
-                blueTotal += blue;
+                // 累加每个通道的值
+                if(red>maxRed) maxRed=red;
+                if(green>maxGreen) maxGreen=green;
+                if(blue>maxBlue) maxBlue=blue;
+                totalRed += red;
+                totalGreen += green;
+                totalBlue += blue;
             }
         }
-        double r = (double) redTotal /totalPixels / 255.0;
-        double g = (double) greenTotal / totalPixels / 255.0;
-        double b = (double) blueTotal / totalPixels / 255.0;
-        double x = (-0.14282) * r + (1.54924) * g + (-0.95641) * b;
-        double y = (-0.32466) * r + (1.57837) * g + (-0.73191) * b;
-        // 根据Y值计算相关色温
+        double averageRed = totalRed / totalPixels;
+        double averageGreen = totalGreen / totalPixels;
+        double averageBlue = totalBlue / totalPixels;
+        double x = (-0.14282) * averageRed + (1.54924) * averageGreen + (-0.95641) *averageBlue;
+        double y = (-0.32466) * averageRed + (1.57837) * averageGreen + (-0.73191) * averageBlue;
         double n = (x - 0.3320) / (y - 0.1858);
-        return (449 * Math.pow(n, 3)) + (3525 * Math.pow(n, 2)) + (6823.3 * n) + 5520.33; // 返回色温值（单位：Kelvin）
+
+        return (449 * Math.pow(n, 3)) + (3525 * Math.pow(n, 2)) + (6823.3 * n) + 5520.33;
+
     }
+    private static void TemperatureToRGB(){
+        double Temperature = kelvin / 100;
 
-
-    private static void calculateRGBStrength(){
-        double kelvin = Temperature / 100;
-        if (kelvin < 66) {
+        if (Temperature < 66) {
             redStrength = 255;
         } else {
-            redStrength = kelvin - 60;
+            redStrength = Temperature - 60;
             redStrength = 329.698727446 * Math.pow(redStrength, -0.1332047592);
             redStrength = Math.max(0, Math.min(redStrength, 255));
         }
-        if (kelvin < 66) {
-            greenStrength = kelvin;
+        if (Temperature < 66) {
+            greenStrength = Temperature;
             greenStrength = 99.4708025861 * Math.log(greenStrength) - 161.1195681661;
             greenStrength = Math.max(0, Math.min(greenStrength, 255));
         } else {
-            greenStrength = kelvin - 60;
+            greenStrength = Temperature - 60;
             greenStrength = 288.1221695283 * Math.pow(greenStrength, -0.0755148492);
             greenStrength = Math.max(0, Math.min(greenStrength, 255));
         }
-        if (kelvin >= 66) {
+        if (Temperature >= 66) {
             blueStrength = 255;
         } else {
-            if (kelvin <= 19) {
-                blueStrength = 0;
+            if (Temperature <= 19) {
+                blueStrength= 0;
             } else {
-                blueStrength = kelvin - 10;
+                blueStrength = Temperature - 10;
                 blueStrength = 138.5177312231 * Math.log(blueStrength) - 305.0447927307;
                 blueStrength = Math.max(0, Math.min(blueStrength, 255));
             }
         }
+
+
     }
 }
 
