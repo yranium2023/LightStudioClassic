@@ -35,11 +35,6 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
     public static void temperatureAdjustBind(VSlider temperatureSlider, ImageObj editingImageObj){
         if(editingImageObj!=null){
             System.out.println("bind success");
-            bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
-            processedImage = new BufferedImage(
-                    bufferedImage.getWidth(),
-                    bufferedImage.getHeight(),
-                    BufferedImage.TYPE_INT_ARGB);
             ExecutorService executor = Executors.newSingleThreadExecutor();
             executor.submit(() -> {
                 originalTemperature = calculateColorTemperature();
@@ -54,6 +49,14 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
             // 创建新的监听器
             SliderListener = (obs, old, now) -> {
                 if (old == now) return;
+                if(editingImageObj.getNowSlider_1()!= ImageObj.sliderType_1.TEMPERATURE){
+                    bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
+                    processedImage = new BufferedImage(
+                            bufferedImage.getWidth(),
+                            bufferedImage.getHeight(),
+                            BufferedImage.TYPE_INT_ARGB);
+                    editingImageObj.setNowSlider_1(ImageObj.sliderType_1.TEMPERATURE);
+                }
                 double newValue = 0.15 + temperatureSlider.getPercentage() * 1.7;//0.15 1 1.85
                 if (Math.abs(newValue - lastValue) > threshold) {
                     Temperature =originalTemperature*(2-newValue);

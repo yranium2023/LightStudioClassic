@@ -42,11 +42,6 @@ public class ImageSaturationAdjustment extends ImageAdjustment {
     public static void saturationAdjustBind(VSlider saturationSlider, ImageObj editingImageObj){
         if(editingImageObj!=null){
             System.out.println("bind success");
-            bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
-            processedImage = new BufferedImage(
-                    bufferedImage.getWidth(),
-                    bufferedImage.getHeight(),
-                    BufferedImage.TYPE_INT_ARGB);
             // 移除之前的监听器
             if (SliderListener != null) {
                 saturationSlider.percentageProperty().removeListener(SliderListener);
@@ -57,6 +52,14 @@ public class ImageSaturationAdjustment extends ImageAdjustment {
             // 创建新的监听器
             SliderListener = (obs, old, now) -> {
                 if (old == now) return;
+                if(editingImageObj.getNowSlider_1()!= ImageObj.sliderType_1.SATURATION){
+                    bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
+                    processedImage = new BufferedImage(
+                            bufferedImage.getWidth(),
+                            bufferedImage.getHeight(),
+                            BufferedImage.TYPE_INT_ARGB);
+                    editingImageObj.setNowSlider_1(ImageObj.sliderType_1.SATURATION);
+                }
                 double newValue = 0 + saturationSlider.getPercentage() * 2;//0 1 2
                 if (Math.abs(newValue - lastValue) > threshold) {
                     saturationValue = newValue;

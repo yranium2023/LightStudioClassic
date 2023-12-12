@@ -11,8 +11,6 @@ import java.awt.image.BufferedImage;
  */
 public class ImageAdjustment {
 
-    protected static ImageView imageView;
-
-    protected static BufferedImage bufferedImage;
-    protected static BufferedImage processedImage;
+    public static BufferedImage bufferedImage;
+    public static BufferedImage processedImage;
 }

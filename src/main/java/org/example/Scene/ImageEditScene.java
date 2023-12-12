@@ -25,11 +25,13 @@ import javafx.util.Duration;
 import org.example.ImageClip.ImageClip;
 import org.example.ImageModification.*;
 import org.example.ImageTools.ImageScaler;
+import org.example.ImageTools.ImageTransfer;
 import org.example.ImageTools.ImportImageResource;
 import org.example.LSMain;
 import org.example.Pane.ImagePane;
 import org.example.StaticValues;
 
+import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -229,6 +231,11 @@ public class ImageEditScene extends SuperScene{
         }};
         sliderEditButton.setOnAction(event -> {
             prePane.getChildren().clear();
+            ImageAdjustment.bufferedImage = ImageTransfer.toBufferedImage(StaticValues.editingImageObj.getEditingImage());
+            ImageAdjustment.processedImage = new BufferedImage(
+                    ImageAdjustment.bufferedImage.getWidth(),
+                    ImageAdjustment.bufferedImage.getHeight(),
+                    BufferedImage.TYPE_INT_ARGB);
             prePane.getChildren().addAll(littleModulePane.getNode(),
                     contrastLabel,
                     contrastSlider,

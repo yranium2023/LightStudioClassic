@@ -36,11 +36,6 @@ public class ImageExposureAdjustment extends ImageAdjustment {
     public static void exposerAdjustBind(VSlider exposureSlider, ImageObj editingImageObj){
         if(editingImageObj!=null){
             System.out.println("bind success");
-            bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
-            processedImage = new BufferedImage(
-                    bufferedImage.getWidth(),
-                    bufferedImage.getHeight(),
-                    BufferedImage.TYPE_INT_ARGB);
             // 移除之前的监听器
             if (SliderListener != null) {
                 exposureSlider.percentageProperty().removeListener(SliderListener);
@@ -51,6 +46,16 @@ public class ImageExposureAdjustment extends ImageAdjustment {
             // 创建新的监听器
             SliderListener = (obs, old, now) -> {
                 if (old == now) return;
+                if(editingImageObj.getNowSlider_1()!= ImageObj.sliderType_1.EXPOSURE){
+                    bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
+                    processedImage = new BufferedImage(
+                            bufferedImage.getWidth(),
+                            bufferedImage.getHeight(),
+                            BufferedImage.TYPE_INT_ARGB);
+                    editingImageObj.setNowSlider_1(ImageObj.sliderType_1.EXPOSURE);
+                    System.out.println("sliderType_1 changed");
+                }
+                System.out.println(editingImageObj.getNowSlider_1());
                 double newValue = -1 + exposureSlider.getPercentage() * 2;//-1 0 1
                 if (Math.abs(newValue - lastValue) > threshold) {
                     exposureValue = newValue;

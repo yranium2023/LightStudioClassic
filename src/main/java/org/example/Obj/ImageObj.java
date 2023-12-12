@@ -49,6 +49,14 @@ public class ImageObj {
     private double saturationPercent = 0.5;
     //色温滑动条，初始化为0.5
     private double temperaturePercent = 0.5;
+    //创建一个枚举类型，存储当前滑动条是四个滑动条中的哪一条
+    private sliderType_1 nowSlider_1=null;
+    public enum sliderType_1{
+        CONTRAST,
+        EXPOSURE,
+        SATURATION,
+        TEMPERATURE
+    }
 
     /***
      * @Description 构造函数 用于构建Image对象
@@ -311,5 +319,13 @@ public class ImageObj {
 
     public void setTemperaturePercent(double temperaturePercent) {
         this.temperaturePercent = temperaturePercent;
+    }
+
+    public sliderType_1 getNowSlider_1() {
+        return nowSlider_1;
+    }
+
+    public void setNowSlider_1(sliderType_1 nowSlider_1) {
+        this.nowSlider_1 = nowSlider_1;
     }
 }

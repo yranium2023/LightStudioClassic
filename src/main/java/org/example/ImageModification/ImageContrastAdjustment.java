@@ -34,11 +34,6 @@ public class ImageContrastAdjustment extends ImageAdjustment {
     public static void contrastAdjustBind(VSlider contrastSlider, ImageObj editingImageObj){
         if(editingImageObj!=null){
             System.out.println("bind success");
-            bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
-            processedImage = new BufferedImage(
-                    bufferedImage.getWidth(),
-                    bufferedImage.getHeight(),
-                    BufferedImage.TYPE_INT_ARGB);
             // 移除之前的监听器
             if (contrastSliderListener != null) {
                 contrastSlider.percentageProperty().removeListener(contrastSliderListener);
@@ -49,6 +44,14 @@ public class ImageContrastAdjustment extends ImageAdjustment {
             // 创建新的监听器
             contrastSliderListener = (obs, old, now) -> {
                 if (old == now) return;
+                if(editingImageObj.getNowSlider_1()!= ImageObj.sliderType_1.CONTRAST){
+                    bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
+                    processedImage = new BufferedImage(
+                            bufferedImage.getWidth(),
+                            bufferedImage.getHeight(),
+                            BufferedImage.TYPE_INT_ARGB);
+                    editingImageObj.setNowSlider_1(ImageObj.sliderType_1.CONTRAST);
+                }
                 double newValue = 0.2 + contrastSlider.getPercentage() * 1.6;
                 if (Math.abs(newValue - lastValue) > threshold) {
                     contrastValue = 2 - newValue;
