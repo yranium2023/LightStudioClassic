@@ -230,26 +230,28 @@ public class ImageEditScene extends SuperScene{
             getImageView().setFitHeight(15);
         }};
         sliderEditButton.setOnAction(event -> {
-            prePane.getChildren().clear();
-            ImageAdjustment.bufferedImage = ImageTransfer.toBufferedImage(StaticValues.editingImageObj.getEditingImage());
-            ImageAdjustment.processedImage = new BufferedImage(
-                    ImageAdjustment.bufferedImage.getWidth(),
-                    ImageAdjustment.bufferedImage.getHeight(),
-                    BufferedImage.TYPE_INT_ARGB);
-            prePane.getChildren().addAll(littleModulePane.getNode(),
-                    contrastLabel,
-                    contrastSlider,
-                    exposureLabel,
-                    exposureSlider,
-                    saturationLabel,
-                    saturationSlider,
-                    temperatureLabel,
-                    temperatureSlider
-            );
-            ImageContrastAdjustment.contrastAdjustBind(contrastSlider,StaticValues.editingImageObj);
-            ImageExposureAdjustment.exposerAdjustBind(exposureSlider,StaticValues.editingImageObj);
-            ImageSaturationAdjustment.saturationAdjustBind(saturationSlider,StaticValues.editingImageObj);
-            ImageTemperatureAdjustment.temperatureAdjustBind(temperatureSlider,StaticValues.editingImageObj);
+            if(StaticValues.editingImageObj!=null){
+                prePane.getChildren().clear();
+                ImageAdjustment.bufferedImage = ImageTransfer.toBufferedImage(StaticValues.editingImageObj.getEditingImage());
+                ImageAdjustment.processedImage = new BufferedImage(
+                        ImageAdjustment.bufferedImage.getWidth(),
+                        ImageAdjustment.bufferedImage.getHeight(),
+                        BufferedImage.TYPE_INT_ARGB);
+                prePane.getChildren().addAll(littleModulePane.getNode(),
+                        contrastLabel,
+                        contrastSlider,
+                        exposureLabel,
+                        exposureSlider,
+                        saturationLabel,
+                        saturationSlider,
+                        temperatureLabel,
+                        temperatureSlider
+                );
+                ImageContrastAdjustment.contrastAdjustBind(contrastSlider,StaticValues.editingImageObj);
+                ImageExposureAdjustment.exposerAdjustBind(exposureSlider,StaticValues.editingImageObj);
+                ImageSaturationAdjustment.saturationAdjustBind(saturationSlider,StaticValues.editingImageObj);
+                ImageTemperatureAdjustment.temperatureAdjustBind(temperatureSlider,StaticValues.editingImageObj);
+            }
         });
         FXUtils.observeHeightCenter(littleModulePane.getContentPane(),sliderEditButton);
         littleModulePane.getContentPane().getChildren().add(sliderEditButton);
