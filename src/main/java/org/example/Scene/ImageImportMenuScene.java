@@ -111,6 +111,7 @@ public class ImageImportMenuScene extends SuperScene {
                         for (int i = 0; i < totalFiles; i++) {
                             // 处理每个选中的图片文件
                             File selectedFile = selectedFiles.get(i);
+                            Platform.runLater(() -> label.setText(selectedFile.getName()));
                             String imagePath = selectedFile.toURI().toString();
                             Image selectedImage = new Image(imagePath);
                             ImageObj imageObj = new ImageObj(selectedImage);
@@ -139,7 +140,6 @@ public class ImageImportMenuScene extends SuperScene {
 
                             // 更新进度
                             progressBar.setProgress((double)(i+1)/(double)(totalFiles));
-                            Platform.runLater(() -> label.setText(selectedFile.getName()));
                         }
                         return null;
                     }
