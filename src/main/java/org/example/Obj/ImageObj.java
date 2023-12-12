@@ -36,6 +36,12 @@ public class ImageObj {
     private FusionImageButton  copyButton = null;
     //对比度滑动条，初始化为0.5
     private double contrastPercent=0.5;
+    //曝光度滑动条，初始化为0.5
+    private double exposurePercent=0.5;
+    //饱和度滑动条，初始化为0.5
+    private double saturationPercent=0.5;
+    //色温滑动条，初始化为0.5
+    private double temperaturePercent=0.5;
 
     /***
      * @Description  构造函数 用于构建Image对象
@@ -247,6 +253,30 @@ public class ImageObj {
     }
 
     public void setContrastPercent(double contrastPercent) {
-        contrastPercent = contrastPercent;
+        this.contrastPercent = contrastPercent;
+    }
+
+    public double getExposurePercent() {
+        return exposurePercent;
+    }
+
+    public void setExposurePercent(double exposurePercent) {
+        this.exposurePercent = exposurePercent;
+    }
+
+    public double getSaturationPercent() {
+        return saturationPercent;
+    }
+
+    public void setSaturationPercent(double saturationPercent) {
+        this.saturationPercent = saturationPercent;
+    }
+
+    public double getTemperaturePercent() {
+        return temperaturePercent;
+    }
+
+    public void setTemperaturePercent(double temperaturePercent) {
+        this.temperaturePercent = temperaturePercent;
     }
 }

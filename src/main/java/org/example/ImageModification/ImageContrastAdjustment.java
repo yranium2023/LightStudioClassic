@@ -23,6 +23,13 @@ public class ImageContrastAdjustment extends ImageAdjustment {
     private static double contrastValue;
     private static ChangeListener<Number> contrastSliderListener;
 
+    /**
+     * @Description  该方法用于绑定对比度调整滑动条
+     * @param contrastSlider
+     * @param editingImageObj
+     * @author 吴鹄远
+     * @date 2023/12/12 16:27
+    **/
 
     public static void contrastAdjustBind(VSlider contrastSlider, ImageObj editingImageObj){
         if(editingImageObj!=null){
@@ -42,8 +49,6 @@ public class ImageContrastAdjustment extends ImageAdjustment {
             // 创建新的监听器
             contrastSliderListener = (obs, old, now) -> {
                 if (old == now) return;
-                editingImageObj.setContrastPercent(contrastSlider.getPercentage());
-                System.out.println(editingImageObj.getContrastPercent());
                 double newValue = 0.2 + contrastSlider.getPercentage() * 1.6;
                 if (Math.abs(newValue - lastValue) > threshold) {
                     contrastValue = 2 - newValue;
@@ -53,6 +58,9 @@ public class ImageContrastAdjustment extends ImageAdjustment {
             };
             // 添加新的监听器
             contrastSlider.percentageProperty().addListener(contrastSliderListener);
+            contrastSlider.setOnMouseReleased(e->{
+                editingImageObj.setContrastPercent(contrastSlider.getPercentage());
+            });
         }
     }
 

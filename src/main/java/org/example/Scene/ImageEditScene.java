@@ -2,6 +2,7 @@ package org.example.Scene;
 
 import io.vproxy.vfx.control.scroll.ScrollDirection;
 import io.vproxy.vfx.control.scroll.VScrollPane;
+import io.vproxy.vfx.manager.font.FontManager;
 import io.vproxy.vfx.theme.Theme;
 import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.button.FusionImageButton;
@@ -12,6 +13,7 @@ import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.*;
 import io.vproxy.vfx.ui.slider.SliderDirection;
 import io.vproxy.vfx.ui.slider.VSlider;
+import io.vproxy.vfx.ui.wrapper.ThemeLabel;
 import io.vproxy.vfx.util.FXUtils;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -24,8 +26,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 import org.example.ImageClip.ImageClip;
-import org.example.ImageModification.AutoWhiteBalance;
-import org.example.ImageModification.ImageContrastAdjustment;
+import org.example.ImageModification.*;
 import org.example.ImageTools.ImageScaler;
 import org.example.ImageTools.ImageTransfer;
 import org.example.ImageTools.ImportImageResource;
@@ -136,17 +137,73 @@ public class ImageEditScene extends SuperScene{
         littleModulePane.getContentPane().getChildren().add(imageClipButton);
 
         //创建滑动条
-        var ContrastSlider=new VSlider(SliderDirection.LEFT_TO_RIGHT){{
-            setLength(150);
+        //创建标签
+        var contrastLabel = new ThemeLabel("对比度调整：") {{
+            FontManager.get().setFont(this, settings -> settings.setSize(12));
+            setLayoutX(10);
+            layoutYProperty().bind(littleModulePane.getNode().layoutYProperty().add(littleModulePane.getNode().heightProperty().add(20)));
+        }};
+        //创建对比度滑动条
+        var contrastSlider=new VSlider(SliderDirection.LEFT_TO_RIGHT){{
+            setLength(180);
             setPercentage(0.5);
             setValueTransform(value -> {
                 double mappedValue = value * 2 - 1; // 将百分比值映射到 [-1, 1] 范围
                 return String.format("%.2f", mappedValue);});
-            layoutYProperty().bind(littleModulePane.getNode().layoutYProperty()
-                    .add(littleModulePane.getNode().heightProperty().add(20)));
+            layoutYProperty().bind(contrastLabel.layoutYProperty().add(30));
         }};
+        //创建标签
+        var exposureLabel = new ThemeLabel("曝光度调整：") {{
+            setLayoutX(10);
+            FontManager.get().setFont(this, settings -> settings.setSize(12));
+            layoutYProperty().bind(contrastSlider.layoutYProperty().add(30));
+        }};
+        //创建曝光度滑动条
+        var exposureSlider=new VSlider(SliderDirection.LEFT_TO_RIGHT){{
+            setLength(180);
+            setPercentage(0.5);
+            setValueTransform(value -> {
+                double mappedValue = value * 2 - 1; // 将百分比值映射到 [-1, 1] 范围
+                return String.format("%.2f", mappedValue);});
+            layoutYProperty().bind(exposureLabel.layoutYProperty().add(30));
+        }};
+        //创建标签
+        var saturationLabel = new ThemeLabel("饱和度调整：") {{
+            FontManager.get().setFont(this, settings -> settings.setSize(12));
+            setLayoutX(10);
+            layoutYProperty().bind(exposureSlider.layoutYProperty().add(30));
+        }};
+        //创建饱和度滑动条
+        var saturationSlider=new VSlider(SliderDirection.LEFT_TO_RIGHT){{
+            setLength(180);
+            setPercentage(0.5);
+            setValueTransform(value -> {
+                double mappedValue = value * 2 - 1; // 将百分比值映射到 [-1, 1] 范围
+                return String.format("%.2f", mappedValue);});
+            layoutYProperty().bind(saturationLabel.layoutYProperty().add(30));
+        }};
+        //创建标签
+        var temperatureLabel = new ThemeLabel("色温调整：") {{
+            FontManager.get().setFont(this, settings -> settings.setSize(12));
+            setLayoutX(10);
+            layoutYProperty().bind(saturationSlider.layoutYProperty().add(30));
+        }};
+        //创建色温滑动条
+        var temperatureSlider=new VSlider(SliderDirection.LEFT_TO_RIGHT){{
+            setLength(180);
+            setPercentage(0.5);
+            setValueTransform(value -> {
+                double mappedValue = value * 2 - 1; // 将百分比值映射到 [-1, 1] 范围
+                return String.format("%.2f", mappedValue);});
+            layoutYProperty().bind(temperatureLabel.layoutYProperty().add(30));
+        }};
+
         //设置居中
-        FXUtils.observeWidthCenter(prePane,ContrastSlider);
+        FXUtils.observeWidthCenter(prePane,contrastSlider);
+        FXUtils.observeWidthCenter(prePane,exposureSlider);
+        FXUtils.observeWidthCenter(prePane,saturationSlider);
+        FXUtils.observeWidthCenter(prePane,temperatureSlider);
+
 
         //创建一个button用于前往滑动条调整
         var sliderEditButton=new FusionImageButton(
@@ -160,8 +217,20 @@ public class ImageEditScene extends SuperScene{
         }};
         sliderEditButton.setOnAction(event -> {
             prePane.getChildren().clear();
-            prePane.getChildren().addAll(littleModulePane.getNode(),ContrastSlider);
-            ImageContrastAdjustment.contrastAdjustBind(ContrastSlider,StaticValues.editingImageObj);
+            prePane.getChildren().addAll(littleModulePane.getNode(),
+                    contrastLabel,
+                    contrastSlider,
+                    exposureLabel,
+                    exposureSlider,
+                    saturationLabel,
+                    saturationSlider,
+                    temperatureLabel,
+                    temperatureSlider
+            );
+            ImageContrastAdjustment.contrastAdjustBind(contrastSlider,StaticValues.editingImageObj);
+            ImageExposureAdjustment.exposerAdjustBind(exposureSlider,StaticValues.editingImageObj);
+            ImageSaturationAdjustment.saturationAdjustBind(saturationSlider,StaticValues.editingImageObj);
+            ImageTemperatureAdjustment.temperatureAdjustBind(temperatureSlider,StaticValues.editingImageObj);
         });
         FXUtils.observeHeightCenter(littleModulePane.getContentPane(),sliderEditButton);
         littleModulePane.getContentPane().getChildren().add(sliderEditButton);
