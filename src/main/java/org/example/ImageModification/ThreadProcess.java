@@ -27,7 +27,6 @@ public abstract class ThreadProcess {
             processedImage.flush();
             forkJoinPool.shutdown();
     }
-
     class Task extends RecursiveAction {
         private static final int Max = 250000;
 
