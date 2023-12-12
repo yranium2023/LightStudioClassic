@@ -1,5 +1,7 @@
 package org.example.ImageModification;
 
+import io.vproxy.vfx.ui.slider.VSlider;
+import javafx.beans.value.ChangeListener;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
 import javafx.scene.control.Slider;
@@ -8,47 +10,54 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.example.ImageTools.ImageTransfer;
+import org.example.Obj.ImageObj;
+import org.example.Scene.ImageEditScene;
+import org.example.StaticValues;
 
 import java.awt.image.BufferedImage;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ImageContrastAdjustment extends ImageAdjustment {
+    private static double lastValue = 0.0;
+    private static double contrastValue;
+    private static ChangeListener<Number> contrastSliderListener;
 
-    private Slider contrastSlider;
 
-    private double lastValue = 0.0;
-    private double contrastValue;
-
-    public void start(Stage primaryStage) {
-        Image originalImage = new Image(getClass().getResource("/image/a.jpg").toString());
-        imageView = new ImageView(originalImage);
-        imageView.setFitWidth(400);
-        imageView.setFitHeight(300);
-        bufferedImage = ImageTransfer.toBufferedImage(imageView.getImage());
-        processedImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        contrastSlider = new Slider( 0.2, 1.8,1.0);
-        double threshold = 0.1; // 定义阈值，每次滑动长度大于该值时认为值发生改变
-        contrastSlider.setOnMouseDragged(event -> {
-            // Update the contrast when the slider value changes
-            double newValue = contrastSlider.getValue();
-            if (Math.abs(newValue - lastValue) > threshold) {
-                contrastValue = 2-newValue;
-                adjustContrastAsync();
-                // Update the ImageView with the adjusted image
-                lastValue = newValue;
+    public static void contrastAdjustBind(VSlider contrastSlider, ImageObj editingImageObj){
+        if(editingImageObj!=null){
+            System.out.println("bind success");
+            bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
+            processedImage = new BufferedImage(
+                    bufferedImage.getWidth(),
+                    bufferedImage.getHeight(),
+                    BufferedImage.TYPE_INT_ARGB);
+            // 移除之前的监听器
+            if (contrastSliderListener != null) {
+                contrastSlider.percentageProperty().removeListener(contrastSliderListener);
             }
-        });
-        VBox root = new VBox(10);
-        root.getChildren().addAll(imageView, contrastSlider);
-        Scene scene = new Scene(root, 600, 400);
-        primaryStage.setTitle("Image Contrast Adjustment");
-        primaryStage.setScene(scene);
-        primaryStage.show();
+            contrastSlider.setPercentage(StaticValues.editingImageObj.getContrastPercent());
+            double threshold = 0.1; // 定义阈值，每次滑动长度大于该值时认为值发生改变
+            lastValue=1.0;
+            // 创建新的监听器
+            contrastSliderListener = (obs, old, now) -> {
+                if (old == now) return;
+                editingImageObj.setContrastPercent(contrastSlider.getPercentage());
+                System.out.println(editingImageObj.getContrastPercent());
+                double newValue = 0.2 + contrastSlider.getPercentage() * 1.6;
+                if (Math.abs(newValue - lastValue) > threshold) {
+                    contrastValue = 2 - newValue;
+                    adjustContrastAsync(editingImageObj);
+                    lastValue = newValue;
+                }
+            };
+            // 添加新的监听器
+            contrastSlider.percentageProperty().addListener(contrastSliderListener);
+        }
     }
 
 
-    private void adjustContrastAsync() {
+    private static void adjustContrastAsync(ImageObj editingImageObj) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             new ThreadProcess(bufferedImage, processedImage) {
@@ -73,7 +82,12 @@ public class ImageContrastAdjustment extends ImageAdjustment {
             }.run();
             javafx.application.Platform.runLater(() -> {
                 Image adjustedImage = SwingFXUtils.toFXImage(processedImage, null);
-                imageView.setImage(adjustedImage);
+                //设置新图像
+                editingImageObj.getEditImages().add(adjustedImage);
+                editingImageObj.renewAll(adjustedImage);
+                //刷新显示的图像
+                ImageEditScene.initEditImagePane();
+                System.out.println("对比度调整成功");
             });
         });
         executor.shutdown();

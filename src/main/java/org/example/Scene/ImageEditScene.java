@@ -25,6 +25,7 @@ import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 import org.example.ImageClip.ImageClip;
 import org.example.ImageModification.AutoWhiteBalance;
+import org.example.ImageModification.ImageContrastAdjustment;
 import org.example.ImageTools.ImageScaler;
 import org.example.ImageTools.ImageTransfer;
 import org.example.ImageTools.ImportImageResource;
@@ -51,7 +52,16 @@ public class ImageEditScene extends SuperScene{
         setLayoutX(60);
         setLayoutY(100);
     }};
-
+    //创建一个pane来包含各种组件
+    private static Pane prePane=new Pane(){{
+        setPrefWidth(220);
+    }};
+    //创建一个fusionPane用于包裹fusionButton
+    private static FusionPane littleModulePane=new FusionPane(){{
+        getNode().setPrefWidth(170);
+        getNode().setPrefHeight(45);
+        getNode().setLayoutY(20);
+    }};
     VScene scene = new VScene(VSceneRole.DRAWER_HORIZONTAL);
 
     public ImageEditScene(Supplier<VSceneGroup> sceneGroupSup) {
@@ -80,11 +90,7 @@ public class ImageEditScene extends SuperScene{
         editingPane.getNode().layoutXProperty().bind(histogramPane.layoutXProperty());
         //绑定和界面下端的距离
         FXUtils.observeHeight(LSMain.getStage().getInitialScene().getContentPane(),editingPane.getNode(),-400);
-        //穿件一个pane来包含各种组件
-        Pane prePane=new Pane(){{
-            setPrefWidth(220);
-//            setPrefHeight(550);
-        }};
+
         //创建一个矩形用来包裹editingPane
         Rectangle editingPaneRec=new Rectangle(
                 editingPane.getNode().getLayoutX(),
@@ -100,13 +106,7 @@ public class ImageEditScene extends SuperScene{
             setStroke(Color.WHITE);
             setStrokeType(StrokeType.INSIDE);
         }};
-        //创建一个fusionPane用于包裹fusionButton
-        FusionPane littleModulePane=new FusionPane(){{
-            enableAutoContentWidthHeight();
-            getNode().setPrefWidth(editingPane.getNode().getPrefWidth()-50);
-            getNode().setPrefHeight(45);
-            getNode().setLayoutY(20);
-        }};
+
         //创建绑定，使得ImageClipPane始终位于Pane中间
         FXUtils.observeWidthCenter(prePane,littleModulePane.getNode());
         prePane.getChildren().add(littleModulePane.getNode());
@@ -138,12 +138,12 @@ public class ImageEditScene extends SuperScene{
         //创建滑动条
         var ContrastSlider=new VSlider(SliderDirection.LEFT_TO_RIGHT){{
             setLength(150);
+            setPercentage(0.5);
             setValueTransform(value -> {
                 double mappedValue = value * 2 - 1; // 将百分比值映射到 [-1, 1] 范围
                 return String.format("%.2f", mappedValue);});
             layoutYProperty().bind(littleModulePane.getNode().layoutYProperty()
-                    .add(littleModulePane.getNode().heightProperty()
-                            .add(20)));
+                    .add(littleModulePane.getNode().heightProperty().add(20)));
         }};
         //设置居中
         FXUtils.observeWidthCenter(prePane,ContrastSlider);
@@ -161,6 +161,7 @@ public class ImageEditScene extends SuperScene{
         sliderEditButton.setOnAction(event -> {
             prePane.getChildren().clear();
             prePane.getChildren().addAll(littleModulePane.getNode(),ContrastSlider);
+            ImageContrastAdjustment.contrastAdjustBind(ContrastSlider,StaticValues.editingImageObj);
         });
         FXUtils.observeHeightCenter(littleModulePane.getContentPane(),sliderEditButton);
         littleModulePane.getContentPane().getChildren().add(sliderEditButton);
@@ -285,6 +286,16 @@ public class ImageEditScene extends SuperScene{
         if(StaticValues.editingImageObj!=null){
             ImageView nowImageView= ImageScaler.getImageView(StaticValues.editingImageObj.getEditingImage(),editImagePane);
             editImagePane.getChildren().add(nowImageView);
+        }
+    }
+
+    public static void initImageEditScene(){
+        editImagePane.InitImagePane();
+        if(StaticValues.editingImageObj!=null){
+            ImageView nowImageView= ImageScaler.getImageView(StaticValues.editingImageObj.getEditingImage(),editImagePane);
+            editImagePane.getChildren().add(nowImageView);
+            prePane.getChildren().clear();
+            prePane.getChildren().add(littleModulePane.getNode());
         }
     }
 
