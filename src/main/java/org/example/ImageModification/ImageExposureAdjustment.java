@@ -67,6 +67,7 @@ public class ImageExposureAdjustment extends ImageAdjustment {
             exposureSlider.percentageProperty().addListener(SliderListener);
             exposureSlider.setOnMouseReleased(e->{
                 editingImageObj.setExposurePercent(exposureSlider.getPercentage());
+                AdjustHistory.addHistory("曝光度调整",exposureValue);
             });
         }
     }

@@ -68,6 +68,7 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
             temperatureSlider.percentageProperty().addListener(SliderListener);
             temperatureSlider.setOnMouseReleased(e->{
                 editingImageObj.setTemperaturePercent(temperatureSlider.getPercentage());
+                AdjustHistory.addHistory("色温调整",kelvin);
             });
         }
     }
