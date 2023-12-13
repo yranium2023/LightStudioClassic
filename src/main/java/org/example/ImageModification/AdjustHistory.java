@@ -21,5 +21,5 @@ public class AdjustHistory {
      */
     public static LinkedHashMap<String, Double> getAdjustHistory() {
         return adjustHistory;
-    }/
+    }
 }
