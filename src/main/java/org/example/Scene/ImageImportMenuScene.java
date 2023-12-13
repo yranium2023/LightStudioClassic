@@ -19,6 +19,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
 import javafx.stage.FileChooser;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
@@ -43,6 +45,7 @@ public class ImageImportMenuScene extends SuperScene {
     private List<VBox> fusionImageButtonsVbox = null;
 
     public static List<VBox> copyImageButtonsVbox = new ArrayList<>();
+
 
     public ImageImportMenuScene(Supplier<VSceneGroup> sceneGroupSup) {
 
@@ -200,6 +203,22 @@ public class ImageImportMenuScene extends SuperScene {
                     System.out.println("选择成功");
                     StaticValues.editingImageObj = imageObj;
                     Histogram.drawHistogram(StaticValues.editingImageObj.getEditingImage());
+                    for(ImageObj imageObj1:totalImages){
+                        if(imageObj1.getImageButton().isDisable())
+                        {
+                            imageObj1.getImageButton().setDisable(false);
+                            imageObj1.getButtonVBox().setBackground(null);
+                        }
+
+                        if(imageObj1.getCopyButton().isDisable()){
+                            imageObj1.getCopyButton().setDisable(false);
+                            imageObj1.getCopyVBox().setBackground(null);
+                        }
+
+                    }
+                    imageObj.getButtonVBox().setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(5), null)));
+                    imageObj.getCopyVBox().setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(5), null)));
+                    button.setDisable(true);
                 }
             });
             copy.setOnAction(e -> {

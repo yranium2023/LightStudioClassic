@@ -328,4 +328,20 @@ public class ImageObj {
     public void setNowSlider_1(sliderType_1 nowSlider_1) {
         this.nowSlider_1 = nowSlider_1;
     }
+
+    public FusionImageButton getImageButton() {
+        return imageButton;
+    }
+
+    public FusionImageButton getCopyButton() {
+        return copyButton;
+    }
+
+    public VBox getButtonVBox() {
+        return buttonVBox;
+    }
+
+    public VBox getCopyVBox() {
+        return copyVBox;
+    }
 }

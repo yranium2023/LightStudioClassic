@@ -53,6 +53,7 @@ public class ImageImportScene extends SuperScene {
         setVgap(25);
     }};
 
+
     public ImageImportScene(Supplier<VSceneGroup> sceneGroupSup) {
         super(VSceneRole.MAIN);
         menuScene=new ImageImportMenuScene(sceneGroupSup);
@@ -131,7 +132,6 @@ public class ImageImportScene extends SuperScene {
                System.out.println("删除成功");
            }
         });
-
         opPane.getContentPane().getChildren().add(deleteBUtton);
         getContentPane().getChildren().add(opPane.getNode());
         getContentPane().getChildren().add(flowPaneRec);
