@@ -57,7 +57,7 @@ public class ImageEditScene extends SuperScene{
     }};
     //创建一个fusionPane用于包裹fusionButton
     private static FusionPane littleModulePane=new FusionPane(){{
-        getNode().setPrefWidth(170);
+        getNode().setPrefWidth(200);
         getNode().setPrefHeight(45);
         getNode().setLayoutY(20);
     }};
@@ -130,7 +130,7 @@ public class ImageEditScene extends SuperScene{
             setPrefWidth(25);
             setPrefHeight(25);
             setOnlyAnimateWhenNotClicked(true);
-            setLayoutX(10);
+            setLayoutX(7);
             getImageView().setFitHeight(15);
         }};
         //使得按钮在pane的高度中间
@@ -226,7 +226,7 @@ public class ImageEditScene extends SuperScene{
             setPrefWidth(25);
             setPrefHeight(25);
             setOnlyAnimateWhenNotClicked(true);
-            setLayoutX(10+25+15);
+            setLayoutX(7+25+10);
             getImageView().setFitHeight(15);
         }};
         sliderEditButton.setOnAction(event -> {
@@ -263,7 +263,7 @@ public class ImageEditScene extends SuperScene{
             setPrefWidth(25);
             setPrefHeight(25);
             setOnlyAnimateWhenNotClicked(true);
-            setLayoutX(10+25+15+25+15);
+            setLayoutX(7+25+10+25+10);
             getImageView().setFitHeight(15);
         }};
         FXUtils.observeHeightCenter(littleModulePane.getContentPane(),awbButton);
@@ -282,12 +282,24 @@ public class ImageEditScene extends SuperScene{
             setPrefWidth(25);
             setPrefHeight(25);
             setOnlyAnimateWhenNotClicked(true);
-            setLayoutX(10+25+15+25+15+25+15);
+            setLayoutX(7+25+10+25+10+25+10);
             getImageView().setFitHeight(15);
         }};
         FXUtils.observeHeightCenter(littleModulePane.getContentPane(),curveButton);
         littleModulePane.getContentPane().getChildren().add(curveButton);
-        
+
+        //创建一个button用于前往hsl调整
+        var HSLButton=new FusionImageButton(
+                ImportImageResource.getInstance().getImage("/image/HSL.png")
+        ){{
+            setPrefWidth(25);
+            setPrefHeight(25);
+            setOnlyAnimateWhenNotClicked(true);
+            setLayoutX(7+25+10+25+10+25+10+25+10);
+            getImageView().setFitHeight(15);
+        }};
+        FXUtils.observeHeightCenter(littleModulePane.getContentPane(),HSLButton);
+        littleModulePane.getContentPane().getChildren().add(HSLButton);
 
 
 
