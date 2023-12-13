@@ -275,7 +275,19 @@ public class ImageEditScene extends SuperScene{
             }
         });
 
-
+        //新建一个button用于前往曲线调整
+        var curveButton=new FusionImageButton(
+                ImportImageResource.getInstance().getImage("/image/curve.png")
+        ){{
+            setPrefWidth(25);
+            setPrefHeight(25);
+            setOnlyAnimateWhenNotClicked(true);
+            setLayoutX(10+25+15+25+15+25+15);
+            getImageView().setFitHeight(15);
+        }};
+        FXUtils.observeHeightCenter(littleModulePane.getContentPane(),curveButton);
+        littleModulePane.getContentPane().getChildren().add(curveButton);
+        
 
 
 
