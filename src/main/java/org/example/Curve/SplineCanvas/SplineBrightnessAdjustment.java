@@ -1,10 +1,25 @@
 package org.example.Curve.SplineCanvas;
 
 
+import io.vproxy.vfx.util.FXUtils;
+import javafx.application.Application;
+import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.StrokeType;
+import javafx.stage.Stage;
+import org.example.ImageModification.ThreadProcess;
 import org.example.ImageTools.ImageTransfer;
+import org.example.Obj.ImageObj;
+import org.example.Scene.ImageEditScene;
+import org.example.StaticValues;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
@@ -15,23 +30,59 @@ import java.util.concurrent.RecursiveAction;
  * @Description
  * @date 2023/12/9 22:46
  */
-public class SplineBrightnessAdjustment{
+public class SplineBrightnessAdjustment {
+    //创建一个矩形用来包裹curve
+    private static Rectangle curveRec=new Rectangle(190,190){{
+        setStrokeWidth(2);
+        setStroke(Color.WHITE);
+        setFill(Color.TRANSPARENT);
+        setStrokeType(StrokeType.INSIDE);
+    }};
 
-    public static ImageView imageView;
+
     public static BufferedImage bufferedImage;
     public static BufferedImage processedImage;
+    /**
+     * @Description  这个类用于创建曲线
+     * @param curvePane
+     * @param editingImageObj
+     * @author 吴鹄远
+     * @date 2023/12/14 10:27
+    **/
+    public static void addCurve(Pane curvePane, ImageObj editingImageObj){
+        if(editingImageObj!=null){
+            bufferedImage=ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
+            processedImage = new BufferedImage(
+                    SplineBrightnessAdjustment.bufferedImage.getWidth(),
+                    SplineBrightnessAdjustment.bufferedImage.getHeight(),
+                    BufferedImage.TYPE_INT_ARGB
+            );
+            SplineCanvas splineCanvas=new SplineCanvas(190);
+            StackPane stackPane=new StackPane();
+            stackPane.getChildren().addAll(curveRec,splineCanvas);
+            curvePane.getChildren().add(stackPane);
+            FXUtils.observeWidthCenter(curvePane,stackPane);
+        }
+
+    }
+
     public static void applyLUTToImage(){
         SplineCanvas.ResultLUT.checkLUT();
         ForkJoinPool forkJoinPool=new ForkJoinPool();
         forkJoinPool.invoke(new LUTTask(0,0,bufferedImage.getWidth(),bufferedImage.getHeight(),SplineCanvas.ResultLUT));
         javafx.application.Platform.runLater(() -> {
-            Image adjustedImage = ImageTransfer.toJavaFXImage(SplineBrightnessAdjustment.processedImage);
-            SplineBrightnessAdjustment.imageView.setImage(adjustedImage);
+            Image adjustedImage = ImageTransfer.toJavaFXImage(processedImage);
+            StaticValues.editingImageObj.renewAll(adjustedImage);
+            ImageEditScene.initEditImagePane();
+            System.out.println("曲线调整成功");
         });
         bufferedImage.flush();
         processedImage.flush();
         forkJoinPool.shutdown();
     }
+
+
+
     static class LUTTask extends RecursiveAction{
         private static final int Max =100000;
         private final int startX, startY, endX, endY;

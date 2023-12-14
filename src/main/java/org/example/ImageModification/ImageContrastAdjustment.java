@@ -95,7 +95,7 @@ public class ImageContrastAdjustment extends ImageAdjustment {
             javafx.application.Platform.runLater(() -> {
                 Image adjustedImage = SwingFXUtils.toFXImage(processedImage, null);
                 //设置新图像
-                editingImageObj.getEditImages().add(adjustedImage);
+//                editingImageObj.getEditImages().add(adjustedImage);
                 editingImageObj.renewAll(adjustedImage);
                 //刷新显示的图像
                 ImageEditScene.initEditImagePane();

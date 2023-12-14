@@ -21,7 +21,7 @@ public class SplineCanvas extends StackPane{
     private ArrayList<MyPoint2D> curvePoints=new ArrayList<>();
     public  static LUT ResultLUT=new LUT();
     private static final Color CURVE_COLOR = Color.GRAY;
-    private static final Color CONTROL_POINT_COLOR = Color.BLACK;
+    private static final Color CONTROL_POINT_COLOR = Color.WHITE;
     private static final double CANVAS_POINT_RADIUS=3.0;
     private static final double CURVE_THICKNESS = 1.2;
     private static final double step = 1.0;

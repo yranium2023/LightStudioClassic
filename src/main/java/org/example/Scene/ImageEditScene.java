@@ -22,6 +22,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
+import org.example.Curve.SplineCanvas.SplineBrightnessAdjustment;
 import org.example.ImageClip.ImageClip;
 import org.example.ImageModification.*;
 import org.example.ImageTools.ImageScaler;
@@ -237,7 +238,8 @@ public class ImageEditScene extends SuperScene{
                         ImageAdjustment.bufferedImage.getWidth(),
                         ImageAdjustment.bufferedImage.getHeight(),
                         BufferedImage.TYPE_INT_ARGB);
-                prePane.getChildren().addAll(littleModulePane.getNode(),
+                prePane.getChildren().addAll(
+                        littleModulePane.getNode(),
                         contrastLabel,
                         contrastSlider,
                         exposureLabel,
@@ -287,6 +289,29 @@ public class ImageEditScene extends SuperScene{
         }};
         FXUtils.observeHeightCenter(littleModulePane.getContentPane(),curveButton);
         littleModulePane.getContentPane().getChildren().add(curveButton);
+        //创建标签
+        var curveLabel = new ThemeLabel("色调曲线：") {{
+            FontManager.get().setFont(this, settings -> settings.setSize(12));
+            setLayoutX(10);
+            layoutYProperty().bind(littleModulePane.getNode().layoutYProperty().add(littleModulePane.getNode().heightProperty().add(20)));
+        }};
+        //创建一个单独的pane用于容纳矩形
+        Pane curvePane=new Pane(){{
+            setPrefWidth(200);
+            setPrefHeight(200);
+            layoutYProperty().bind(curveLabel.layoutYProperty().add(30));
+        }};
+        FXUtils.observeWidthCenter(prePane,curvePane);
+        curveButton.setOnAction(event -> {
+            prePane.getChildren().clear();
+            curvePane.getChildren().clear();
+            prePane.getChildren().addAll(
+                    littleModulePane.getNode(),
+                    curveLabel,
+                    curvePane
+            );
+            SplineBrightnessAdjustment.addCurve(curvePane,StaticValues.editingImageObj);
+        });
 
         //创建一个button用于前往hsl调整
         var HSLButton=new FusionImageButton(
