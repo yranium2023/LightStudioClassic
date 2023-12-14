@@ -39,7 +39,6 @@ public class SplineBrightnessAdjustment {
         setStrokeType(StrokeType.INSIDE);
     }};
 
-
     public static BufferedImage bufferedImage;
     public static BufferedImage processedImage;
     /**
@@ -57,9 +56,8 @@ public class SplineBrightnessAdjustment {
                     SplineBrightnessAdjustment.bufferedImage.getHeight(),
                     BufferedImage.TYPE_INT_ARGB
             );
-            SplineCanvas splineCanvas=new SplineCanvas(190);
             StackPane stackPane=new StackPane();
-            stackPane.getChildren().addAll(curveRec,splineCanvas);
+            stackPane.getChildren().addAll(curveRec,editingImageObj.getSplineCanvas());
             curvePane.getChildren().add(stackPane);
             FXUtils.observeWidthCenter(curvePane,stackPane);
         }

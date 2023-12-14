@@ -4,6 +4,7 @@ import io.vproxy.vfx.ui.button.FusionImageButton;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
+import org.example.Curve.SplineCanvas.SplineCanvas;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
 import org.example.Scene.ImageEditScene;
@@ -57,6 +58,8 @@ public class ImageObj {
         SATURATION,
         TEMPERATURE
     }
+    //创建一个属于自己的曲线，这样就不用记录了
+    private SplineCanvas splineCanvas=new SplineCanvas(190);
 
     /***
      * @Description 构造函数 用于构建Image对象
@@ -343,5 +346,13 @@ public class ImageObj {
 
     public VBox getCopyVBox() {
         return copyVBox;
+    }
+
+    public SplineCanvas getSplineCanvas() {
+        return splineCanvas;
+    }
+
+    public void setSplineCanvas(SplineCanvas splineCanvas) {
+        this.splineCanvas = splineCanvas;
     }
 }
