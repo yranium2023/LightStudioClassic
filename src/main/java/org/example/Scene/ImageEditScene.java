@@ -299,7 +299,7 @@ public class ImageEditScene extends SuperScene{
         Pane curvePane=new Pane(){{
             setPrefWidth(200);
             setPrefHeight(200);
-            layoutYProperty().bind(curveLabel.layoutYProperty().add(30));
+            layoutYProperty().bind(curveLabel.layoutYProperty().add(20));
         }};
         FXUtils.observeWidthCenter(prePane,curvePane);
         curveButton.setOnAction(event -> {
