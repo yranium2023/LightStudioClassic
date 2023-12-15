@@ -344,17 +344,17 @@ public class ImageEditScene extends SuperScene{
         //生成下方pane
         var navigatePane = new FusionPane();{
             getNode().setPrefHeight(30);
-            getNode().setPrefWidth(getContentPane().getWidth());
+            getNode().setPrefWidth(1200);
         }
         navigatePane.getNode().layoutYProperty().bind(LSMain.getStage().getInitialScene().getContentPane().heightProperty().add(-50));
         getContentPane().getChildren().add(navigatePane.getNode());
         FXUtils.observeWidthCenter(LSMain.getStage().getInitialScene().getContentPane(),navigatePane.getNode());
         var fromBottomButton = new FusionImageButton(ImportImageResource.getInstance().getImage("image/upArrow.png")) {{
-            setPrefWidth(1200);
+            setPrefWidth(1300);
             setPrefHeight(30);
             getImageView().setFitHeight(20);
         }};
-
+        FXUtils.observeWidthCenter(navigatePane.getNode(),fromBottomButton);
         // 在初始化部分定义一个 Timeline 用于刷新添加按钮
         Timeline refreshTimeline = new Timeline();
         //初始化scene
@@ -365,6 +365,8 @@ public class ImageEditScene extends SuperScene{
                 CornerRadii.EMPTY,
                 Insets.EMPTY
         )));
+        //绑定滑动窗口 尚未实现 需要在这里修改
+        scrollEditFlowPane.getNode().layoutXProperty().bind(LSMain.getStage().getInitialScene().getContentPane().heightProperty().add(-50));
         //新建VScrollPane用于生成滑动窗口，并存放flowPane
         FXUtils.observeWidthHeight(scene.getContentPane(), scrollEditFlowPane.getNode());
         //绑定两个pane的宽和高
