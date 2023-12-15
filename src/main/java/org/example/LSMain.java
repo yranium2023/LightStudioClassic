@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import org.example.ImageModification.AutoWhiteBalance;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ImportImageResource;
+import org.example.Obj.ImageObj;
 import org.example.Scene.*;
 
 import java.util.ArrayList;
@@ -129,6 +130,14 @@ public class LSMain extends Application {
         stage.getStage().centerOnScreen();
         stage.getStage().show();
 
+    }
+
+    @Override
+    public void stop() throws Exception {
+        for(ImageObj imageObj:ImageImportMenuScene.totalImages){
+            ImageObj.saveImagePath(imageObj.getImagePath(),"./src/main/resources/serializedData/testData.txt");
+        }
+        super.stop();
     }
 
     public static VStage getStage() {

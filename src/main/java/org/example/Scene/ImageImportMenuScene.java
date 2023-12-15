@@ -177,6 +177,9 @@ public class ImageImportMenuScene extends SuperScene {
         });
     }
 
+    public static void turningFilesIntoImages(List<File> selectedFiles){
+
+    }
 
     /***
      * @Description 创建多个FusionButtonBox 含有图片 和文字说明
@@ -218,7 +221,8 @@ public class ImageImportMenuScene extends SuperScene {
                     }
                     imageObj.getButtonVBox().setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(5), null)));
                     imageObj.getCopyVBox().setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(5), null)));
-                    button.setDisable(true);
+                    imageObj.getImageButton().setDisable(true);
+                    imageObj.getCopyButton().setDisable(true);
                 }
             });
             copy.setOnAction(e -> {
@@ -226,6 +230,23 @@ public class ImageImportMenuScene extends SuperScene {
                     System.out.println("选择成功");
                     StaticValues.editingImageObj = imageObj;
                     Histogram.drawHistogram(StaticValues.editingImageObj.getEditingImage());
+                    for(ImageObj imageObj1:totalImages){
+                        if(imageObj1.getImageButton().isDisable())
+                        {
+                            imageObj1.getImageButton().setDisable(false);
+                            imageObj1.getButtonVBox().setBackground(null);
+                        }
+
+                        if(imageObj1.getCopyButton().isDisable()){
+                            imageObj1.getCopyButton().setDisable(false);
+                            imageObj1.getCopyVBox().setBackground(null);
+                        }
+
+                    }
+                    imageObj.getButtonVBox().setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(5), null)));
+                    imageObj.getCopyVBox().setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(5), null)));
+                    imageObj.getImageButton().setDisable(true);
+                    imageObj.getCopyButton().setDisable(true);
                 }
             });
             double selectedImageHeight = imageObj.getEditingImage().getHeight();

@@ -13,6 +13,7 @@ import org.example.Scene.ImageImportScene;
 import org.example.StaticValues;
 
 import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -354,5 +355,24 @@ public class ImageObj {
 
     public void setSplineCanvas(SplineCanvas splineCanvas) {
         this.splineCanvas = splineCanvas;
+    }
+
+    public static void saveImagePath(String imagePath, String filePath) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
+            writer.write(imagePath);
+            writer.newLine();  // 添加换行符，以便区分不同图片路径
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static String readImagePath(String filePath) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            return reader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -365,8 +365,6 @@ public class ImageEditScene extends SuperScene{
                 CornerRadii.EMPTY,
                 Insets.EMPTY
         )));
-        //绑定滑动窗口 尚未实现 需要在这里修改
-        scrollEditFlowPane.getNode().layoutXProperty().bind(LSMain.getStage().getInitialScene().getContentPane().heightProperty().add(-50));
         //新建VScrollPane用于生成滑动窗口，并存放flowPane
         FXUtils.observeWidthHeight(scene.getContentPane(), scrollEditFlowPane.getNode());
         //绑定两个pane的宽和高
