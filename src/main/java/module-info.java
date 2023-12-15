@@ -16,4 +16,5 @@ module org.example {
     opens org.example to javafx.fxml;
     exports org.example;
     exports org.example.Curve.SplineCanvas;
+    exports org.example.ImageModification;
 }
