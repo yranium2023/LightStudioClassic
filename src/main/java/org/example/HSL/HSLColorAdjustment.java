@@ -297,48 +297,48 @@ public class HSLColorAdjustment extends ImageAdjustment {
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = rgb & 0xFF;
-        return red > 150 && green < 100 && blue < 100;
+        return red > 145 && green < 160 && blue < 160;
     }
-    // 判断橙色
+
     private static boolean isOrange(int rgb){
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = rgb & 0xFF;
-        return red > 200 && green > 80 && blue < 50;
+        return red > 155 && green > 55 && blue < 95;
     }
-    // 判断黄色
+
     private static boolean isYellow(int rgb) {
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = rgb & 0xFF;
-        return red > 200 && green > 180 && blue < 50;
+        return red > 155 && green > 125 && blue < 125;
     }
-    // 判断绿色
+
     private static boolean isGreen(int rgb) {
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = rgb & 0xFF;
-        return red < 100 && green > 150 && blue < 100;
+        return red < 125 && green > 105 && blue < 175;
     }
-    // 判断蓝色
+
     private static boolean isBlue(int rgb) {
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = rgb & 0xFF;
-        return red < 100 && green < 100 && blue > 150;
+        return red < 125 && green < 175 && blue > 125;
     }
+
     private static boolean isCyan(int rgb){
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = rgb & 0xFF;
-        return green > 150 && blue > 150 && red < 100;
+        return green > 125 && blue > 125 && red < 155;
     }
-    // 判断紫色
+
     private static boolean isPurple(int rgb) {
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = rgb & 0xFF;
-        return red > 150 && green < 100 && blue > 150;
+        return red > 105 && green < 195 && blue > 105;
     }
-
 }
