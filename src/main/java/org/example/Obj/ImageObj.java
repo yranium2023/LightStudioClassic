@@ -32,8 +32,6 @@ public class ImageObj {
     private Image editingImage = null;
     //裁减过程中产生的图片列表
     private List<Image> clipImages = new ArrayList<>();
-    //编辑过程中产生的图片列表
-    private List<Image> editImages = new ArrayList<>();
     //传入图片的路径
     String imagePath = null;
     //图库中整个vbox
@@ -163,15 +161,6 @@ public class ImageObj {
 
     public List<Image> getClipImages() {
         return clipImages;
-    }
-
-    /***
-     * @Description 获取编辑图片列表
-     * @author 张喆宇
-     * @date 2023/12/9 11:28
-     **/
-    public List<Image> getEditImages() {
-        return editImages;
     }
 
     /***
