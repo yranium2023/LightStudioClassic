@@ -67,7 +67,7 @@ public class ImageEditScene extends SuperScene{
     public static VScrollPane scrollEditFlowPane = new VScrollPane(ScrollDirection.HORIZONTAL) {{
         getNode().setLayoutX(0);
         getNode().setLayoutY(0);
-        getNode().setPrefWidth(1275);
+        getNode().setPrefWidth(1265);
         getNode().setPrefHeight(100);
     }};
 
@@ -326,6 +326,104 @@ public class ImageEditScene extends SuperScene{
         FXUtils.observeHeightCenter(littleModulePane.getContentPane(),HSLButton);
         littleModulePane.getContentPane().getChildren().add(HSLButton);
 
+        //创建一个fusionPane用于包含七个hsl按钮
+        var hslModulePane=new FusionPane(){{
+            getNode().setPrefWidth(200);
+            getNode().setPrefHeight(40);
+            getNode().layoutYProperty().bind(littleModulePane.getNode().layoutYProperty()
+                    .add(littleModulePane.getNode().heightProperty().add(20)));
+        }};
+        FXUtils.observeWidthCenter(prePane,hslModulePane.getNode());
+        //创建7个button
+        //红色按钮
+        var redButton=new FusionImageButton(
+                ImportImageResource.getInstance().getImage("/image/red.png")
+        ){{
+            setPrefWidth(20);
+            setPrefHeight(20);
+            setOnlyAnimateWhenNotClicked(true);
+            getImageView().setFitHeight(13);
+//            setLayoutX(10);
+        }};
+        FXUtils.observeHeightCenter(hslModulePane.getContentPane(),redButton);
+        hslModulePane.getContentPane().getChildren().add(redButton);
+        //橙色按钮
+        var orangeButton=new FusionImageButton(
+                ImportImageResource.getInstance().getImage("/image/orange.png")
+        ){{
+            setPrefWidth(20);
+            setPrefHeight(20);
+            setOnlyAnimateWhenNotClicked(true);
+            getImageView().setFitHeight(13);
+            setLayoutX(redButton.getLayoutX()+26.3);
+        }};
+        FXUtils.observeHeightCenter(hslModulePane.getContentPane(),orangeButton);
+        hslModulePane.getContentPane().getChildren().add(orangeButton);
+        //黄色按钮
+        var yellowButton=new FusionImageButton(
+                ImportImageResource.getInstance().getImage("/image/yellow.png")
+        ){{
+            setPrefWidth(20);
+            setPrefHeight(20);
+            setOnlyAnimateWhenNotClicked(true);
+            getImageView().setFitHeight(13);
+            setLayoutX(orangeButton.getLayoutX()+26.3);
+        }};
+        FXUtils.observeHeightCenter(hslModulePane.getContentPane(),yellowButton);
+        hslModulePane.getContentPane().getChildren().add(yellowButton);
+        //绿色按钮
+        var greenButton=new FusionImageButton(
+                ImportImageResource.getInstance().getImage("/image/green.png")
+        ){{
+            setPrefWidth(20);
+            setPrefHeight(20);
+            setOnlyAnimateWhenNotClicked(true);
+            getImageView().setFitHeight(13);
+            setLayoutX(yellowButton.getLayoutX()+26.3);
+        }};
+        FXUtils.observeHeightCenter(hslModulePane.getContentPane(),greenButton);
+        hslModulePane.getContentPane().getChildren().add(greenButton);
+        //蓝绿色按钮
+        var cyanButton=new FusionImageButton(
+                ImportImageResource.getInstance().getImage("/image/cyan.png")
+        ){{
+            setPrefWidth(20);
+            setPrefHeight(20);
+            setOnlyAnimateWhenNotClicked(true);
+            getImageView().setFitHeight(13);
+            setLayoutX(greenButton.getLayoutX()+26.3);
+        }};
+        FXUtils.observeHeightCenter(hslModulePane.getContentPane(),cyanButton);
+        hslModulePane.getContentPane().getChildren().add(cyanButton);
+        //蓝色按钮
+        var blueButton=new FusionImageButton(
+                ImportImageResource.getInstance().getImage("/image/blue.png")
+        ){{
+            setPrefWidth(20);
+            setPrefHeight(20);
+            setOnlyAnimateWhenNotClicked(true);
+            getImageView().setFitHeight(13);
+            setLayoutX(cyanButton.getLayoutX()+26.3);
+        }};
+        FXUtils.observeHeightCenter(hslModulePane.getContentPane(),blueButton);
+        hslModulePane.getContentPane().getChildren().add(blueButton);
+        //紫色按钮
+        var purpleButton=new FusionImageButton(
+                ImportImageResource.getInstance().getImage("/image/purple.png")
+        ){{
+            setPrefWidth(20);
+            setPrefHeight(20);
+            setOnlyAnimateWhenNotClicked(true);
+            getImageView().setFitHeight(13);
+            setLayoutX(blueButton.getLayoutX()+26.3);
+        }};
+        FXUtils.observeHeightCenter(hslModulePane.getContentPane(),purpleButton);
+        hslModulePane.getContentPane().getChildren().add(purpleButton);
+        HSLButton.setOnAction(event -> {
+            prePane.getChildren().clear();
+            prePane.getChildren().add(littleModulePane.getNode());
+            prePane.getChildren().add(hslModulePane.getNode());
+        });
 
 
 
