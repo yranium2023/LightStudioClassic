@@ -17,4 +17,5 @@ module org.example {
     exports org.example;
     exports org.example.Curve.SplineCanvas;
     exports org.example.ImageModification;
+    exports org.example.Obj;
 }

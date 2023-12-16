@@ -6,11 +6,8 @@ import java.util.Arrays;
 public class LUT {
     private int[] Curve;
     public LUT(){
-
         Curve= new int[256];
-
         Arrays.fill(Curve, -1);
-
     }
     public void addXToY(int x,int y){
         x=x>255?255:x;

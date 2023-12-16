@@ -3,13 +3,9 @@ package org.example.ImageModification;
 import io.vproxy.vfx.ui.slider.VSlider;
 import javafx.beans.value.ChangeListener;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.Scene;
-import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import org.example.ImageTools.ImageTransfer;
+import org.example.Obj.AdjustHistory;
 import org.example.Obj.ImageObj;
 import org.example.Scene.ImageEditScene;
 import org.example.StaticValues;
@@ -63,7 +59,7 @@ public class ImageContrastAdjustment extends ImageAdjustment {
             contrastSlider.percentageProperty().addListener(contrastSliderListener);
             contrastSlider.setOnMouseReleased(e->{
                 editingImageObj.setContrastPercent(contrastSlider.getPercentage());
-                AdjustHistory.addHistory("对比度调整",contrastValue);
+                AdjustHistory.addHistory("对比度调整",Double.toString(contrastValue));
             });
         }
     }

@@ -9,6 +9,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import org.example.Obj.AdjustHistory;
 
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
@@ -147,12 +148,11 @@ public class SplineCanvas extends StackPane{
             int x=(int)((point.getX()/CANVAS_WIDTH)*255.0);
             int y=(int)((1-point.getY()/CANVAS_WIDTH)*255.0);
             ResultLUT.addXToY(x,y);
+            AdjustHistory.addHistory("点曲线调整",x+" "+y);
         }
         if (currentTask == null || currentTask.isDone()) {
             // 如果当前任务为空或者已经完成，则提交新任务
-
             currentTask = executor.submit(SplineBrightnessAdjustment::applyLUTToImage);
-
         }else{
             currentTask.cancel(true);
             currentTask = executor.submit(SplineBrightnessAdjustment::applyLUTToImage);

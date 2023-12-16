@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 import org.example.ImageModification.ImageAdjustment;
 import org.example.ImageModification.ThreadProcess;
 import org.example.ImageTools.ImageTransfer;
+import org.example.Obj.AdjustHistory;
 import org.example.Obj.HSLColor;
 import org.example.Obj.HSLInfo;
 import org.example.Obj.ImageObj;
@@ -207,6 +208,17 @@ public class HSLColorAdjustment extends ImageAdjustment {
                 //刷新显示的图像
                 ImageEditScene.initEditImagePane();
                 System.out.println("调整完毕");
+                switch (selectedProperty){
+                    case 0:
+                        AdjustHistory.addHistory("HSL色相调整", selectedColor +" "+ selectedProperty);
+                        break;
+                    case 1:
+                        AdjustHistory.addHistory("HSL饱和度调整", selectedColor +" "+ selectedProperty);
+                        break;
+                    case 2:
+                        AdjustHistory.addHistory("HSL亮度调整", selectedColor +" "+ selectedProperty);
+                        break;
+                }
             });
         });
         executor.shutdown();
