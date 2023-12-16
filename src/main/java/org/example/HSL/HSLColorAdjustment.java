@@ -1,6 +1,6 @@
 package org.example.HSL;
 
-import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
@@ -8,8 +8,13 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import org.example.ImageModification.ImageAdjustment;
 import org.example.ImageModification.ThreadProcess;
 import org.example.ImageTools.ImageTransfer;
+import org.example.Obj.HSLColor;
+import org.example.Obj.HSLInfo;
+import org.example.Obj.ImageObj;
+import org.example.Scene.ImageEditScene;
 
 import java.awt.image.BufferedImage;
 import java.util.concurrent.ExecutorService;
@@ -20,34 +25,22 @@ import java.util.concurrent.Executors;
  * @Description 该类实现HSL调整，对每个颜色调整色相，饱和度，亮度
  * @date 2023/12/9 13:48
  */
-enum MyColor{
-    Red,
-    Orange,
-    Yellow,
-    Green,
-    Cyan,
-    Blue,
-    Purple;
-
-}
 interface MyFunction {
     boolean doSomething(int rgb);
 
 }
-public class HSLColorAdjustment extends Application{
-    private ImageView imageView;
+public class HSLColorAdjustment extends ImageAdjustment {
 
-    private BufferedImage bufferedImage;
+    private static final double [] lastValue={0,0,0};
 
-    private BufferedImage processedImage;
+    private static int selectedColor=0;
 
-    private final double [] lastValue={0,0,0};
+    private static int selectedProperty;
 
-    private int selectedColor=0;
-
-    private int selectedProperty;
-
-    private double  huePer=0, satuPer=0,lumPer=0;
+    private static double  huePer=0, satuPer=0,lumPer=0;
+    private static ChangeListener<Number> hueListener;
+    private static ChangeListener<Number> saturationListener;
+    private static ChangeListener<Number> luminanceListener;
     private static final MyFunction[] isColor=new MyFunction[7];
     static{
         isColor[0]=HSLColorAdjustment::isRed;
@@ -58,82 +51,117 @@ public class HSLColorAdjustment extends Application{
         isColor[5]=HSLColorAdjustment::isCyan;
         isColor[6]=HSLColorAdjustment::isPurple;
     }
-    //修改后请使之继承imageadjustment类，自行调整上述属性的假设。
-    public static void main(String[] args) {
-        launch(args);
+    public static void hslButtonBind(HSLColor hslColor, ImageObj editingImageObj){
+        System.out.println("绑定"+hslColor+"成功");
+        if(editingImageObj!=null){
+            var hueSlider_HSL=ImageEditScene.hueSlider_HSL;
+            var saturationSlider_HSL=ImageEditScene.saturationSlider_HSL;
+            var luminanceSlider_HSL=ImageEditScene.luminanceSlider_HSL;
+            bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
+            processedImage = new BufferedImage(
+                    bufferedImage.getWidth(),
+                    bufferedImage.getHeight(),
+                    BufferedImage.TYPE_INT_ARGB
+            );
+            //移除之前的监视器
+            if(hueListener!=null){
+                hueSlider_HSL.percentageProperty().removeListener(hueListener);
+            }
+            if(saturationListener!=null){
+                saturationSlider_HSL.percentageProperty().removeListener(saturationListener);
+            }
+            if(luminanceListener!=null){
+                luminanceSlider_HSL.percentageProperty().removeListener(luminanceListener);
+            }
+            selectedColor=hslColor.ordinal();
+            HSLInfo hslInfo=editingImageObj.getHslInfos().get(hslColor);
+            hueSlider_HSL.setPercentage(hslInfo.getHuePercent());
+            saturationSlider_HSL.setPercentage(hslInfo.getSaturationPercent());
+            luminanceSlider_HSL.setPercentage(hslInfo.getLuminancePercent());
+            //判断间隔
+            double threshold =0.03;
+            lastValue[0]=0;
+            lastValue[1]=0;
+            lastValue[2]=0;
+            //色相轴
+            hueListener=(ob,old,now)->{
+                if (old == now) return;
+                System.out.println("正在调整hue");
+                if(hslInfo.getNowType()!= HSLInfo.sliderType.HUE){
+                    bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
+                    processedImage = new BufferedImage(
+                            bufferedImage.getWidth(),
+                            bufferedImage.getHeight(),
+                            BufferedImage.TYPE_INT_ARGB
+                    );
+                    hslInfo.setNowType(HSLInfo.sliderType.HUE);
+                }
+                huePer=-0.18+hueSlider_HSL.getPercentage()*0.36;
+                selectedProperty=0;
+                if(Math.abs(huePer-lastValue[0])>threshold){
+                    HSLAdjust(editingImageObj);
+                    lastValue[0]=huePer;
+                }
+            };
+            hueSlider_HSL.percentageProperty().addListener(hueListener);
+            hueSlider_HSL.setOnMouseReleased(e->{
+                hslInfo.setHuePercent(hueSlider_HSL.getPercentage());
+            });
+
+            //饱和度轴
+            saturationListener=(ob,old,now)->{
+                System.out.println("正在调整饱和度");
+                if(old==now)return;
+                if(hslInfo.getNowType()!= HSLInfo.sliderType.SATURATION){
+                    bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
+                    processedImage = new BufferedImage(
+                            bufferedImage.getWidth(),
+                            bufferedImage.getHeight(),
+                            BufferedImage.TYPE_INT_ARGB
+                    );
+                    hslInfo.setNowType(HSLInfo.sliderType.SATURATION);
+                }
+                satuPer=-0.3+hueSlider_HSL.getPercentage()*0.6;
+                selectedProperty=1;
+                if(Math.abs(satuPer-lastValue[1])>threshold){
+                    HSLAdjust(editingImageObj);
+                    lastValue[1]=satuPer;
+                }
+            };
+            saturationSlider_HSL.percentageProperty().addListener(saturationListener);
+            saturationSlider_HSL.setOnMouseReleased(e->{
+                hslInfo.setSaturationPercent(saturationSlider_HSL.getPercentage());
+            });
+
+            //明度轴
+            luminanceListener=(ob,old,now)->{
+                if(old==now)return;
+                if(hslInfo.getNowType()!= HSLInfo.sliderType.LUMINANCE){
+                    bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
+                    processedImage = new BufferedImage(
+                            bufferedImage.getWidth(),
+                            bufferedImage.getHeight(),
+                            BufferedImage.TYPE_INT_ARGB
+                    );
+                    hslInfo.setNowType(HSLInfo.sliderType.LUMINANCE);
+                }
+                lumPer=-0.2+0.4*luminanceSlider_HSL.getPercentage();
+                selectedProperty=2;
+                if(Math.abs(lumPer-lastValue[2])>threshold){
+                    HSLAdjust(editingImageObj);
+                    lastValue[2]=lumPer;
+                }
+            };
+            luminanceSlider_HSL.percentageProperty().addListener(luminanceListener);
+            luminanceSlider_HSL.setOnMouseReleased(e->{
+                hslInfo.setLuminancePercent(luminanceSlider_HSL.getPercentage());
+            });
+
+        }
     }
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
 
-        Image originalImage = new Image(getClass().getResource("/image/icon.png").toString());
-        bufferedImage=ImageTransfer.toBufferedImage(originalImage);
-        processedImage=new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_RGB);;
-        HBox root = new HBox();
-        root.setSpacing(10);
-        //7个按钮
-        Button buttonRed=new Button("红");
-        Button buttonOrange=new Button("橙");
-        Button buttonYellow=new Button("黄");
-        Button buttonGreen=new Button("绿");
-        Button buttonBlue=new Button("蓝");
-        Button buttonCyan=new Button("蓝绿");
-        Button buttonPurple=new Button("紫");
-        //七个按钮和相应的颜色对应
-        setButton(buttonRed,MyColor.Red);
-        setButton(buttonOrange,MyColor.Orange);
-        setButton(buttonYellow,MyColor.Yellow);
-        setButton(buttonGreen,MyColor.Green);
-        setButton(buttonBlue,MyColor.Blue);
-        setButton(buttonCyan,MyColor.Cyan);
-        setButton(buttonPurple,MyColor.Purple);
-
-
-        //请合理设置参数，最大范围均为-1到1
-        Slider sliderHue=new Slider(-0.18,0.18,0);
-        Slider sliderSaturation=new Slider(-0.3,0.3,0);
-        Slider sliderLuminance=new Slider(-0.2,0.2,0);
-        //判断间隔
-        double threshold =0.02;
-        //色相轴
-        sliderHue.setOnMouseDragged(dragEvent -> {
-            huePer=sliderHue.getValue();
-            selectedProperty=0;
-            if(Math.abs(huePer-lastValue[0])>threshold){
-                HSLAdjust();
-                //System.out.println("done");
-                lastValue[0]=huePer;
-            }
-        });
-        //饱和度轴
-        sliderSaturation.setOnMouseDragged(dragEvent -> {
-            satuPer=sliderSaturation.getValue();
-            selectedProperty=1;
-            if(Math.abs(satuPer-lastValue[1])>threshold){
-                HSLAdjust();
-                lastValue[1]=satuPer;
-            }
-        });
-        //亮度轴
-        sliderLuminance.setOnMouseDragged((dragEvent -> {
-            lumPer=sliderLuminance.getValue();
-            selectedProperty=2;
-            if(Math.abs(lumPer-lastValue[2])>threshold){
-                HSLAdjust();
-                lastValue[2]=lumPer;
-            }
-        }));
-        imageView=new ImageView(originalImage);
-        imageView.setFitWidth(200);
-        imageView.setFitHeight(200);
-        root.getChildren().addAll(imageView,buttonRed,buttonBlue,buttonGreen,buttonYellow,buttonOrange,buttonPurple,buttonCyan,sliderHue,sliderSaturation,sliderLuminance);
-        //root.getChildren().addAll(imageView,buttonRed,buttonBlue,buttonGreen,buttonOrange,buttonPurple,buttonYellow,buttonCyan,sliderHue,sliderLuminance,sliderLuminance);
-        Scene scene = new Scene(root);
-        primaryStage.setTitle("HSL Color Adjustments");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-    }
-    private void HSLAdjust(){
+    private static void HSLAdjust(ImageObj editingImageObj){
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(()->{
@@ -174,18 +202,16 @@ public class HSLColorAdjustment extends Application{
             }.run();
             javafx.application.Platform.runLater(() -> {
                 Image adjustedImage = ImageTransfer.toJavaFXImage(processedImage);
-                imageView.setImage(adjustedImage);
-                System.out.println("DONE");
+                //设置新图像
+                editingImageObj.renewAll(adjustedImage);
+                //刷新显示的图像
+                ImageEditScene.initEditImagePane();
+                System.out.println("调整完毕");
             });
         });
         executor.shutdown();
     }
 
-    private void setButton(Button button,MyColor color){
-        button.setOnAction(actionEvent -> {
-            selectedColor=color.ordinal();
-        });
-    }
     private static double[] rgbToHsl(int r, int g, int b) {
         double[] hsl = new double[3];
         double var_R = (r / 255.0);

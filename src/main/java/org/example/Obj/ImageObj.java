@@ -15,6 +15,7 @@ import org.example.StaticValues;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -52,15 +53,28 @@ public class ImageObj {
     //色温滑动条，初始化为0.5
     private double temperaturePercent = 0.5;
     //创建一个枚举类型，存储当前滑动条是四个滑动条中的哪一条
-    private sliderType_1 nowSlider_1=null;
-    public enum sliderType_1{
+    private sliderType_1 nowSlider_1 = null;
+
+    public enum sliderType_1 {
         CONTRAST,
         EXPOSURE,
         SATURATION,
         TEMPERATURE
     }
+
     //创建一个属于自己的曲线，这样就不用记录了
-    private SplineCanvas splineCanvas=new SplineCanvas(190);
+    private SplineCanvas splineCanvas = new SplineCanvas(190);
+
+
+    private HashMap<HSLColor,HSLInfo> hslInfos = new HashMap<>() {{
+        put(HSLColor.Red,new HSLInfo(HSLColor.Red));
+        put(HSLColor.Yellow,new HSLInfo(HSLColor.Yellow));
+        put(HSLColor.Orange,new HSLInfo(HSLColor.Orange));
+        put(HSLColor.Green,new HSLInfo(HSLColor.Green));
+        put(HSLColor.Cyan,new HSLInfo(HSLColor.Cyan));
+        put(HSLColor.Blue,new HSLInfo(HSLColor.Blue));
+        put(HSLColor.Purple,new HSLInfo(HSLColor.Purple));
+    }};
 
     /***
      * @Description 构造函数 用于构建Image对象
@@ -278,17 +292,17 @@ public class ImageObj {
     }
 
     /***
-     * @Description  用于从两个图片按钮以及总图片中移除所有产生的按钮
+     * @Description 用于从两个图片按钮以及总图片中移除所有产生的按钮
      * @author 张喆宇
      * @date 2023/12/12 22:17
-    **/
+     **/
 
-    public void delete(){
+    public void delete() {
         ImageImportMenuScene.totalImages.remove(this);
         ImageImportScene.flowImportPane.getChildren().remove(this.buttonVBox);
         ImageEditScene.hEditBox.getChildren().remove(this.copyVBox);
-        if(!ImageImportMenuScene.totalImages.isEmpty())
-            StaticValues.editingImageObj=ImageImportMenuScene.totalImages.get(0);
+        if (!ImageImportMenuScene.totalImages.isEmpty())
+            StaticValues.editingImageObj = ImageImportMenuScene.totalImages.get(0);
         Histogram.drawHistogram(StaticValues.editingImageObj.getEditingImage());
         ImageEditScene.initEditImagePane();
     }
@@ -351,6 +365,10 @@ public class ImageObj {
 
     public SplineCanvas getSplineCanvas() {
         return splineCanvas;
+    }
+
+    public HashMap<HSLColor, HSLInfo> getHslInfos() {
+        return hslInfos;
     }
 
     public void setSplineCanvas(SplineCanvas splineCanvas) {

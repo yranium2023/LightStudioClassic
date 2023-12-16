@@ -4,9 +4,7 @@ import io.vproxy.vfx.control.scroll.ScrollDirection;
 import io.vproxy.vfx.control.scroll.VScrollPane;
 import io.vproxy.vfx.manager.font.FontManager;
 import io.vproxy.vfx.theme.Theme;
-import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.button.FusionImageButton;
-import io.vproxy.vfx.ui.layout.HPadding;
 import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.*;
 import io.vproxy.vfx.ui.slider.SliderDirection;
@@ -23,12 +21,15 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 import org.example.Curve.SplineCanvas.SplineBrightnessAdjustment;
+import org.example.HSL.HSLColorAdjustment;
 import org.example.ImageClip.ImageClip;
 import org.example.ImageModification.*;
 import org.example.ImageTools.ImageScaler;
 import org.example.ImageTools.ImageTransfer;
 import org.example.ImageTools.ImportImageResource;
 import org.example.LSMain;
+import org.example.Obj.HSLColor;
+import org.example.Obj.HSLInfo;
 import org.example.Pane.ImagePane;
 import org.example.StaticValues;
 
@@ -78,6 +79,31 @@ public class ImageEditScene extends SuperScene{
         setPrefHeight(scrollEditFlowPane.getNode().getPrefHeight());
         setPrefWidth(scrollEditFlowPane.getNode().getPrefWidth());
         // 设置行间距
+    }};
+
+    //创建hsl的三个slider
+    public static VSlider hueSlider_HSL =new VSlider(){{
+        setLength(180);
+        setPercentage(0.5);
+        setValueTransform(value -> {
+            double mappedValue = value * 2 - 1; // 将百分比值映射到 [-1, 1] 范围
+            return String.format("%.2f", mappedValue);});
+    }};
+
+    public static VSlider saturationSlider_HSL =new VSlider(){{
+        setLength(180);
+        setPercentage(0.5);
+        setValueTransform(value -> {
+            double mappedValue = value * 2 - 1; // 将百分比值映射到 [-1, 1] 范围
+            return String.format("%.2f", mappedValue);});
+    }};
+
+    public static VSlider luminanceSlider_HSL =new VSlider(){{
+        setLength(180);
+        setPercentage(0.5);
+        setValueTransform(value -> {
+            double mappedValue = value * 2 - 1; // 将百分比值映射到 [-1, 1] 范围
+            return String.format("%.2f", mappedValue);});
     }};
 
     public ImageEditScene(Supplier<VSceneGroup> sceneGroupSup) {
@@ -343,7 +369,6 @@ public class ImageEditScene extends SuperScene{
             setPrefHeight(20);
             setOnlyAnimateWhenNotClicked(true);
             getImageView().setFitHeight(13);
-//            setLayoutX(10);
         }};
         FXUtils.observeHeightCenter(hslModulePane.getContentPane(),redButton);
         hslModulePane.getContentPane().getChildren().add(redButton);
@@ -419,10 +444,65 @@ public class ImageEditScene extends SuperScene{
         }};
         FXUtils.observeHeightCenter(hslModulePane.getContentPane(),purpleButton);
         hslModulePane.getContentPane().getChildren().add(purpleButton);
+
+        //创建标签并设置滑动条的位置
+        //创建标签
+        var hueLabel_HSL = new ThemeLabel("色相调整：") {{
+            FontManager.get().setFont(this, settings -> settings.setSize(12));
+            setLayoutX(10);
+            layoutYProperty().bind(hslModulePane.getNode().layoutYProperty().add(hslModulePane.getContentPane().heightProperty().add(40)));
+        }};
+        hueSlider_HSL.layoutYProperty().bind(hueLabel_HSL.layoutYProperty().add(30));
+        FXUtils.observeWidthCenter(prePane, hueSlider_HSL);
+        var saturationLabel_HSL = new ThemeLabel("饱和度调整：") {{
+            FontManager.get().setFont(this, settings -> settings.setSize(12));
+            setLayoutX(10);
+            layoutYProperty().bind(hueSlider_HSL.layoutYProperty().add(30));
+        }};
+        saturationSlider_HSL.layoutYProperty().bind(saturationLabel_HSL.layoutYProperty().add(30));
+        FXUtils.observeWidthCenter(prePane, saturationSlider_HSL);
+        var luminanceLabel_HSL = new ThemeLabel("明度调整：") {{
+            FontManager.get().setFont(this, settings -> settings.setSize(12));
+            setLayoutX(10);
+            layoutYProperty().bind(saturationSlider_HSL.layoutYProperty().add(30));
+        }};
+        luminanceSlider_HSL.layoutYProperty().bind(luminanceLabel_HSL.layoutYProperty().add(30));
+        FXUtils.observeWidthCenter(prePane,luminanceSlider_HSL);
+        redButton.setOnAction(event -> {
+            HSLColorAdjustment.hslButtonBind(HSLColor.Red,StaticValues.editingImageObj);
+        });
+        yellowButton.setOnAction(event -> {
+            HSLColorAdjustment.hslButtonBind(HSLColor.Yellow,StaticValues.editingImageObj);
+        });
+        orangeButton.setOnAction(event -> {
+            HSLColorAdjustment.hslButtonBind(HSLColor.Orange,StaticValues.editingImageObj);
+        });
+        greenButton.setOnAction(event -> {
+            HSLColorAdjustment.hslButtonBind(HSLColor.Green,StaticValues.editingImageObj);
+        });
+        cyanButton.setOnAction(event -> {
+            HSLColorAdjustment.hslButtonBind(HSLColor.Cyan,StaticValues.editingImageObj);
+        });
+        blueButton.setOnAction(event -> {
+            HSLColorAdjustment.hslButtonBind(HSLColor.Blue,StaticValues.editingImageObj);
+        });
+        purpleButton.setOnAction(event -> {
+            HSLColorAdjustment.hslButtonBind(HSLColor.Purple,StaticValues.editingImageObj);
+        });
+
+
         HSLButton.setOnAction(event -> {
             prePane.getChildren().clear();
             prePane.getChildren().add(littleModulePane.getNode());
             prePane.getChildren().add(hslModulePane.getNode());
+            prePane.getChildren().addAll(
+                    hueLabel_HSL,
+                    hueSlider_HSL,
+                    saturationLabel_HSL,
+                    saturationSlider_HSL,
+                    luminanceLabel_HSL,
+                    luminanceSlider_HSL
+            );
         });
 
 
