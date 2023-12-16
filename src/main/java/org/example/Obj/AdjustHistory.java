@@ -16,7 +16,8 @@ public class AdjustHistory {
         //对于adjustProperty，加入的是类型判断字符传，比如“HSL色相调整”这类字符串，对于Value，就是算法中需要用到的关键值
         //value比较特殊的有hsl和曲线，曲线中，存的value为x+“ ”+y，hsl中，存的value为selectedcolor+“ ”+selectedproperty，其余均可直接赋值为value，同时x和y是int类型，其余均为double类型。
         //对于曲线的调整请获得x，y后，对LUT进行操作，调用addXoY函数！！！关键是通x和y获得LUT！！！
-        //所以每次调用历史记录，只要对相应的value进行赋值，再改变image，调用相应的modification函数即可。
+        //如果不知道adjustProperty值，请直接点击方法左上角的8个用法进行查看！！！
+        //所以每次调用历史记录，只要对相应的value进行赋值，改变相应的bufferimage，后面直接调用每个类中的含有adjust的函数，获取相应类的processedimage就是我们需要的
     }
     /**
      * @describle 获得调整的历史记录，用key值判断进行的调整类型，用value判断调整的value值
