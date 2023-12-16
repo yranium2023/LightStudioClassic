@@ -31,5 +31,4 @@ src/test
 target
 javafx.iml
 LightStudioClassic.iml
-
-LightStudioClassic.iml
+/src/main/resources/serializedData/

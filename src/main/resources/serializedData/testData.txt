@@ -45,3 +45,4 @@ file:/D:/Photo/同学发言.jpg
 file:/C:/Users/张喆宇/Pictures/Screenshots/屏幕截图_20221104_193706.png
 file:/C:/Users/张喆宇/Pictures/Screenshots/屏幕截图_20221105_132719.png
 file:/C:/Users/张喆宇/Pictures/Screenshots/屏幕截图_20230126_184329.png
+file:/Users/yranium/Desktop/4f344a2d1d4cbee76b002d6c19f1f33c.png
