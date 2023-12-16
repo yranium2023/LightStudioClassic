@@ -80,9 +80,9 @@ public class HSLColorAdjustment extends ImageAdjustment {
             luminanceSlider_HSL.setPercentage(hslInfo.getLuminancePercent());
             //判断间隔
             double threshold =0.03;
-            lastValue[0]=0;
-            lastValue[1]=0;
-            lastValue[2]=0;
+            lastValue[0]=-0.18+hueSlider_HSL.getPercentage()*0.36;;
+            lastValue[1]=-0.3+hueSlider_HSL.getPercentage()*0.6;
+            lastValue[2]=-0.2+0.4*luminanceSlider_HSL.getPercentage();
             //色相轴
             hueListener=(ob,old,now)->{
                 if (old == now) return;
