@@ -47,8 +47,8 @@ public class HSLColorAdjustment extends ImageAdjustment {
         isColor[1]=HSLColorAdjustment::isOrange;
         isColor[2]=HSLColorAdjustment::isYellow;
         isColor[3]=HSLColorAdjustment::isGreen;
-        isColor[4]=HSLColorAdjustment::isBlue;
-        isColor[5]=HSLColorAdjustment::isCyan;
+        isColor[4]=HSLColorAdjustment::isCyan;
+        isColor[5]=HSLColorAdjustment::isBlue;
         isColor[6]=HSLColorAdjustment::isPurple;
     }
     public static void hslButtonBind(HSLColor hslColor, ImageObj editingImageObj){
@@ -121,7 +121,7 @@ public class HSLColorAdjustment extends ImageAdjustment {
                     );
                     hslInfo.setNowType(HSLInfo.sliderType.SATURATION);
                 }
-                satuPer=-0.3+hueSlider_HSL.getPercentage()*0.6;
+                satuPer=-0.3+saturationSlider_HSL.getPercentage()*0.6;
                 selectedProperty=1;
                 if(Math.abs(satuPer-lastValue[1])>threshold){
                     HSLAdjust(editingImageObj);
