@@ -74,7 +74,7 @@ public class ImageSaturationAdjustment extends ImageAdjustment {
         }
     }
 
-    private static void adjustSaturationAsync(ImageObj editingImageObj) {
+    public static void adjustSaturationAsync(ImageObj editingImageObj) {
 
         ExecutorService executor = Executors.newCachedThreadPool();
         executor.submit(() -> {
@@ -101,6 +101,10 @@ public class ImageSaturationAdjustment extends ImageAdjustment {
             });
         });
         executor.shutdown();
+    }
+
+    public static void setSaturationValue(double saturationValue) {
+        ImageSaturationAdjustment.saturationValue = saturationValue;
     }
 
     // 将 RGB 转换为 HSL

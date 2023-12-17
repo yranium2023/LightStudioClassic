@@ -8,7 +8,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.example.Curve.SplineCanvas.SplineBrightnessAdjustment;
 import org.example.Curve.SplineCanvas.SplineCanvas;
+import org.example.HSL.HSLColorAdjustment;
 import org.example.ImageModification.ImageContrastAdjustment;
+import org.example.ImageModification.ImageExposureAdjustment;
+import org.example.ImageModification.ImageSaturationAdjustment;
+import org.example.ImageModification.ImageTemperatureAdjustment;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
 import org.example.ImageTools.ImageTransfer;
@@ -20,10 +24,7 @@ import org.example.StaticValues;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * @author 张喆宇
@@ -66,41 +67,84 @@ public class ImageObj implements Serializable {
     private transient sliderType_1 nowSlider_1 = null;
     //历史记录
     private final Stack<AdjustHistory> adjustHistory = new Stack<>();
+
+    private final Map<String,AdjustHistory> adjustHistoryMap=new HashMap<>();
     public void addHistory(AdjustHistory History){
         adjustHistory.push(History);
+        adjustHistoryMap.put(History.getAdjustProperty(), History);
         EditHistoryScene.addLabel(History);
     }
-    public  Image AdjustImage(java.awt.Image image){
-        for(AdjustHistory history:adjustHistory){
-            String adjustProperty=history.getAdjustProperty();
+    //请补全下述方法和setimage方法，setimage中需要传入需要处理的图片
+    //adjust函数中传入需要处理的图片
+    //processedImage是进行调整后得到的Bufferedimage
+    public  Image AdjustImage(Image image){
+        adjustHistoryMap.forEach((key,value)->{
+            String adjustProperty=key;
             switch (adjustProperty){
                 case "点曲线调整"->{
-
-                    SplineBrightnessAdjustment.applyLUTToImage();
+                    setImage(SplineBrightnessAdjustment.bufferedImage,SplineBrightnessAdjustment.processedImage);
+                    SplineCanvas.setResultLUT(value.getLUTValue());
+                    SplineBrightnessAdjustment.applyLUTToImage(/*需要处理的图片*/);
                 }
                 case "对比度调整"->{
                     //括号里面传入原图片
-                    ImageContrastAdjustment.bufferedImage = ImageTransfer.toBufferedImage();
-                    ImageContrastAdjustment.processedImage = new BufferedImage(
-                            ImageContrastAdjustment.bufferedImage.getWidth(),
-                            ImageContrastAdjustment.bufferedImage.getHeight(),
-                            BufferedImage.TYPE_INT_ARGB);
-                    ImageContrastAdjustment.adjustContrastAsync();
-                    //ImageContrastAdjustment.processedImage是我们需要的东西。
+                    setImage(ImageContrastAdjustment.bufferedImage,ImageExposureAdjustment.processedImage);
+                    ImageContrastAdjustment.setContrastValue(value.getFirstValue());
+                    ImageContrastAdjustment.adjustContrastAsync(/*需要处理的图片*/);
                 }
                 case "饱和度调整"->{
-
+                    setImage(ImageSaturationAdjustment.bufferedImage,ImageExposureAdjustment.processedImage);
+                    ImageSaturationAdjustment.setSaturationValue(value.getFirstValue());
+                    ImageSaturationAdjustment.adjustSaturationAsync(/*需要处理的图片*/);
                 }
                 case "曝光度调整"->{
+                  setImage(ImageExposureAdjustment.bufferedImage,ImageExposureAdjustment.processedImage);
+                    ImageExposureAdjustment.setExposureValue(value.getFirstValue());
+                    ImageExposureAdjustment.adjustExposureAsync(/*需要处理的图片*/);
 
                 }
-                case ""->{
+                case "色温调整"->{
+                   setImage(ImageTemperatureAdjustment.bufferedImage,ImageSaturationAdjustment.processedImage);
+                    ImageTemperatureAdjustment.setKelvin(value.getFirstValue());
+                    ImageTemperatureAdjustment.adjustTemperatureAsync();
+                }
+                case "HSL色相调整"-> {
+                    setImage(HSLColorAdjustment.bufferedImage,HSLColorAdjustment.processedImage);
+                    HSLColorAdjustment.processedImage=new BufferedImage(
+                            HSLColorAdjustment.bufferedImage.getWidth(),
+                            HSLColorAdjustment.bufferedImage.getHeight(),
+                            BufferedImage.TYPE_INT_ARGB);
+                    HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
+                    HSLColorAdjustment.setHuePer(value.getSecondValue());
+                    HSLColorAdjustment.setSelectedProperty(0);
+                    HSLColorAdjustment.HSLAdjust(/*需要处理的图片*/);
 
+                }
+                case "HSL饱和度调整"->{
+                    setImage(HSLColorAdjustment.bufferedImage,HSLColorAdjustment.processedImage);
+                    HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
+                    HSLColorAdjustment.setSatuPer(value.getSecondValue());
+                    HSLColorAdjustment.setSelectedProperty(1);
+                    HSLColorAdjustment.HSLAdjust(/*需要处理的图片*/);
+                }
+                case "HSL明度调整"->{
+                   setImage(HSLColorAdjustment.bufferedImage,HSLColorAdjustment.processedImage);
+                    HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
+                    HSLColorAdjustment.setLumPer(value.getSecondValue());
+                    HSLColorAdjustment.setSelectedProperty(2);
+                    HSLColorAdjustment.HSLAdjust(/*需要处理的图片*/);
                 }
             }
-        }
+        });
+        return /*最终需要导出的图片*/;
     }
-
+    public void setImage(BufferedImage bufferedImage,BufferedImage processedImage){
+        bufferedImage=ImageTransfer.toBufferedImage(/*需要处理的图片*/);
+        processedImage=new BufferedImage(
+                bufferedImage.getWidth(),
+                bufferedImage.getHeight(),
+                BufferedImage.TYPE_INT_ARGB);
+    }
     public enum sliderType_1 {
         CONTRAST,
         EXPOSURE,

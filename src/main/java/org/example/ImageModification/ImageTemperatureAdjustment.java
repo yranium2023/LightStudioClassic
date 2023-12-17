@@ -70,7 +70,7 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
             });
         }
     }
-    private static void adjustTemperatureAsync(ImageObj editingImageObj) {
+    public static void adjustTemperatureAsync(ImageObj editingImageObj) {
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
@@ -101,6 +101,11 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
             });
         });
     }
+
+    public static void setKelvin(double kelvin) {
+        ImageTemperatureAdjustment.kelvin = kelvin;
+    }
+
     private static double calculateColorTemperature( ){
 
         // 计算图像的红色、绿色和蓝色通道的平均值

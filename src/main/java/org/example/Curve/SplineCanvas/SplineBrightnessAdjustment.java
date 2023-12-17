@@ -124,4 +124,5 @@ public class SplineBrightnessAdjustment extends ImageAdjustment {
             }
         }
     }
+
 }

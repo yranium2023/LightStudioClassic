@@ -164,9 +164,26 @@ public class HSLColorAdjustment extends ImageAdjustment {
             });
         }
     }
+    public static void setHuePer(double huePer) {
+        HSLColorAdjustment.huePer = huePer;
+    }
 
+    public static void setSatuPer(double satuPer) {
+        HSLColorAdjustment.satuPer = satuPer;
+    }
+    public static void setLumPer(double lumPer) {
+        HSLColorAdjustment.lumPer = lumPer;
+    }
 
-    private static void HSLAdjust(ImageObj editingImageObj){
+    public static void setSelectedColor(int selectedColor) {
+        HSLColorAdjustment.selectedColor = selectedColor;
+    }
+
+    public static void setSelectedProperty(int selectedProperty) {
+        HSLColorAdjustment.selectedProperty = selectedProperty;
+    }
+
+    public static void HSLAdjust(ImageObj editingImageObj){
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(()->{

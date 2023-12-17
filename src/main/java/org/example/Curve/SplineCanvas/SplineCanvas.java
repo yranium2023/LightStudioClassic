@@ -323,4 +323,7 @@ public class SplineCanvas extends StackPane{
         return super.getStyleableNode();
     }
 
+    public static void setResultLUT(LUT resultLUT) {
+        ResultLUT = resultLUT;
+    }
 }

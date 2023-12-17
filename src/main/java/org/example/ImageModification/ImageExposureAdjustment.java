@@ -70,7 +70,7 @@ public class ImageExposureAdjustment extends ImageAdjustment {
         }
     }
 
-    private static void adjustExposureAsync(ImageObj editingImageObj) {
+    public static void adjustExposureAsync(ImageObj editingImageObj) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
            new ThreadProcess(bufferedImage,processedImage){
@@ -106,5 +106,7 @@ public class ImageExposureAdjustment extends ImageAdjustment {
         executor.shutdown();
     }
 
-
+    public static void setExposureValue(double exposureValue) {
+        ImageExposureAdjustment.exposureValue = exposureValue;
+    }
 }

@@ -66,6 +66,9 @@ public class ImageContrastAdjustment extends ImageAdjustment {
         }
     }
 
+    public static void setContrastValue(double contrastValue) {
+        ImageContrastAdjustment.contrastValue = contrastValue;
+    }
 
     public static void adjustContrastAsync(ImageObj editingImageObj) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
