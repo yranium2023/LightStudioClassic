@@ -1,5 +1,6 @@
 package org.example.Scene;
 
+import io.vproxy.vfx.control.scroll.VScrollPane;
 import io.vproxy.vfx.theme.Theme;
 import io.vproxy.vfx.ui.button.FusionButton;
 import io.vproxy.vfx.ui.button.FusionImageButton;
@@ -21,14 +22,17 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
 import org.example.Obj.ImageObj;
 import org.example.StaticValues;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -118,6 +122,7 @@ public class ImageImportMenuScene extends SuperScene {
                             String imagePath = selectedFile.toURI().toString();
                             Image selectedImage = new Image(imagePath);
                             ImageObj imageObj = new ImageObj(selectedImage);
+                            imageObj.setImageName(selectedFile.getName());
                             BufferedImage bufferedImage = SwingFXUtils.fromFXImage(selectedImage, null);
                             double selectedImageHeight = selectedImage.getHeight();
                             double selectedImageWidth = selectedImage.getWidth();
@@ -175,11 +180,116 @@ public class ImageImportMenuScene extends SuperScene {
                 });
             }
         });
+        OutPutButton.setOnAction(e -> {
+            VStage stage = new VStage();
+            stage.getStage().setResizable(false);
+            stage.getStage().setHeight(610);
+            stage.getStage().setWidth(900);
+            VScrollPane scrollOutputFlowPane = new VScrollPane() {{
+                getNode().setLayoutX(70);
+                getNode().setLayoutY(70);
+                getNode().setPrefWidth(760);
+                getNode().setPrefHeight(450);
+            }};
+            FlowPane flowOutputPane = new FlowPane() {{
+                setLayoutX(0);
+                setLayoutY(0);
+                setPrefHeight(scrollOutputFlowPane.getNode().getPrefHeight());
+                setPrefWidth(scrollOutputFlowPane.getNode().getPrefWidth());
+                // 设置行列间距
+                setHgap(50);
+                setVgap(25);
+            }};
+            // 创建一个矩形用于显示flowPane的边框
+            Rectangle flowPaneRec = new Rectangle(scrollOutputFlowPane.getNode().getLayoutX() - 20, scrollOutputFlowPane.getNode().getLayoutY() - 10, flowOutputPane.getPrefWidth() + 20, flowOutputPane.getPrefHeight() + 10) {{
+                setFill(Color.TRANSPARENT);
+                setStroke(Color.WHITE); // 设置矩形的边框颜色
+                setStrokeType(StrokeType.INSIDE);//边框为内嵌式，不会超出pane的范围
+            }};
+            //绑定两个pane的宽和高
+            FXUtils.observeWidthHeight(scrollOutputFlowPane.getNode(), flowOutputPane);
+            scrollOutputFlowPane.setContent(flowOutputPane);
+            List<ImageObj> outImages=new ArrayList<>();
+            for(ImageObj imageObj:totalImages){
+                VBox outVox = new VBox();
+                FusionImageButton outImageButton = new FusionImageButton();
+                imageObj.setOutPutImageVBox(outVox);
+                outVox.getChildren().add(outImageButton);
+                Label descriptionLabel = new Label(Integer.toString((int) imageObj.getEditingImage().getWidth()) + '×' + (int) imageObj.getEditingImage().getHeight());
+                descriptionLabel.setTextFill(Color.WHITE);
+                outVox.getChildren().add(descriptionLabel);
+                outVox.setAlignment(Pos.CENTER); // 居中对齐
+                outVox.setSpacing(5);
+                outImageButton.setPrefSize(80,80);
+                outImageButton.getImageView().setImage(imageObj.getButtonImage());
+                outImageButton.setOnAction(event -> {
+                    if(outImages.contains(imageObj)){
+                        outImages.remove(imageObj);
+                        outVox.setBackground(null);
+                    }else{
+                        outImages.add(imageObj);
+                        outVox.setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(5), null)));
+                    }
+                });
+                flowOutputPane.getChildren().add(outVox);
+            }
+            var OPpane = new FusionPane() {{
+                getNode().setPrefHeight(50);
+                getNode().setPrefWidth(300);
+                getNode().setLayoutX(530);
+                getNode().setLayoutY(530);
+            }};
+            getContentPane().getChildren().add(OPpane.getNode());
+            FusionButton yesButton = new FusionButton("确定") {{
+                setPrefWidth(125);
+                setPrefHeight(OPpane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);
+                setOnlyAnimateWhenNotClicked(true);
+            }};
+            FusionButton noButton = new FusionButton("撤销") {{
+                setPrefWidth(125);
+                setPrefHeight(OPpane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);
+                setLayoutX(155);
+                setOnlyAnimateWhenNotClicked(true);
+            }};
+            yesButton.setOnAction(event -> {
+                DirectoryChooser directoryChooser = new DirectoryChooser();
+                directoryChooser.setTitle("选择导出路径");
+
+                // 显示文件选择对话框
+                File selectedDirectory = directoryChooser.showDialog(stage.getStage());
+                for(ImageObj imageObj:outImages){
+                    // 构造完整的文件路径
+                    String filePath =selectedDirectory.getPath()+File.separator + imageObj.getImageName();
+                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageObj.getEditingImage(),null);
+                    // 保存BufferedImage到文件
+                    try {
+                        File file = new File(filePath);
+                        int lastDotIndex = filePath.lastIndexOf('.');
+                        // 获取文件拓展名
+                        String fileExtension =filePath.substring(lastDotIndex + 1);
+                        ImageIO.write(bufferedImage, fileExtension, file); // 这里可以根据需要选择其他图片格式
+                        System.out.println("Image saved to: " + file.getAbsolutePath());
+                    } catch (IOException event1) {
+                        event1.printStackTrace();
+                    }
+                }
+                stage.close();
+            });
+            noButton.setOnAction(event -> {
+                for(ImageObj imageObj:outImages){
+                    imageObj.getOutPutImageVBox().setBackground(null);
+                }
+                outImages.clear();
+            });
+            OPpane.getContentPane().getChildren().add(yesButton);
+            OPpane.getContentPane().getChildren().add(noButton);
+            stage.getInitialScene().getContentPane().getChildren().add(flowPaneRec);
+            stage.getInitialScene().getContentPane().getChildren().add(scrollOutputFlowPane.getNode());
+            stage.getInitialScene().getContentPane().getChildren().add(OPpane.getNode());
+            stage.show();
+        });
     }
 
-    public static void turningFilesIntoImages(List<File> selectedFiles){
-
-    }
 
     /***
      * @Description 创建多个FusionButtonBox 含有图片 和文字说明

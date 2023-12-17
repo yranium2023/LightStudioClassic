@@ -2,8 +2,10 @@ package org.example.Obj;
 
 import io.vproxy.vfx.ui.button.FusionImageButton;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import org.example.Curve.SplineCanvas.SplineCanvas;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
@@ -32,10 +34,10 @@ public class ImageObj {
     private Image editingImage = null;
     //裁减过程中产生的图片列表
     private List<Image> clipImages = new ArrayList<>();
-    //编辑过程中产生的图片列表
-    private List<Image> editImages = new ArrayList<>();
     //传入图片的路径
     String imagePath = null;
+    //图片的名称
+    String imageName = null;
     //图库中整个vbox
     private VBox buttonVBox = null;
     //图库中按钮
@@ -44,6 +46,8 @@ public class ImageObj {
     private FusionImageButton copyButton = null;
     //横版中整个vbox
     private VBox copyVBox = null;
+    //导出图片中整个vbox
+    private VBox outPutImageVBox = null;
     //对比度滑动条，初始化为0.5
     private double contrastPercent = 0.5;
     //曝光度滑动条，初始化为0.5
@@ -166,15 +170,6 @@ public class ImageObj {
     }
 
     /***
-     * @Description 获取编辑图片列表
-     * @author 张喆宇
-     * @date 2023/12/9 11:28
-     **/
-    public List<Image> getEditImages() {
-        return editImages;
-    }
-
-    /***
      * @Description 用于压缩图片 普通压缩
      * @param image
      * @return javafx.scene.image.Image
@@ -275,7 +270,7 @@ public class ImageObj {
 
     /**
      * @param nowImage
-     * @Description 这个类用来生成新的压缩图片、图标图片、直方图
+     * @Description 这个类用来生成新的压缩图片、图标图片、直方图、和图片面熟
      * @author 吴鹄远
      * @date 2023/12/11 15:24
      **/
@@ -289,6 +284,10 @@ public class ImageObj {
         Image newEditingImage = ImageObj.resizeNormalImage(nowImage);
         setEditingImage(newEditingImage);
         Histogram.drawHistogram(newEditingImage);
+        this.buttonVBox.getChildren().remove(1);
+        Label descriptionLabel = new Label(Integer.toString((int) newEditingImage.getWidth()) + '×' + (int) newEditingImage.getHeight());
+        descriptionLabel.setTextFill(Color.WHITE);
+        this.buttonVBox.getChildren().add(descriptionLabel);
     }
 
     /***
@@ -305,6 +304,14 @@ public class ImageObj {
             StaticValues.editingImageObj = ImageImportMenuScene.totalImages.get(0);
         Histogram.drawHistogram(StaticValues.editingImageObj.getEditingImage());
         ImageEditScene.initEditImagePane();
+    }
+
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
     }
 
     public double getContrastPercent() {
@@ -361,6 +368,14 @@ public class ImageObj {
 
     public VBox getCopyVBox() {
         return copyVBox;
+    }
+
+    public VBox getOutPutImageVBox() {
+        return outPutImageVBox;
+    }
+
+    public void setOutPutImageVBox(VBox outPutImageVBox) {
+        this.outPutImageVBox = outPutImageVBox;
     }
 
     public SplineCanvas getSplineCanvas() {
