@@ -11,6 +11,8 @@ import org.example.Scene.ImageEditScene;
 import org.example.StaticValues;
 
 import java.awt.image.BufferedImage;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -59,7 +61,7 @@ public class ImageContrastAdjustment extends ImageAdjustment {
             contrastSlider.percentageProperty().addListener(contrastSliderListener);
             contrastSlider.setOnMouseReleased(e->{
                 editingImageObj.setContrastPercent(contrastSlider.getPercentage());
-                AdjustHistory.addHistory("对比度调整",Double.toString(contrastValue));
+                AdjustHistory.addHistory(new AdjustHistory("对比度调整", LocalTime.now().truncatedTo(ChronoUnit.SECONDS),contrastValue));
             });
         }
     }

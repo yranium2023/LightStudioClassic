@@ -12,6 +12,8 @@ import org.example.Scene.ImageEditScene;
 import org.example.StaticValues;
 
 import java.awt.image.BufferedImage;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -64,7 +66,7 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
             temperatureSlider.percentageProperty().addListener(SliderListener);
             temperatureSlider.setOnMouseReleased(e->{
                 editingImageObj.setTemperaturePercent(temperatureSlider.getPercentage());
-                AdjustHistory.addHistory("色温调整",Double.toString(kelvin));
+                AdjustHistory.addHistory(new AdjustHistory("色温调整", LocalTime.now().truncatedTo(ChronoUnit.SECONDS),kelvin));
             });
         }
     }

@@ -11,6 +11,8 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import org.example.Obj.AdjustHistory;
 
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -49,6 +51,7 @@ public class SplineCanvas extends StackPane{
 
         canvas.setOnMouseReleased(mouseEvent -> {
             DraggingIndex=-1;
+            AdjustHistory.addHistory(new AdjustHistory("点曲线调整", LocalTime.now().truncatedTo(ChronoUnit.SECONDS),ResultLUT));
         });
         canvas.setOnMousePressed(event -> {
             double x=event.getX();
@@ -60,7 +63,6 @@ public class SplineCanvas extends StackPane{
                     redraw();
                 }else {
                     DraggingIndex=controlPoints.selectPoint(point);
-
                 }
 
             }
@@ -148,7 +150,6 @@ public class SplineCanvas extends StackPane{
             int x=(int)((point.getX()/CANVAS_WIDTH)*255.0);
             int y=(int)((1-point.getY()/CANVAS_WIDTH)*255.0);
             ResultLUT.addXToY(x,y);
-            AdjustHistory.addHistory("点曲线调整",x+" "+y);
         }
         if (currentTask == null || currentTask.isDone()) {
             // 如果当前任务为空或者已经完成，则提交新任务

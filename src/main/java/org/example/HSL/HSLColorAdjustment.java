@@ -18,6 +18,8 @@ import org.example.Obj.ImageObj;
 import org.example.Scene.ImageEditScene;
 
 import java.awt.image.BufferedImage;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -156,6 +158,17 @@ public class HSLColorAdjustment extends ImageAdjustment {
             luminanceSlider_HSL.percentageProperty().addListener(luminanceListener);
             luminanceSlider_HSL.setOnMouseReleased(e->{
                 hslInfo.setLuminancePercent(luminanceSlider_HSL.getPercentage());
+                switch (selectedProperty){
+                    case 0:
+                        AdjustHistory.addHistory(new AdjustHistory("HSL色相调整",LocalTime.now().truncatedTo(ChronoUnit.SECONDS),selectedColor,selectedProperty));
+                        break;
+                    case 1:
+                        AdjustHistory.addHistory(new AdjustHistory("HSL饱和度调整",LocalTime.now().truncatedTo(ChronoUnit.SECONDS),selectedColor,selectedProperty));
+                        break;
+                    case 2:
+                        AdjustHistory.addHistory(new AdjustHistory("HSL明度调整",LocalTime.now().truncatedTo(ChronoUnit.SECONDS),selectedColor,selectedProperty));
+                        break;
+                }
             });
 
         }
@@ -208,17 +221,6 @@ public class HSLColorAdjustment extends ImageAdjustment {
                 //刷新显示的图像
                 ImageEditScene.initEditImagePane();
                 System.out.println("调整完毕");
-                switch (selectedProperty){
-                    case 0:
-                        AdjustHistory.addHistory("HSL色相调整", selectedColor +" "+ selectedProperty);
-                        break;
-                    case 1:
-                        AdjustHistory.addHistory("HSL饱和度调整", selectedColor +" "+ selectedProperty);
-                        break;
-                    case 2:
-                        AdjustHistory.addHistory("HSL亮度调整", selectedColor +" "+ selectedProperty);
-                        break;
-                }
             });
         });
         executor.shutdown();
@@ -309,8 +311,9 @@ public class HSLColorAdjustment extends ImageAdjustment {
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = rgb & 0xFF;
-        return red > 145 && green < 160 && blue < 160;
+        return red > 155 && green < 160 && blue < 160; // 提高红色识别条件
     }
+
 
     private static boolean isOrange(int rgb){
         int red = (rgb >> 16) & 0xFF;
@@ -323,28 +326,27 @@ public class HSLColorAdjustment extends ImageAdjustment {
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = rgb & 0xFF;
-        return red > 155 && green > 125 && blue < 125;
+        return red > 155 && green > 125 && blue < 120;
     }
 
     private static boolean isGreen(int rgb) {
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = rgb & 0xFF;
-        return red < 125 && green > 105 && blue < 175;
+        return red < 115 && green > 105 && blue < 175; // 缩小绿色判断范围
     }
 
     private static boolean isBlue(int rgb) {
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = rgb & 0xFF;
-        return red < 125 && green < 175 && blue > 125;
+        return red < 125 && green < 175 && blue > 105; // 降低蓝色识别条件
     }
-
     private static boolean isCyan(int rgb){
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
         int blue = rgb & 0xFF;
-        return green > 125 && blue > 125 && red < 155;
+        return green > 115 && blue > 115 && red < 155; // 扩大青色判断范围
     }
 
     private static boolean isPurple(int rgb) {

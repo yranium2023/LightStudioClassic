@@ -11,6 +11,8 @@ import org.example.Scene.ImageEditScene;
 import org.example.StaticValues;
 
 import java.awt.image.BufferedImage;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -63,7 +65,7 @@ public class ImageExposureAdjustment extends ImageAdjustment {
             exposureSlider.percentageProperty().addListener(SliderListener);
             exposureSlider.setOnMouseReleased(e->{
                 editingImageObj.setExposurePercent(exposureSlider.getPercentage());
-                AdjustHistory.addHistory("曝光度调整",Double.toString(exposureValue));
+                AdjustHistory.addHistory(new AdjustHistory("曝光度调整", LocalTime.now().truncatedTo(ChronoUnit.SECONDS),exposureValue));
             });
         }
     }

@@ -17,6 +17,8 @@ import org.example.Scene.ImageEditScene;
 import org.example.StaticValues;
 
 import java.awt.image.BufferedImage;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -67,7 +69,7 @@ public class ImageSaturationAdjustment extends ImageAdjustment {
             saturationSlider.percentageProperty().addListener(SliderListener);
             saturationSlider.setOnMouseReleased(e->{
                 editingImageObj.setSaturationPercent(saturationSlider.getPercentage());
-                AdjustHistory.addHistory("饱和度调整",Double.toString(saturationValue));
+                AdjustHistory.addHistory(new AdjustHistory("饱和度调整", LocalTime.now().truncatedTo(ChronoUnit.SECONDS),saturationValue));
             });
         }
     }
