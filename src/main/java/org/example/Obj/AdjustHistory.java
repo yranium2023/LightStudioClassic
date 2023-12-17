@@ -4,6 +4,7 @@ import org.example.Curve.SplineCanvas.LUT;
 import org.example.Scene.EditHistoryScene;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.*;
 
@@ -12,7 +13,7 @@ import java.util.*;
  * @Description 本类实现历史记录
  * @date 2023/12/13 21:46
  */
-public class AdjustHistory {
+public class AdjustHistory implements Serializable {
 
     private String adjustProperty;//类型
 
