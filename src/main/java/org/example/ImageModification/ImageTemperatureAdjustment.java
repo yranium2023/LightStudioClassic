@@ -57,7 +57,7 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
                 }
                 double newValue = temperatureSlider.getPercentage() * 1.95;//0.15 1 1.85
                 if (Math.abs(newValue - lastValue) > threshold) {
-                    kelvin =20000*(2-newValue)+1000;
+                    kelvin =6500*(2-newValue);
                     adjustTemperatureAsync(editingImageObj);
                     lastValue = newValue;
                 }

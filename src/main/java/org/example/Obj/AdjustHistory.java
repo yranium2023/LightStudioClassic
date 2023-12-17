@@ -3,6 +3,7 @@ package org.example.Obj;
 import org.example.Curve.SplineCanvas.LUT;
 import org.example.Scene.EditHistoryScene;
 
+import java.awt.*;
 import java.time.LocalTime;
 import java.util.*;
 
@@ -31,6 +32,7 @@ public class AdjustHistory {
         this.time=System.currentTimeMillis();
         this.LUTValue=LUTValue;
     }
+
 
 
     public long getTime() {

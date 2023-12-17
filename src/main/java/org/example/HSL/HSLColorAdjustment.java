@@ -109,6 +109,7 @@ public class HSLColorAdjustment extends ImageAdjustment {
             hueSlider_HSL.percentageProperty().addListener(hueListener);
             hueSlider_HSL.setOnMouseReleased(e->{
                 hslInfo.setHuePercent(hueSlider_HSL.getPercentage());
+                editingImageObj.addHistory(new AdjustHistory("HSL色相调整",selectedColor,selectedProperty));
             });
 
             //饱和度轴
@@ -134,6 +135,7 @@ public class HSLColorAdjustment extends ImageAdjustment {
             saturationSlider_HSL.percentageProperty().addListener(saturationListener);
             saturationSlider_HSL.setOnMouseReleased(e->{
                 hslInfo.setSaturationPercent(saturationSlider_HSL.getPercentage());
+                editingImageObj.addHistory(new AdjustHistory("HSL饱和度调整",selectedColor,selectedProperty));
             });
 
             //明度轴
@@ -158,19 +160,8 @@ public class HSLColorAdjustment extends ImageAdjustment {
             luminanceSlider_HSL.percentageProperty().addListener(luminanceListener);
             luminanceSlider_HSL.setOnMouseReleased(e->{
                 hslInfo.setLuminancePercent(luminanceSlider_HSL.getPercentage());
-                switch (selectedProperty){
-                    case 0:
-                        editingImageObj.addHistory(new AdjustHistory("HSL色相调整",selectedColor,selectedProperty));
-                        break;
-                    case 1:
-                        editingImageObj.addHistory(new AdjustHistory("HSL饱和度调整",selectedColor,selectedProperty));
-                        break;
-                    case 2:
                         editingImageObj.addHistory(new AdjustHistory("HSL明度调整",selectedColor,selectedProperty));
-                        break;
-                }
             });
-
         }
     }
 
