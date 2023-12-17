@@ -10,6 +10,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import org.example.Obj.AdjustHistory;
+import org.example.StaticValues;
 
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
@@ -51,7 +52,7 @@ public class SplineCanvas extends StackPane{
 
         canvas.setOnMouseReleased(mouseEvent -> {
             DraggingIndex=-1;
-            AdjustHistory.addHistory(new AdjustHistory("点曲线调整", LocalTime.now().truncatedTo(ChronoUnit.SECONDS),ResultLUT));
+            StaticValues.editingImageObj.addHistory(new AdjustHistory("点曲线调整",ResultLUT));
         });
         canvas.setOnMousePressed(event -> {
             double x=event.getX();

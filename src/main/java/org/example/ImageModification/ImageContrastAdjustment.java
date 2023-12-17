@@ -61,7 +61,7 @@ public class ImageContrastAdjustment extends ImageAdjustment {
             contrastSlider.percentageProperty().addListener(contrastSliderListener);
             contrastSlider.setOnMouseReleased(e->{
                 editingImageObj.setContrastPercent(contrastSlider.getPercentage());
-                AdjustHistory.addHistory(new AdjustHistory("对比度调整", LocalTime.now().truncatedTo(ChronoUnit.SECONDS),contrastValue));
+                editingImageObj.addHistory(new AdjustHistory("对比度调整",contrastValue));
             });
         }
     }

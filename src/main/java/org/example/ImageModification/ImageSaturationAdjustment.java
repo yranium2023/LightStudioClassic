@@ -69,7 +69,7 @@ public class ImageSaturationAdjustment extends ImageAdjustment {
             saturationSlider.percentageProperty().addListener(SliderListener);
             saturationSlider.setOnMouseReleased(e->{
                 editingImageObj.setSaturationPercent(saturationSlider.getPercentage());
-                AdjustHistory.addHistory(new AdjustHistory("饱和度调整", LocalTime.now().truncatedTo(ChronoUnit.SECONDS),saturationValue));
+                editingImageObj.addHistory(new AdjustHistory("饱和度调整",saturationValue));
             });
         }
     }

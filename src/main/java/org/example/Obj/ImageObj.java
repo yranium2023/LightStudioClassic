@@ -9,6 +9,7 @@ import javafx.scene.paint.Color;
 import org.example.Curve.SplineCanvas.SplineCanvas;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
+import org.example.Scene.EditHistoryScene;
 import org.example.Scene.ImageEditScene;
 import org.example.Scene.ImageImportMenuScene;
 import org.example.Scene.ImageImportScene;
@@ -19,6 +20,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * @author 张喆宇
@@ -58,6 +60,12 @@ public class ImageObj {
     private double temperaturePercent = 0.5;
     //创建一个枚举类型，存储当前滑动条是四个滑动条中的哪一条
     private sliderType_1 nowSlider_1 = null;
+    //历史记录
+    private  final Stack<AdjustHistory> adjustHistory = new Stack<>();
+    public void addHistory(AdjustHistory History){
+        adjustHistory.push(History);
+        EditHistoryScene.addLabel(History);
+    }
 
     public enum sliderType_1 {
         CONTRAST,

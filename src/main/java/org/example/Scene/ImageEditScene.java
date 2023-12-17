@@ -50,7 +50,7 @@ public class ImageEditScene extends SuperScene{
     private static ImagePane editImagePane=new ImagePane(){{
         setWidth(900);
         setHeight(550);
-        setLayoutX(60);
+        setLayoutX(70);
         setLayoutY(100);
     }};
     //创建一个pane来包含各种组件
@@ -514,8 +514,32 @@ public class ImageEditScene extends SuperScene{
 
 
 
-
-
+        //生成左边的pane
+        var historyPane=new FusionPane(){{
+           getNode().prefHeightProperty().bind(LSMain.getStage().getStage().heightProperty().add(-150));
+           getNode().setPrefWidth(50);
+           getNode().setLayoutX(10);
+        }};
+        //绑定
+        FXUtils.observeHeightCenter(getContentPane(),historyPane.getNode());
+        getContentPane().getChildren().add(historyPane.getNode());
+        //创建一个按钮
+        var toHistoryButton=new FusionImageButton(ImportImageResource.getInstance().getImage("image/rightArrow.png")){{
+           prefHeightProperty().bind(historyPane.getNode().heightProperty().add(-30));
+           setPrefWidth(30);
+           getImageView().setFitWidth(20);
+        }};
+        //绑定在pane中间
+        FXUtils.observeHeightCenter(historyPane.getNode(),toHistoryButton);
+        historyPane.getContentPane().getChildren().add(toHistoryButton);
+        //创建历史记录场景
+        var historyScene=new EditHistoryScene();
+        toHistoryButton.setOnAction(event -> {
+            if(!sceneGroupSup.get().getScenes().contains(historyScene)){
+                sceneGroupSup.get().addScene(historyScene,VSceneHideMethod.TO_LEFT);
+            }
+            sceneGroupSup.get().show(historyScene,VSceneShowMethod.FROM_LEFT);
+        });
 
 
 

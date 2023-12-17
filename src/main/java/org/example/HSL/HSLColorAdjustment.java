@@ -160,13 +160,13 @@ public class HSLColorAdjustment extends ImageAdjustment {
                 hslInfo.setLuminancePercent(luminanceSlider_HSL.getPercentage());
                 switch (selectedProperty){
                     case 0:
-                        AdjustHistory.addHistory(new AdjustHistory("HSL色相调整",LocalTime.now().truncatedTo(ChronoUnit.SECONDS),selectedColor,selectedProperty));
+                        editingImageObj.addHistory(new AdjustHistory("HSL色相调整",selectedColor,selectedProperty));
                         break;
                     case 1:
-                        AdjustHistory.addHistory(new AdjustHistory("HSL饱和度调整",LocalTime.now().truncatedTo(ChronoUnit.SECONDS),selectedColor,selectedProperty));
+                        editingImageObj.addHistory(new AdjustHistory("HSL饱和度调整",selectedColor,selectedProperty));
                         break;
                     case 2:
-                        AdjustHistory.addHistory(new AdjustHistory("HSL明度调整",LocalTime.now().truncatedTo(ChronoUnit.SECONDS),selectedColor,selectedProperty));
+                        editingImageObj.addHistory(new AdjustHistory("HSL明度调整",selectedColor,selectedProperty));
                         break;
                 }
             });
