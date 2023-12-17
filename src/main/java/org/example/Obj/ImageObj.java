@@ -300,6 +300,7 @@ public class ImageObj {
         ImageImportMenuScene.totalImages.remove(this);
         ImageImportScene.flowImportPane.getChildren().remove(this.buttonVBox);
         ImageEditScene.hEditBox.getChildren().remove(this.copyVBox);
+        ImageImportScene.menuScene.getCopyImageButtonsVboxButtons().remove(this.copyVBox);
         if (!ImageImportMenuScene.totalImages.isEmpty())
             StaticValues.editingImageObj = ImageImportMenuScene.totalImages.get(0);
         Histogram.drawHistogram(StaticValues.editingImageObj.getEditingImage());
