@@ -52,16 +52,25 @@ public class ImageSaturationAdjustment extends ImageAdjustment {
                 if (old == now) return;
                 if(editingImageObj.getNowSlider_1()!= ImageObj.sliderType_1.SATURATION){
                     bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
-                    processedImage = new BufferedImage(
-                            bufferedImage.getWidth(),
-                            bufferedImage.getHeight(),
-                            BufferedImage.TYPE_INT_ARGB);
+                    ImageAdjustment.setProcessedImage();
                     editingImageObj.setNowSlider_1(ImageObj.sliderType_1.SATURATION);
                 }
                 double newValue = 0 + saturationSlider.getPercentage() * 2;//0 1 2
                 if (Math.abs(newValue - lastValue) > threshold) {
                     saturationValue = newValue;
-                    adjustSaturationAsync(editingImageObj);
+                    ExecutorService executor = Executors.newCachedThreadPool();
+                    executor.submit(() -> {
+                        adjustSaturationAsync();
+                        javafx.application.Platform.runLater(() -> {
+                            Image adjustedImage = SwingFXUtils.toFXImage(processedImage, null);
+                            //设置新图像
+                            editingImageObj.renewAll(adjustedImage);
+                            //刷新显示的图像
+                            ImageEditScene.initEditImagePane();
+                            System.out.println("饱和度调整成功");
+                        });
+                    });
+                    executor.shutdown();
                     lastValue = newValue;
                 }
             };
@@ -74,10 +83,8 @@ public class ImageSaturationAdjustment extends ImageAdjustment {
         }
     }
 
-    public static void adjustSaturationAsync(ImageObj editingImageObj) {
+    public static void adjustSaturationAsync() {
 
-        ExecutorService executor = Executors.newCachedThreadPool();
-        executor.submit(() -> {
             new ThreadProcess(bufferedImage,processedImage){
                 @Override
                 public int calculateRGB(int rgb) {
@@ -91,16 +98,7 @@ public class ImageSaturationAdjustment extends ImageAdjustment {
                     return hslToRgb(hsl[0], hsl[1], hsl[2], alpha);
                 }
             }.run();
-            javafx.application.Platform.runLater(() -> {
-                Image adjustedImage = SwingFXUtils.toFXImage(processedImage, null);
-                //设置新图像
-                editingImageObj.renewAll(adjustedImage);
-                //刷新显示的图像
-                ImageEditScene.initEditImagePane();
-                System.out.println("饱和度调整成功");
-            });
-        });
-        executor.shutdown();
+
     }
 
     public static void setSaturationValue(double saturationValue) {

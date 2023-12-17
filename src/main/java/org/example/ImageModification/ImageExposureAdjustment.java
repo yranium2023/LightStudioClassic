@@ -46,10 +46,7 @@ public class ImageExposureAdjustment extends ImageAdjustment {
                 if (old == now) return;
                 if(editingImageObj.getNowSlider_1()!= ImageObj.sliderType_1.EXPOSURE){
                     bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
-                    processedImage = new BufferedImage(
-                            bufferedImage.getWidth(),
-                            bufferedImage.getHeight(),
-                            BufferedImage.TYPE_INT_ARGB);
+                    ImageAdjustment.setProcessedImage();
                     editingImageObj.setNowSlider_1(ImageObj.sliderType_1.EXPOSURE);
                     System.out.println("sliderType_1 changed");
                 }
@@ -57,7 +54,21 @@ public class ImageExposureAdjustment extends ImageAdjustment {
                 double newValue = -1 + exposureSlider.getPercentage() * 2;//-1 0 1
                 if (Math.abs(newValue - lastValue) > threshold) {
                     exposureValue = newValue;
-                    adjustExposureAsync(editingImageObj);
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    executor.submit(() -> {
+                        adjustExposureAsync();
+                        javafx.application.Platform.runLater(() -> {
+                            Image adjustedImage = SwingFXUtils.toFXImage(processedImage, null);
+                            //设置新图像
+//                editingImageObj.getEditImages().add(adjustedImage);
+                            editingImageObj.renewAll(adjustedImage);
+                            //刷新显示的图像
+                            ImageEditScene.initEditImagePane();
+                            System.out.println("曝光度调整成功");
+
+                        });
+                    });
+                    executor.shutdown();
                     lastValue = newValue;
                 }
             };
@@ -70,9 +81,7 @@ public class ImageExposureAdjustment extends ImageAdjustment {
         }
     }
 
-    public static void adjustExposureAsync(ImageObj editingImageObj) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
+    public static void adjustExposureAsync() {
            new ThreadProcess(bufferedImage,processedImage){
                @Override
                public int calculateRGB(int rgb) {
@@ -92,18 +101,6 @@ public class ImageExposureAdjustment extends ImageAdjustment {
                    return (alpha << 24) | (red << 16) | (green << 8) | blue;
                }
            }.run();
-            javafx.application.Platform.runLater(() -> {
-                Image adjustedImage = SwingFXUtils.toFXImage(processedImage, null);
-                //设置新图像
-//                editingImageObj.getEditImages().add(adjustedImage);
-                editingImageObj.renewAll(adjustedImage);
-                //刷新显示的图像
-                ImageEditScene.initEditImagePane();
-                System.out.println("曝光度调整成功");
-
-            });
-        });
-        executor.shutdown();
     }
 
     public static void setExposureValue(double exposureValue) {

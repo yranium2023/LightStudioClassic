@@ -49,16 +49,26 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
                 if (old == now) return;
                 if(editingImageObj.getNowSlider_1()!= ImageObj.sliderType_1.TEMPERATURE){
                     bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
-                    processedImage = new BufferedImage(
-                            bufferedImage.getWidth(),
-                            bufferedImage.getHeight(),
-                            BufferedImage.TYPE_INT_ARGB);
+                    ImageAdjustment.setProcessedImage();
                     editingImageObj.setNowSlider_1(ImageObj.sliderType_1.TEMPERATURE);
                 }
                 double newValue = temperatureSlider.getPercentage() * 1.95;//0.15 1 1.85
                 if (Math.abs(newValue - lastValue) > threshold) {
                     kelvin =6500*(2-newValue);
-                    adjustTemperatureAsync(editingImageObj);
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    executor.submit(() -> {
+                        adjustTemperatureAsync();
+                        javafx.application.Platform.runLater(() -> {
+                            Image adjustedImage = SwingFXUtils.toFXImage(processedImage, null);
+                            //设置新图像
+                            //editingImageObj.getEditImages().add(adjustedImage);
+                            editingImageObj.renewAll(adjustedImage);
+                            //刷新显示的图像
+                            ImageEditScene.initEditImagePane();
+                            System.out.println("色温调整成功");
+                        });
+                    });
+                    executor.shutdown();
                     lastValue = newValue;
                 }
             };
@@ -70,10 +80,7 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
             });
         }
     }
-    public static void adjustTemperatureAsync(ImageObj editingImageObj) {
-
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
+    public static void adjustTemperatureAsync() {
             TemperatureToRGB();
             new ThreadProcess(bufferedImage, processedImage) {
                 @Override
@@ -90,16 +97,6 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
                     return (alpha << 24) | (red << 16) | (green << 8) | blue;
                 }
             }.run();
-            javafx.application.Platform.runLater(() -> {
-                Image adjustedImage = SwingFXUtils.toFXImage(processedImage, null);
-                //设置新图像
-//                editingImageObj.getEditImages().add(adjustedImage);
-                editingImageObj.renewAll(adjustedImage);
-                //刷新显示的图像
-                ImageEditScene.initEditImagePane();
-                System.out.println("色温调整成功");
-            });
-        });
     }
 
     public static void setKelvin(double kelvin) {

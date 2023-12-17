@@ -49,11 +49,7 @@ public class SplineBrightnessAdjustment extends ImageAdjustment {
     public static void addCurve(Pane curvePane, ImageObj editingImageObj){
         if(editingImageObj!=null){
             bufferedImage=ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
-            processedImage = new BufferedImage(
-                    bufferedImage.getWidth(),
-                    bufferedImage.getHeight(),
-                    BufferedImage.TYPE_INT_ARGB
-            );
+            ImageAdjustment.setProcessedImage();
             StackPane stackPane=new StackPane();
             stackPane.getChildren().addAll(curveRec,editingImageObj.getSplineCanvas());
             curvePane.getChildren().add(stackPane);
@@ -66,12 +62,6 @@ public class SplineBrightnessAdjustment extends ImageAdjustment {
         SplineCanvas.ResultLUT.checkLUT();
         ForkJoinPool forkJoinPool=new ForkJoinPool();
         forkJoinPool.invoke(new LUTTask(0,0,bufferedImage.getWidth(),bufferedImage.getHeight(),SplineCanvas.ResultLUT));
-        javafx.application.Platform.runLater(() -> {
-            Image adjustedImage = ImageTransfer.toJavaFXImage(processedImage);
-            StaticValues.editingImageObj.renewAll(adjustedImage);
-            ImageEditScene.initEditImagePane();
-            System.out.println("曲线调整成功");
-        });
         bufferedImage.flush();
         processedImage.flush();
         forkJoinPool.shutdown();

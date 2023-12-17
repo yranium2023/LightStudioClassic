@@ -76,11 +76,7 @@ public class ImageObj implements Serializable {
         ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(this.originalImage);
 
         adjustHistoryMap.forEach((key,value)->{
-            ImageAdjustment.processedImage=new BufferedImage(
-                    ImageAdjustment.bufferedImage.getWidth(),
-                    ImageAdjustment.bufferedImage.getHeight(),
-                    BufferedImage.TYPE_INT_ARGB
-            );
+           ImageAdjustment.setProcessedImage();
             switch (key){
                 case "点曲线调整"->{
                     SplineCanvas.setResultLUT(value.getLUTValue());
@@ -88,37 +84,37 @@ public class ImageObj implements Serializable {
                 }
                 case "对比度调整"->{
                     ImageContrastAdjustment.setContrastValue(value.getFirstValue());
-                    ImageContrastAdjustment.adjustContrastAsync(this);
+                    ImageContrastAdjustment.adjustContrastAsync();
                 }
                 case "饱和度调整"->{
                     ImageSaturationAdjustment.setSaturationValue(value.getFirstValue());
-                    ImageSaturationAdjustment.adjustSaturationAsync(this);
+                    ImageSaturationAdjustment.adjustSaturationAsync();
                 }
                 case "曝光度调整"->{
                     ImageExposureAdjustment.setExposureValue(value.getFirstValue());
-                    ImageExposureAdjustment.adjustExposureAsync(this);
+                    ImageExposureAdjustment.adjustExposureAsync();
                 }
                 case "色温调整"->{
                     ImageTemperatureAdjustment.setKelvin(value.getFirstValue());
-                    ImageTemperatureAdjustment.adjustTemperatureAsync(this);
+                    ImageTemperatureAdjustment.adjustTemperatureAsync();
                 }
                 case "HSL色相调整"-> {
                     HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
                     HSLColorAdjustment.setHuePer(value.getSecondValue());
                     HSLColorAdjustment.setSelectedProperty(0);
-                    HSLColorAdjustment.HSLAdjust(this);
+                    HSLColorAdjustment.HSLAdjust();
                 }
                 case "HSL饱和度调整"->{
                     HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
                     HSLColorAdjustment.setSatuPer(value.getSecondValue());
                     HSLColorAdjustment.setSelectedProperty(1);
-                    HSLColorAdjustment.HSLAdjust(this);
+                    HSLColorAdjustment.HSLAdjust();
                 }
                 case "HSL明度调整"->{
                     HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
                     HSLColorAdjustment.setLumPer(value.getSecondValue());
                     HSLColorAdjustment.setSelectedProperty(2);
-                    HSLColorAdjustment.HSLAdjust(this);
+                    HSLColorAdjustment.HSLAdjust();
                 }
             }
         });

@@ -61,11 +61,7 @@ public class HSLColorAdjustment extends ImageAdjustment {
             var saturationSlider_HSL=ImageEditScene.saturationSlider_HSL;
             var luminanceSlider_HSL=ImageEditScene.luminanceSlider_HSL;
             bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
-            processedImage = new BufferedImage(
-                    bufferedImage.getWidth(),
-                    bufferedImage.getHeight(),
-                    BufferedImage.TYPE_INT_ARGB
-            );
+            ImageAdjustment.setProcessedImage();
             //移除之前的监视器
             if(hueListener!=null){
                 hueSlider_HSL.percentageProperty().removeListener(hueListener);
@@ -92,17 +88,25 @@ public class HSLColorAdjustment extends ImageAdjustment {
                 System.out.println("正在调整hue");
                 if(hslInfo.getNowType()!= HSLInfo.sliderType.HUE){
                     bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
-                    processedImage = new BufferedImage(
-                            bufferedImage.getWidth(),
-                            bufferedImage.getHeight(),
-                            BufferedImage.TYPE_INT_ARGB
-                    );
+                    ImageAdjustment.setProcessedImage();
                     hslInfo.setNowType(HSLInfo.sliderType.HUE);
                 }
                 huePer=-0.18+hueSlider_HSL.getPercentage()*0.36;
                 selectedProperty=0;
                 if(Math.abs(huePer-lastValue[0])>threshold){
-                    HSLAdjust(editingImageObj);
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    executor.submit(()->{
+                        HSLAdjust();
+                        javafx.application.Platform.runLater(() -> {
+                            Image adjustedImage = ImageTransfer.toJavaFXImage(processedImage);
+                            //设置新图像
+                            editingImageObj.renewAll(adjustedImage);
+                            //刷新显示的图像
+                            ImageEditScene.initEditImagePane();
+                            System.out.println("调整完毕");
+                        });
+                    });
+                    executor.shutdown();
                     lastValue[0]=huePer;
                 }
             };
@@ -118,17 +122,25 @@ public class HSLColorAdjustment extends ImageAdjustment {
                 if(old==now)return;
                 if(hslInfo.getNowType()!= HSLInfo.sliderType.SATURATION){
                     bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
-                    processedImage = new BufferedImage(
-                            bufferedImage.getWidth(),
-                            bufferedImage.getHeight(),
-                            BufferedImage.TYPE_INT_ARGB
-                    );
+                    ImageAdjustment.setProcessedImage();
                     hslInfo.setNowType(HSLInfo.sliderType.SATURATION);
                 }
                 satuPer=-0.3+saturationSlider_HSL.getPercentage()*0.6;
                 selectedProperty=1;
                 if(Math.abs(satuPer-lastValue[1])>threshold){
-                    HSLAdjust(editingImageObj);
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    executor.submit(()->{
+                        HSLAdjust();
+                        javafx.application.Platform.runLater(() -> {
+                            Image adjustedImage = ImageTransfer.toJavaFXImage(processedImage);
+                            //设置新图像
+                            editingImageObj.renewAll(adjustedImage);
+                            //刷新显示的图像
+                            ImageEditScene.initEditImagePane();
+                            System.out.println("调整完毕");
+                        });
+                    });
+                    executor.shutdown();
                     lastValue[1]=satuPer;
                 }
             };
@@ -143,31 +155,38 @@ public class HSLColorAdjustment extends ImageAdjustment {
                 if(old==now)return;
                 if(hslInfo.getNowType()!= HSLInfo.sliderType.LUMINANCE){
                     bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
-                    processedImage = new BufferedImage(
-                            bufferedImage.getWidth(),
-                            bufferedImage.getHeight(),
-                            BufferedImage.TYPE_INT_ARGB
-                    );
+                    ImageAdjustment.setProcessedImage();
                     hslInfo.setNowType(HSLInfo.sliderType.LUMINANCE);
                 }
                 lumPer=-0.2+0.4*luminanceSlider_HSL.getPercentage();
                 selectedProperty=2;
                 if(Math.abs(lumPer-lastValue[2])>threshold){
-                    HSLAdjust(editingImageObj);
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    executor.submit(()->{
+                        HSLAdjust();
+                        javafx.application.Platform.runLater(() -> {
+                            Image adjustedImage = ImageTransfer.toJavaFXImage(processedImage);
+                            //设置新图像
+                            editingImageObj.renewAll(adjustedImage);
+                            //刷新显示的图像
+                            ImageEditScene.initEditImagePane();
+                            System.out.println("调整完毕");
+                        });
+                    });
+                    executor.shutdown();
                     lastValue[2]=lumPer;
                 }
             };
             luminanceSlider_HSL.percentageProperty().addListener(luminanceListener);
             luminanceSlider_HSL.setOnMouseReleased(e->{
                 hslInfo.setLuminancePercent(luminanceSlider_HSL.getPercentage());
-                        editingImageObj.addHistory(new AdjustHistory("HSL明度调整",selectedColor,selectedProperty));
+                editingImageObj.addHistory(new AdjustHistory("HSL明度调整",selectedColor,selectedProperty));
             });
         }
     }
     public static void setHuePer(double huePer) {
         HSLColorAdjustment.huePer = huePer;
     }
-
     public static void setSatuPer(double satuPer) {
         HSLColorAdjustment.satuPer = satuPer;
     }
@@ -178,15 +197,10 @@ public class HSLColorAdjustment extends ImageAdjustment {
     public static void setSelectedColor(int selectedColor) {
         HSLColorAdjustment.selectedColor = selectedColor;
     }
-
     public static void setSelectedProperty(int selectedProperty) {
         HSLColorAdjustment.selectedProperty = selectedProperty;
     }
-
-    public static void HSLAdjust(ImageObj editingImageObj){
-
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(()->{
+    public static void HSLAdjust(){
             new ThreadProcess(bufferedImage,processedImage){
                 @Override
                 public int calculateRGB(int rgb) {
@@ -222,16 +236,6 @@ public class HSLColorAdjustment extends ImageAdjustment {
                     }
                 }
             }.run();
-            javafx.application.Platform.runLater(() -> {
-                Image adjustedImage = ImageTransfer.toJavaFXImage(processedImage);
-                //设置新图像
-                editingImageObj.renewAll(adjustedImage);
-                //刷新显示的图像
-                ImageEditScene.initEditImagePane();
-                System.out.println("调整完毕");
-            });
-        });
-        executor.shutdown();
     }
 
     private static double[] rgbToHsl(int r, int g, int b) {

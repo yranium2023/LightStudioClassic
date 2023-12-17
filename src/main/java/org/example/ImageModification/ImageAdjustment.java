@@ -13,4 +13,13 @@ public class ImageAdjustment {
 
     public static BufferedImage bufferedImage;
     public static BufferedImage processedImage;
+
+    public static void setProcessedImage() {
+     processedImage =new BufferedImage(
+             bufferedImage.getWidth(),
+             bufferedImage.getHeight(),
+             BufferedImage.TYPE_INT_ARGB
+     );
+    }
+
 }

@@ -6,10 +6,14 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import org.example.ImageModification.ImageAdjustment;
+import org.example.ImageTools.ImageTransfer;
 import org.example.Obj.AdjustHistory;
+import org.example.Scene.ImageEditScene;
 import org.example.StaticValues;
 
 import java.time.LocalTime;
@@ -154,12 +158,27 @@ public class SplineCanvas extends StackPane{
         }
         if (currentTask == null || currentTask.isDone()) {
             // 如果当前任务为空或者已经完成，则提交新任务
-            currentTask = executor.submit(SplineBrightnessAdjustment::applyLUTToImage);
+            currentTask = executor.submit(()->{
+                SplineBrightnessAdjustment.applyLUTToImage();
+                javafx.application.Platform.runLater(() -> {
+                    Image adjustedImage = ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
+                    StaticValues.editingImageObj.renewAll(adjustedImage);
+                    ImageEditScene.initEditImagePane();
+                    System.out.println("曲线调整成功");
+                });
+             });
         }else{
             currentTask.cancel(true);
-            currentTask = executor.submit(SplineBrightnessAdjustment::applyLUTToImage);
+            currentTask = executor.submit(()->{
+                SplineBrightnessAdjustment.applyLUTToImage();
+                javafx.application.Platform.runLater(() -> {
+                    Image adjustedImage = ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
+                    StaticValues.editingImageObj.renewAll(adjustedImage);
+                    ImageEditScene.initEditImagePane();
+                    System.out.println("曲线调整成功");
+                });
+            });
         }
-
         gc.strokePolyline(curveXPoints, curveYPoints, curvePoints.size());
         curvePoints.clear();
     }
