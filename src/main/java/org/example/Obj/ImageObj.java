@@ -110,10 +110,6 @@ public class ImageObj implements Serializable {
                 }
                 case "HSL色相调整"-> {
                     setImage(HSLColorAdjustment.bufferedImage,HSLColorAdjustment.processedImage);
-                    HSLColorAdjustment.processedImage=new BufferedImage(
-                            HSLColorAdjustment.bufferedImage.getWidth(),
-                            HSLColorAdjustment.bufferedImage.getHeight(),
-                            BufferedImage.TYPE_INT_ARGB);
                     HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
                     HSLColorAdjustment.setHuePer(value.getSecondValue());
                     HSLColorAdjustment.setSelectedProperty(0);
