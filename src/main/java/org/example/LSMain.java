@@ -134,9 +134,6 @@ public class LSMain extends Application {
 
     @Override
     public void stop() throws Exception {
-        for(ImageObj imageObj:ImageImportMenuScene.totalImages){
-            ImageObj.saveImagePath(imageObj.getImagePath(),"./src/main/resources/serializedData/testData.txt");
-        }
         super.stop();
     }
 

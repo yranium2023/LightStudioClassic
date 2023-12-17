@@ -36,6 +36,8 @@ public class ImageObj {
     private List<Image> clipImages = new ArrayList<>();
     //传入图片的路径
     String imagePath = null;
+    //图片的名称
+    String imageName = null;
     //图库中整个vbox
     private VBox buttonVBox = null;
     //图库中按钮
@@ -44,6 +46,8 @@ public class ImageObj {
     private FusionImageButton copyButton = null;
     //横版中整个vbox
     private VBox copyVBox = null;
+    //导出图片中整个vbox
+    private VBox outPutImageVBox = null;
     //对比度滑动条，初始化为0.5
     private double contrastPercent = 0.5;
     //曝光度滑动条，初始化为0.5
@@ -302,6 +306,14 @@ public class ImageObj {
         ImageEditScene.initEditImagePane();
     }
 
+    public String getImageName() {
+        return imageName;
+    }
+
+    public void setImageName(String imageName) {
+        this.imageName = imageName;
+    }
+
     public double getContrastPercent() {
         return contrastPercent;
     }
@@ -356,6 +368,14 @@ public class ImageObj {
 
     public VBox getCopyVBox() {
         return copyVBox;
+    }
+
+    public VBox getOutPutImageVBox() {
+        return outPutImageVBox;
+    }
+
+    public void setOutPutImageVBox(VBox outPutImageVBox) {
+        this.outPutImageVBox = outPutImageVBox;
     }
 
     public SplineCanvas getSplineCanvas() {
