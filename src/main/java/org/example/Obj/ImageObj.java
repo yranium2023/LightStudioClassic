@@ -77,7 +77,7 @@ public class ImageObj implements Serializable {
     //请补全下述方法和setimage方法，setimage中需要传入需要处理的图片
     //adjust函数中传入需要处理的图片
     //processedImage是进行调整后得到的Bufferedimage
-    public  Image AdjustImage(Image image){
+    public Image AdjustImage(){
         adjustHistoryMap.forEach((key,value)->{
             String adjustProperty=key;
             switch (adjustProperty){
@@ -90,45 +90,44 @@ public class ImageObj implements Serializable {
                     //括号里面传入原图片
                     setImage(ImageContrastAdjustment.bufferedImage,ImageExposureAdjustment.processedImage);
                     ImageContrastAdjustment.setContrastValue(value.getFirstValue());
-                    ImageContrastAdjustment.adjustContrastAsync(/*需要处理的图片*/);
+                    ImageContrastAdjustment.adjustContrastAsync(this);
                 }
                 case "饱和度调整"->{
                     setImage(ImageSaturationAdjustment.bufferedImage,ImageExposureAdjustment.processedImage);
                     ImageSaturationAdjustment.setSaturationValue(value.getFirstValue());
-                    ImageSaturationAdjustment.adjustSaturationAsync(/*需要处理的图片*/);
+                    ImageSaturationAdjustment.adjustSaturationAsync(this);
                 }
                 case "曝光度调整"->{
                   setImage(ImageExposureAdjustment.bufferedImage,ImageExposureAdjustment.processedImage);
                     ImageExposureAdjustment.setExposureValue(value.getFirstValue());
-                    ImageExposureAdjustment.adjustExposureAsync(/*需要处理的图片*/);
+                    ImageExposureAdjustment.adjustExposureAsync(this);
 
                 }
                 case "色温调整"->{
                    setImage(ImageTemperatureAdjustment.bufferedImage,ImageSaturationAdjustment.processedImage);
                     ImageTemperatureAdjustment.setKelvin(value.getFirstValue());
-                    ImageTemperatureAdjustment.adjustTemperatureAsync();
+                    ImageTemperatureAdjustment.adjustTemperatureAsync(this);
                 }
                 case "HSL色相调整"-> {
                     setImage(HSLColorAdjustment.bufferedImage,HSLColorAdjustment.processedImage);
                     HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
                     HSLColorAdjustment.setHuePer(value.getSecondValue());
                     HSLColorAdjustment.setSelectedProperty(0);
-                    HSLColorAdjustment.HSLAdjust(/*需要处理的图片*/);
-
+                    HSLColorAdjustment.HSLAdjust(this);
                 }
                 case "HSL饱和度调整"->{
                     setImage(HSLColorAdjustment.bufferedImage,HSLColorAdjustment.processedImage);
                     HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
                     HSLColorAdjustment.setSatuPer(value.getSecondValue());
                     HSLColorAdjustment.setSelectedProperty(1);
-                    HSLColorAdjustment.HSLAdjust(/*需要处理的图片*/);
+                    HSLColorAdjustment.HSLAdjust(this);
                 }
                 case "HSL明度调整"->{
                    setImage(HSLColorAdjustment.bufferedImage,HSLColorAdjustment.processedImage);
                     HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
                     HSLColorAdjustment.setLumPer(value.getSecondValue());
                     HSLColorAdjustment.setSelectedProperty(2);
-                    HSLColorAdjustment.HSLAdjust(/*需要处理的图片*/);
+                    HSLColorAdjustment.HSLAdjust(this);
                 }
             }
         });
