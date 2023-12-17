@@ -84,7 +84,7 @@ public class ImageObj implements Serializable {
                 case "点曲线调整"->{
                     setImage(SplineBrightnessAdjustment.bufferedImage,SplineBrightnessAdjustment.processedImage);
                     SplineCanvas.setResultLUT(value.getLUTValue());
-                    SplineBrightnessAdjustment.applyLUTToImage(/*需要处理的图片*/);
+                    SplineBrightnessAdjustment.applyLUTToImage();
                 }
                 case "对比度调整"->{
                     //括号里面传入原图片
