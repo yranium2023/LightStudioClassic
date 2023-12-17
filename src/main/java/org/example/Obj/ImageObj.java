@@ -2,8 +2,10 @@ package org.example.Obj;
 
 import io.vproxy.vfx.ui.button.FusionImageButton;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import org.example.Curve.SplineCanvas.SplineCanvas;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
@@ -264,7 +266,7 @@ public class ImageObj {
 
     /**
      * @param nowImage
-     * @Description 这个类用来生成新的压缩图片、图标图片、直方图
+     * @Description 这个类用来生成新的压缩图片、图标图片、直方图、和图片面熟
      * @author 吴鹄远
      * @date 2023/12/11 15:24
      **/
@@ -278,6 +280,10 @@ public class ImageObj {
         Image newEditingImage = ImageObj.resizeNormalImage(nowImage);
         setEditingImage(newEditingImage);
         Histogram.drawHistogram(newEditingImage);
+        this.buttonVBox.getChildren().remove(1);
+        Label descriptionLabel = new Label(Integer.toString((int) newEditingImage.getWidth()) + '×' + (int) newEditingImage.getHeight());
+        descriptionLabel.setTextFill(Color.WHITE);
+        this.buttonVBox.getChildren().add(descriptionLabel);
     }
 
     /***

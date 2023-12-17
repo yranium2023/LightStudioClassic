@@ -175,6 +175,9 @@ public class ImageImportMenuScene extends SuperScene {
                 });
             }
         });
+        OutPutButton.setOnAction(e -> {
+
+        });
     }
 
     public static void turningFilesIntoImages(List<File> selectedFiles){
