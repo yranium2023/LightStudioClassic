@@ -9,10 +9,7 @@ import javafx.scene.paint.Color;
 import org.example.Curve.SplineCanvas.SplineBrightnessAdjustment;
 import org.example.Curve.SplineCanvas.SplineCanvas;
 import org.example.HSL.HSLColorAdjustment;
-import org.example.ImageModification.ImageContrastAdjustment;
-import org.example.ImageModification.ImageExposureAdjustment;
-import org.example.ImageModification.ImageSaturationAdjustment;
-import org.example.ImageModification.ImageTemperatureAdjustment;
+import org.example.ImageModification.*;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
 import org.example.ImageTools.ImageTransfer;
@@ -74,56 +71,50 @@ public class ImageObj implements Serializable {
         adjustHistoryMap.put(History.getAdjustProperty(), History);
         EditHistoryScene.addLabel(History);
     }
-    //请补全下述方法和setimage方法，setimage中需要传入需要处理的图片
-    //adjust函数中传入需要处理的图片
-    //processedImage是进行调整后得到的Bufferedimage
-    public Image AdjustImage(){
+
+    public Image AdjustRealImage(){
+        ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(this.originalImage);
+
         adjustHistoryMap.forEach((key,value)->{
-            String adjustProperty=key;
-            switch (adjustProperty){
+            ImageAdjustment.processedImage=new BufferedImage(
+                    ImageAdjustment.bufferedImage.getWidth(),
+                    ImageAdjustment.bufferedImage.getHeight(),
+                    BufferedImage.TYPE_INT_ARGB
+            );
+            switch (key){
                 case "点曲线调整"->{
-                    setImage(SplineBrightnessAdjustment.bufferedImage,SplineBrightnessAdjustment.processedImage);
                     SplineCanvas.setResultLUT(value.getLUTValue());
                     SplineBrightnessAdjustment.applyLUTToImage();
                 }
                 case "对比度调整"->{
-                    //括号里面传入原图片
-                    setImage(ImageContrastAdjustment.bufferedImage,ImageExposureAdjustment.processedImage);
                     ImageContrastAdjustment.setContrastValue(value.getFirstValue());
                     ImageContrastAdjustment.adjustContrastAsync(this);
                 }
                 case "饱和度调整"->{
-                    setImage(ImageSaturationAdjustment.bufferedImage,ImageExposureAdjustment.processedImage);
                     ImageSaturationAdjustment.setSaturationValue(value.getFirstValue());
                     ImageSaturationAdjustment.adjustSaturationAsync(this);
                 }
                 case "曝光度调整"->{
-                  setImage(ImageExposureAdjustment.bufferedImage,ImageExposureAdjustment.processedImage);
                     ImageExposureAdjustment.setExposureValue(value.getFirstValue());
                     ImageExposureAdjustment.adjustExposureAsync(this);
-
                 }
                 case "色温调整"->{
-                   setImage(ImageTemperatureAdjustment.bufferedImage,ImageSaturationAdjustment.processedImage);
                     ImageTemperatureAdjustment.setKelvin(value.getFirstValue());
                     ImageTemperatureAdjustment.adjustTemperatureAsync(this);
                 }
                 case "HSL色相调整"-> {
-                    setImage(HSLColorAdjustment.bufferedImage,HSLColorAdjustment.processedImage);
                     HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
                     HSLColorAdjustment.setHuePer(value.getSecondValue());
                     HSLColorAdjustment.setSelectedProperty(0);
                     HSLColorAdjustment.HSLAdjust(this);
                 }
                 case "HSL饱和度调整"->{
-                    setImage(HSLColorAdjustment.bufferedImage,HSLColorAdjustment.processedImage);
                     HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
                     HSLColorAdjustment.setSatuPer(value.getSecondValue());
                     HSLColorAdjustment.setSelectedProperty(1);
                     HSLColorAdjustment.HSLAdjust(this);
                 }
                 case "HSL明度调整"->{
-                   setImage(HSLColorAdjustment.bufferedImage,HSLColorAdjustment.processedImage);
                     HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
                     HSLColorAdjustment.setLumPer(value.getSecondValue());
                     HSLColorAdjustment.setSelectedProperty(2);
@@ -131,14 +122,7 @@ public class ImageObj implements Serializable {
                 }
             }
         });
-        return /*最终需要导出的图片*/;
-    }
-    public void setImage(BufferedImage bufferedImage,BufferedImage processedImage){
-        bufferedImage=ImageTransfer.toBufferedImage(/*需要处理的图片*/);
-        processedImage=new BufferedImage(
-                bufferedImage.getWidth(),
-                bufferedImage.getHeight(),
-                BufferedImage.TYPE_INT_ARGB);
+        return ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
     }
     public enum sliderType_1 {
         CONTRAST,

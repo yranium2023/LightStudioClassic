@@ -50,8 +50,8 @@ public class SplineBrightnessAdjustment extends ImageAdjustment {
         if(editingImageObj!=null){
             bufferedImage=ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
             processedImage = new BufferedImage(
-                    SplineBrightnessAdjustment.bufferedImage.getWidth(),
-                    SplineBrightnessAdjustment.bufferedImage.getHeight(),
+                    bufferedImage.getWidth(),
+                    bufferedImage.getHeight(),
                     BufferedImage.TYPE_INT_ARGB
             );
             StackPane stackPane=new StackPane();
