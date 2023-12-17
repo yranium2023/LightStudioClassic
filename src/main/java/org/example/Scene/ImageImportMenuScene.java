@@ -27,13 +27,17 @@ import javafx.stage.FileChooser;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
 import org.example.Obj.ImageObj;
+import org.example.Obj.ImportHistory;
 import org.example.StaticValues;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -50,6 +54,7 @@ public class ImageImportMenuScene extends SuperScene {
 
     public static List<VBox> copyImageButtonsVbox = new ArrayList<>();
 
+    public static List<ImportHistory> importHistories = new ArrayList<>();
 
     public ImageImportMenuScene(Supplier<VSceneGroup> sceneGroupSup) {
 
@@ -288,6 +293,61 @@ public class ImageImportMenuScene extends SuperScene {
             stage.getInitialScene().getContentPane().getChildren().add(OPpane.getNode());
             stage.show();
         });
+        //以下为历史记录的部分
+        VScrollPane scrollHisFlowPane = new VScrollPane() {{
+            getNode().setLayoutX(10);
+            getNode().setLayoutY(10);
+            getNode().setPrefWidth(330);
+            getNode().setPrefHeight(650);
+        }};
+        var hisFlowPane = new FlowPane() {{
+            setLayoutX(0);
+            setLayoutY(0);
+            setPrefHeight(scrollHisFlowPane.getNode().getPrefHeight());
+            setPrefWidth(scrollHisFlowPane.getNode().getPrefWidth());
+            // 设置列间距
+            setVgap(5);
+        }};
+
+        // 创建一个矩形用于显示flowPane的边框
+        Rectangle hisFlowPaneRec = new Rectangle(scrollHisFlowPane.getNode().getLayoutX() - 5, scrollHisFlowPane.getNode().getLayoutY() - 5, hisFlowPane.getPrefWidth() + 5, hisFlowPane.getPrefHeight() + 5) {{
+            setFill(Color.TRANSPARENT);
+            setStroke(Color.WHITE); // 设置矩形的边框颜色
+            setStrokeType(StrokeType.INSIDE);//边框为内嵌式，不会超出pane的范围
+        }};
+
+        //反序列化过程
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("./src/main/resources/serializedData/testData.dat"))) {
+            // 读取整个列表
+            importHistories = (List<ImportHistory>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        //开始添加按钮
+        if(importHistories!=null){
+            for(ImportHistory importHistory:importHistories){
+                FusionButton hisButton = new FusionButton(importHistory.getDate()) {{
+                    setPrefWidth(320);
+                    setPrefHeight(50);
+                    setOnlyAnimateWhenNotClicked(true);
+                }};
+
+                hisButton.setOnAction(e->{
+                    int len=totalImages.size();
+                    for(int i=0;i<len;i++)
+                        totalImages.get(0).delete();
+                });
+
+                hisFlowPane.getChildren().add(hisButton);
+            }
+        }
+        //绑定两个pane的宽和高
+        FXUtils.observeWidthHeight(scrollHisFlowPane.getNode(), hisFlowPane);
+        scrollHisFlowPane.setContent(hisFlowPane);
+        getContentPane().getChildren().add(hisFlowPaneRec);
+        getContentPane().getChildren().add(scrollHisFlowPane.getNode());
+
     }
 
 

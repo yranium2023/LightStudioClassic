@@ -1,9 +1,12 @@
 package org.example.Curve.SplineCanvas;
 
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class LUT {
+public class LUT implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     private int[] Curve;
     public LUT(){
         Curve= new int[256];

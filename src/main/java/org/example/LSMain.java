@@ -20,8 +20,10 @@ import org.example.ImageModification.AutoWhiteBalance;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ImportImageResource;
 import org.example.Obj.ImageObj;
+import org.example.Obj.ImportHistory;
 import org.example.Scene.*;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,7 +122,6 @@ public class LSMain extends Application {
         navigatePane.getContentPane().getChildren().add(ImageEditButton);
 
 
-
         stage.getInitialScene().getContentPane().getChildren().add(sceneGroup.getNode());
         stage.getInitialScene().getContentPane().getChildren().add(navigatePane.getNode());
 
@@ -134,6 +135,15 @@ public class LSMain extends Application {
 
     @Override
     public void stop() throws Exception {
+        if(!ImageImportMenuScene.totalImages.isEmpty())
+            ImageImportMenuScene.importHistories.add(new ImportHistory(ImageImportMenuScene.totalImages));
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("./src/main/resources/serializedData/testData.dat"))) {
+            // 写入整个列表
+            oos.writeObject(ImageImportMenuScene.importHistories);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println("序列化结束");
         super.stop();
     }
 

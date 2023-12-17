@@ -27,41 +27,42 @@ import java.util.Stack;
  * @Description: 统一管理每个导入的图片 有其原图 精致压缩（用于编辑）和粗糙压缩（用于当图标使用）的图片
  * @date 2023/12/9 11:05
  */
-public class ImageObj {
+public class ImageObj implements Serializable {
+    private static final long serialVersionUID = 1L;
     //传入的原始图片
-    private Image originalImage = null;
+    private transient Image originalImage = null;
     //压缩到80*80的小图片
-    private Image buttonImage = null;
+    private transient Image buttonImage = null;
     //压缩到2k的大图片
-    private Image editingImage = null;
+    private transient Image editingImage = null;
     //裁减过程中产生的图片列表
-    private List<Image> clipImages = new ArrayList<>();
+    private transient List<Image> clipImages = new ArrayList<>();
     //传入图片的路径
     String imagePath = null;
     //图片的名称
-    String imageName = null;
+    transient String imageName = null;
     //图库中整个vbox
-    private VBox buttonVBox = null;
+    private transient VBox buttonVBox = null;
     //图库中按钮
-    private FusionImageButton imageButton = null;
+    private transient FusionImageButton imageButton = null;
     //横板按钮
-    private FusionImageButton copyButton = null;
+    private transient FusionImageButton copyButton = null;
     //横版中整个vbox
-    private VBox copyVBox = null;
+    private transient VBox copyVBox = null;
     //导出图片中整个vbox
-    private VBox outPutImageVBox = null;
+    private transient VBox outPutImageVBox = null;
     //对比度滑动条，初始化为0.5
-    private double contrastPercent = 0.5;
+    private transient double contrastPercent = 0.5;
     //曝光度滑动条，初始化为0.5
-    private double exposurePercent = 0.5;
+    private transient double exposurePercent = 0.5;
     //饱和度滑动条，初始化为0.5
-    private double saturationPercent = 0.5;
+    private transient double saturationPercent = 0.5;
     //色温滑动条，初始化为0.5
-    private double temperaturePercent = 0.5;
+    private transient double temperaturePercent = 0.5;
     //创建一个枚举类型，存储当前滑动条是四个滑动条中的哪一条
-    private sliderType_1 nowSlider_1 = null;
+    private transient sliderType_1 nowSlider_1 = null;
     //历史记录
-    private  final Stack<AdjustHistory> adjustHistory = new Stack<>();
+    private final Stack<AdjustHistory> adjustHistory = new Stack<>();
     public void addHistory(AdjustHistory History){
         adjustHistory.push(History);
         EditHistoryScene.addLabel(History);
@@ -75,10 +76,10 @@ public class ImageObj {
     }
 
     //创建一个属于自己的曲线，这样就不用记录了
-    private SplineCanvas splineCanvas = new SplineCanvas(190);
+    private transient SplineCanvas splineCanvas = new SplineCanvas(190);
 
 
-    private HashMap<HSLColor,HSLInfo> hslInfos = new HashMap<>() {{
+    private transient HashMap<HSLColor,HSLInfo> hslInfos = new HashMap<>() {{
         put(HSLColor.Red,new HSLInfo(HSLColor.Red));
         put(HSLColor.Yellow,new HSLInfo(HSLColor.Yellow));
         put(HSLColor.Orange,new HSLInfo(HSLColor.Orange));
@@ -395,26 +396,39 @@ public class ImageObj {
         return hslInfos;
     }
 
+    public Stack<AdjustHistory> getAdjustHistory() {
+        return adjustHistory;
+    }
+
     public void setSplineCanvas(SplineCanvas splineCanvas) {
         this.splineCanvas = splineCanvas;
     }
 
-    public static void saveImagePath(String imagePath, String filePath) {
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-            writer.write(imagePath);
-            writer.newLine();  // 添加换行符，以便区分不同图片路径
+    public void setOriginalImage(Image originalImage) {
+        this.originalImage = originalImage;
+    }
+
+    // 序列化方法，接受一个包含多个 ImageObj 对象的列表，将它们保存到指定文件夹，并清空序列化文件
+    public static void serializeImageObjs(List<ImageObj> imageObjs, String filePath) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+            // 写入整个列表
+            oos.writeObject(imageObjs);
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-
-    public static String readImagePath(String filePath) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
-            return reader.readLine();
-        } catch (IOException e) {
+    // 反序列化方法，返回一个包含多个 ImageObj 对象的列表
+    public static List<ImageObj> deserializeImageObjs(String filePath) {
+        List<ImageObj> imageObjs = null;
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
+            // 读取整个列表
+            imageObjs = (List<ImageObj>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-            return null;
         }
+
+        return imageObjs;
     }
+
 }
