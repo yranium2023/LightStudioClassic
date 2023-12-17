@@ -55,9 +55,7 @@ public class SplineBrightnessAdjustment extends ImageAdjustment {
             curvePane.getChildren().add(stackPane);
             FXUtils.observeWidthCenter(curvePane,stackPane);
         }
-
     }
-
     public static void applyLUTToImage(){
         SplineCanvas.ResultLUT.checkLUT();
         ForkJoinPool forkJoinPool=new ForkJoinPool();
@@ -70,7 +68,7 @@ public class SplineBrightnessAdjustment extends ImageAdjustment {
 
 
     static class LUTTask extends RecursiveAction{
-        private static final int Max =100000;
+        private static final int Max =10000;
         private final int startX, startY, endX, endY;
         private final LUT L;
         LUTTask(int startX, int startY, int endX, int endY,LUT L){
@@ -82,7 +80,6 @@ public class SplineBrightnessAdjustment extends ImageAdjustment {
         }
         @Override
         protected void compute() {
-
             if((endX-startX)*(endY-startY)<Max){
                 for (int x = startX; x<endX;x++) {
                     for (int y=startY;y<endY;y++) {
@@ -114,5 +111,4 @@ public class SplineBrightnessAdjustment extends ImageAdjustment {
             }
         }
     }
-
 }

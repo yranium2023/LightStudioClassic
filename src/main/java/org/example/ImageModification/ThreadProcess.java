@@ -49,10 +49,10 @@ public abstract class ThreadProcess {
                 int midX = (startX + endX) >>1;
                 int midY = (startY + endY) >>1;
                 invokeAll(
-                    new Task(startX, startY, midX, midY).fork(),
-                    new Task(midX, startY, endX, midY).fork(),
-                    new Task(startX, midY, midX, endY).fork(),
-                    new Task(midX, midY, endX, endY).fork()
+                    new Task(startX, startY, midX, midY),
+                    new Task(midX, startY, endX, midY),
+                    new Task(startX, midY, midX, endY),
+                    new Task(midX, midY, endX, endY)
                 );
             }
         }

@@ -52,9 +52,9 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
                     ImageAdjustment.setProcessedImage();
                     editingImageObj.setNowSlider_1(ImageObj.sliderType_1.TEMPERATURE);
                 }
-                double newValue = temperatureSlider.getPercentage() * 1.95;//0.15 1 1.85
+                double newValue = temperatureSlider.getPercentage() * 1.35;//0.65 1 1.35
                 if (Math.abs(newValue - lastValue) > threshold) {
-                    kelvin =6500*(2-newValue);
+                    kelvin =5500*(2-newValue);
                     ExecutorService executor = Executors.newSingleThreadExecutor();
                     executor.submit(() -> {
                         adjustTemperatureAsync();

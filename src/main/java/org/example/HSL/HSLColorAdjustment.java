@@ -229,7 +229,6 @@ public class HSLColorAdjustment extends ImageAdjustment {
                                hsl[2]=Math.max(0.0,Math.min(1.0,hsl[2]));
                                break;
                        }
-
                         return hslToRgb(hsl[0],hsl[1],hsl[2],alpha);
                     }else{
                         return rgb;
