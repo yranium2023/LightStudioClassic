@@ -67,7 +67,7 @@ public class ImageContrastAdjustment extends ImageAdjustment {
     }
 
 
-    private static void adjustContrastAsync(ImageObj editingImageObj) {
+    public static void adjustContrastAsync(ImageObj editingImageObj) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
             new ThreadProcess(bufferedImage, processedImage) {

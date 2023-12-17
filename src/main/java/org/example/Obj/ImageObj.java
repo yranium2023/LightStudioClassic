@@ -6,9 +6,12 @@ import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import org.example.Curve.SplineCanvas.SplineBrightnessAdjustment;
 import org.example.Curve.SplineCanvas.SplineCanvas;
+import org.example.ImageModification.ImageContrastAdjustment;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
+import org.example.ImageTools.ImageTransfer;
 import org.example.Scene.EditHistoryScene;
 import org.example.Scene.ImageEditScene;
 import org.example.Scene.ImageImportMenuScene;
@@ -65,6 +68,36 @@ public class ImageObj {
     public void addHistory(AdjustHistory History){
         adjustHistory.push(History);
         EditHistoryScene.addLabel(History);
+    }
+    public  Image AdjustImage(java.awt.Image image){
+        for(AdjustHistory history:adjustHistory){
+            String adjustProperty=history.getAdjustProperty();
+            switch (adjustProperty){
+                case "点曲线调整"->{
+
+                    SplineBrightnessAdjustment.applyLUTToImage();
+                }
+                case "对比度调整"->{
+                    //括号里面传入原图片
+                    ImageContrastAdjustment.bufferedImage = ImageTransfer.toBufferedImage();
+                    ImageContrastAdjustment.processedImage = new BufferedImage(
+                            ImageContrastAdjustment.bufferedImage.getWidth(),
+                            ImageContrastAdjustment.bufferedImage.getHeight(),
+                            BufferedImage.TYPE_INT_ARGB);
+                    ImageContrastAdjustment.adjustContrastAsync();
+                    //ImageContrastAdjustment.processedImage是我们需要的东西。
+                }
+                case "饱和度调整"->{
+
+                }
+                case "曝光度调整"->{
+
+                }
+                case ""->{
+
+                }
+            }
+        }
     }
 
     public enum sliderType_1 {

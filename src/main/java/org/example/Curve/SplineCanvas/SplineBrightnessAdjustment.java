@@ -13,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.stage.Stage;
+import org.example.ImageModification.ImageAdjustment;
 import org.example.ImageModification.ThreadProcess;
 import org.example.ImageTools.ImageTransfer;
 import org.example.Obj.ImageObj;
@@ -30,7 +31,7 @@ import java.util.concurrent.RecursiveAction;
  * @Description
  * @date 2023/12/9 22:46
  */
-public class SplineBrightnessAdjustment {
+public class SplineBrightnessAdjustment extends ImageAdjustment {
     //创建一个矩形用来包裹curve
     private static Rectangle curveRec=new Rectangle(190,190){{
         setStrokeWidth(2);
@@ -38,9 +39,6 @@ public class SplineBrightnessAdjustment {
         setFill(Color.TRANSPARENT);
         setStrokeType(StrokeType.INSIDE);
     }};
-
-    public static BufferedImage bufferedImage;
-    public static BufferedImage processedImage;
     /**
      * @Description  这个类用于创建曲线
      * @param curvePane
