@@ -138,6 +138,12 @@ public class LSMain extends Application {
         if(!ImageImportMenuScene.totalImages.isEmpty())
             ImageImportMenuScene.importHistories.add(new ImportHistory(ImageImportMenuScene.totalImages));
         File tmpFile = new File("./src/main/resources/serializedData/testData.dat");
+        // 获取文件的父目录
+        File parentDirectory = tmpFile.getParentFile();
+        // 如果父目录不存在，创建它和所有不存在的父目录
+        if (!parentDirectory.exists()) {
+            parentDirectory.mkdirs();
+        }
         if(!tmpFile.exists()){
             try {
                 tmpFile.createNewFile();
