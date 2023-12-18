@@ -13,7 +13,6 @@ import org.example.ImageModification.*;
 import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ConvertUtil;
 import org.example.ImageTools.ImageTransfer;
-import org.example.Scene.EditHistoryScene;
 import org.example.Scene.ImageEditScene;
 import org.example.Scene.ImageImportMenuScene;
 import org.example.Scene.ImageImportScene;
@@ -21,8 +20,12 @@ import org.example.StaticValues;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.security.Key;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author 张喆宇
@@ -467,25 +470,34 @@ public class ImageObj implements Serializable {
     **/
 
     public Image AdjustRealImage(){
-        Image tempImage=null;
+        AtomicReference<Image> tempImage=null;
         if(clipImages.isEmpty()){
-            tempImage=this.originalImage;
+            tempImage.set(this.originalImage);
         }else{
             int lastIndex=clipImages.size()-1;
-            tempImage=this.clipImages.get(lastIndex);
+            tempImage.set(this.clipImages.get(lastIndex));
         }
-        ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage);
+        ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage.get());
         Set<Map.Entry<String, AdjustHistory>> entrySet = adjustHistoryMap.entrySet();
         Iterator <Map.Entry<String,AdjustHistory>> iterator=entrySet.iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, AdjustHistory> entry = iterator.next();
-            String key = entry.getKey();
-            AdjustHistory value=entry.getValue();
-            ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage);
-            ImageAdjustment.setProcessedImage();
-            imageToHistory(value);
-            tempImage= ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
-        }
+        ExecutorService executor = Executors.newCachedThreadPool();
+            while (iterator.hasNext()) {
+                Map.Entry<String, AdjustHistory> entry = iterator.next();
+                String key = entry.getKey();
+                AdjustHistory value=entry.getValue();
+                ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage.get());
+                ImageAdjustment.setProcessedImage();
+                Future<?> future = executor.submit(()->{
+                    imageToHistory(value);
+                });
+                try {
+                    future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+                tempImage.set(ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage));
+            }
+            executor.shutdown();
         return ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
     }
     /**
@@ -495,20 +507,30 @@ public class ImageObj implements Serializable {
     **/
 
     public void editingImageToHistory(){
-        Image tempImage=this.editingImage;
-        ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage);
+        AtomicReference<Image> tempImage= new AtomicReference<>(this.editingImage);
+        ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage.get());
         Set<Map.Entry<String, AdjustHistory>> entrySet = adjustHistoryMap.entrySet();
         Iterator <Map.Entry<String,AdjustHistory>> iterator=entrySet.iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<String, AdjustHistory> entry = iterator.next();
-            String key = entry.getKey();
-            AdjustHistory value=entry.getValue();
-            ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage);
-            ImageAdjustment.setProcessedImage();
-            imageToHistory(value);
-            tempImage= ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
-        }
-        renewAll(tempImage);
+        ExecutorService executor = Executors.newCachedThreadPool();
+
+            while (iterator.hasNext()) {
+                Map.Entry<String, AdjustHistory> entry = iterator.next();
+                String key = entry.getKey();
+                AdjustHistory value=entry.getValue();
+                ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage.get());
+                ImageAdjustment.setProcessedImage();
+                Future<?> future = executor.submit(()->{
+                    imageToHistory(value);
+                });
+                try {
+                    future.get();
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+                tempImage.set(ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage));
+            }
+            executor.shutdown();
+            renewAll(tempImage.get());
     }
 
     /**
