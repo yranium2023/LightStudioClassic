@@ -20,6 +20,7 @@ import org.example.ImageModification.ImageTemperatureAdjustment;
 import org.example.Obj.AdjustHistory;
 import org.example.Obj.HSLColor;
 import org.example.Obj.ImageObj;
+import org.example.StaticValues;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -120,12 +121,12 @@ public class EditHistoryScene extends SuperScene{
     }
     /**
      * @Description  在切换所选对象时更新表
-     * @param editingImageObj
      * @author 吴鹄远
-     * @date 2023/12/18 18:32
+     * @date 2023/12/18 19:24
     **/
 
-    public static void renewEditHistoryScene(ImageObj editingImageObj){
+    public static void renewEditHistoryScene(){
+        ImageObj editingImageObj= StaticValues.editingImageObj;
         historyTable.getItems().clear();
         if(!editingImageObj.getAdjustHistory().isEmpty()){
             for(var history:editingImageObj.getAdjustHistory()){
