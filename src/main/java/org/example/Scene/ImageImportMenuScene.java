@@ -272,11 +272,16 @@ public class ImageImportMenuScene extends SuperScene {
                 for(ImageObj imageObj:outImages){
                     // 构造完整的文件路径
                     String filePath =selectedDirectory.getPath()+File.separator + imageObj.getImageName();
-                    BufferedImage bufferedImage=null;
+                    BufferedImage bufferedImage;
                     if(outputState==0)
                         bufferedImage = SwingFXUtils.fromFXImage(imageObj.getEditingImage(),null);
                     else{
-                        bufferedImage = SwingFXUtils.fromFXImage(imageObj.AdjustRealImage(),null);
+                        if(imageObj.getAdjustHistory().isEmpty())
+                        {
+                            bufferedImage=SwingFXUtils.fromFXImage(imageObj.getOriginalImage(),null);
+                        }else{
+                            bufferedImage = SwingFXUtils.fromFXImage(imageObj.AdjustRealImage(),null);
+                        }
                     }
 
                     // 保存BufferedImage到文件
