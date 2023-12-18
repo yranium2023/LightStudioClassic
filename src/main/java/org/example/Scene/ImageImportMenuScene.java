@@ -389,7 +389,14 @@ public class ImageImportMenuScene extends SuperScene {
             setStroke(Color.WHITE); // 设置矩形的边框颜色
             setStrokeType(StrokeType.INSIDE);//边框为内嵌式，不会超出pane的范围
         }};
-
+        File tmpFile = new File("./src/main/resources/serializedData/testData.dat");
+        if(!tmpFile.exists()){
+            try {
+                tmpFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         //反序列化过程
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("./src/main/resources/serializedData/testData.dat"))) {
             // 读取整个列表

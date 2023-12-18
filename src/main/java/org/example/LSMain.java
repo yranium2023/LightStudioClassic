@@ -137,6 +137,14 @@ public class LSMain extends Application {
     public void stop() throws Exception {
         if(!ImageImportMenuScene.totalImages.isEmpty())
             ImageImportMenuScene.importHistories.add(new ImportHistory(ImageImportMenuScene.totalImages));
+        File tmpFile = new File("./src/main/resources/serializedData/testData.dat");
+        if(!tmpFile.exists()){
+            try {
+                tmpFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("./src/main/resources/serializedData/testData.dat"))) {
             // 写入整个列表
             oos.writeObject(ImageImportMenuScene.importHistories);
