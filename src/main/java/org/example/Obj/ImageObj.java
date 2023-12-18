@@ -497,45 +497,36 @@ public class ImageObj implements Serializable {
     public void imageToHistory(AdjustHistory history){
         var key=history.getAdjustProperty();
         var value=history;
-        switch (key){
-            case "点曲线调整"->{
-                SplineCanvas.setResultLUT(value.getLUTValue());
-                SplineBrightnessAdjustment.applyLUTToImage();
-            }
-            case "对比度调整"->{
-                ImageContrastAdjustment.setContrastValue(value.getFirstValue());
-                ImageContrastAdjustment.adjustContrastAsync();
-            }
-            case "饱和度调整"->{
-                ImageSaturationAdjustment.setSaturationValue(value.getFirstValue());
-                ImageSaturationAdjustment.adjustSaturationAsync();
-            }
-            case "曝光度调整"->{
-                ImageExposureAdjustment.setExposureValue(value.getFirstValue());
-                ImageExposureAdjustment.adjustExposureAsync();
-            }
-            case "色温调整"->{
-                ImageTemperatureAdjustment.setKelvin(value.getFirstValue());
-                ImageTemperatureAdjustment.adjustTemperatureAsync();
-            }
-            case "HSL色相调整"-> {
-                HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
-                HSLColorAdjustment.setHuePer(value.getSecondValue());
-                HSLColorAdjustment.setSelectedProperty(0);
-                HSLColorAdjustment.HSLAdjust();
-            }
-            case "HSL饱和度调整"->{
-                HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
-                HSLColorAdjustment.setSatuPer(value.getSecondValue());
-                HSLColorAdjustment.setSelectedProperty(1);
-                HSLColorAdjustment.HSLAdjust();
-            }
-            case "HSL明度调整"->{
-                HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
-                HSLColorAdjustment.setLumPer(value.getSecondValue());
-                HSLColorAdjustment.setSelectedProperty(2);
-                HSLColorAdjustment.HSLAdjust();
-            }
+        if ("点曲线调整".equals(key)) {
+            SplineCanvas.setResultLUT(value.getLUTValue());
+            SplineBrightnessAdjustment.applyLUTToImage();
+        } else if ("对比度调整".equals(key)) {
+            ImageContrastAdjustment.setContrastValue(value.getFirstValue());
+            ImageContrastAdjustment.adjustContrastAsync();
+        } else if ("饱和度调整".equals(key)) {
+            ImageSaturationAdjustment.setSaturationValue(value.getFirstValue());
+            ImageSaturationAdjustment.adjustSaturationAsync();
+        } else if ("曝光度调整".equals(key)) {
+            ImageExposureAdjustment.setExposureValue(value.getFirstValue());
+            ImageExposureAdjustment.adjustExposureAsync();
+        } else if ("色温调整".equals(key)) {
+            ImageTemperatureAdjustment.setKelvin(value.getFirstValue());
+            ImageTemperatureAdjustment.adjustTemperatureAsync();
+        } else if ("HSL色相调整{0-6}".matches(key)) {
+            HSLColorAdjustment.setSelectedColor(Character.getNumericValue(key.charAt(7)));
+            HSLColorAdjustment.setHuePer(value.getFirstValue());
+            HSLColorAdjustment.setSelectedProperty(0);
+            HSLColorAdjustment.HSLAdjust();
+        } else if ("HSL饱和度调整{0-6}".matches(key)) {
+            HSLColorAdjustment.setSelectedColor(Character.getNumericValue(key.charAt(8)));
+            HSLColorAdjustment.setSatuPer(value.getFirstValue());
+            HSLColorAdjustment.setSelectedProperty(1);
+            HSLColorAdjustment.HSLAdjust();
+        } else if ("HSL明度调整{0-6}".matches(key)) {
+            HSLColorAdjustment.setSelectedColor(Character.getNumericValue(key.charAt(7)));
+            HSLColorAdjustment.setLumPer(value.getFirstValue());
+            HSLColorAdjustment.setSelectedProperty(2);
+            HSLColorAdjustment.HSLAdjust();
         }
     }
 
