@@ -22,12 +22,9 @@ import java.awt.image.BufferedImage;
 import java.util.concurrent.*;
 
 
-public class AutoWhiteBalance {
+public class AutoWhiteBalance extends ImageAdjustment{
 
-    private static BufferedImage bufferedImage;
-    private static BufferedImage processedImage;//处理完的图形
     private static double  redGain,greenGain,blueGain;
-
 
     /**
      * @Description  该方法用于实现按钮对图片进行自动白平衡调整
