@@ -536,6 +536,8 @@ public class ImageObj implements Serializable {
             HSLColorAdjustment.setLumPer(value.getFirstValue());
             HSLColorAdjustment.setSelectedProperty(2);
             HSLColorAdjustment.HSLAdjust();
+        } else if ("自动白平衡".equals(key)) {
+            AutoWhiteBalance.WhiteBalance();
         }
     }
 

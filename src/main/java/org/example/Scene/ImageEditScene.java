@@ -28,6 +28,7 @@ import org.example.ImageTools.ImageScaler;
 import org.example.ImageTools.ImageTransfer;
 import org.example.ImageTools.ImportImageResource;
 import org.example.LSMain;
+import org.example.Obj.AdjustHistory;
 import org.example.Obj.HSLColor;
 import org.example.Pane.ImagePane;
 import org.example.StaticValues;
@@ -294,6 +295,7 @@ public class ImageEditScene extends SuperScene{
         awbButton.setOnAction(event -> {
             if(StaticValues.editingImageObj!=null){
                 AutoWhiteBalance.autoWhiteBalance(StaticValues.editingImageObj);
+                StaticValues.editingImageObj.addHistory(new AdjustHistory("自动白平衡"));
             }
         });
 
