@@ -433,6 +433,12 @@ public class ImageObj implements Serializable {
         adjustHistoryMap.put(History.getAdjustProperty(), History);
         EditHistoryScene.addLabel(History);
     }
+    /**
+     * @Description  此方法用于导出最高品质的图像
+     * @return javafx.scene.image.Image
+     * @author 吴鹄远
+     * @date 2023/12/18 14:33
+    **/
 
     public Image AdjustRealImage(){
         Image tempImage=null;
@@ -456,6 +462,29 @@ public class ImageObj implements Serializable {
         }
         return ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
     }
+    /**
+     * @Description  此方法用于裁剪过程中对裁剪好的图像进行渲染
+     * @author 吴鹄远
+     * @date 2023/12/18 14:39
+    **/
+
+    public void editingImageToHistory(){
+        Image tempImage=this.editingImage;
+        ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage);
+        Set<Map.Entry<String, AdjustHistory>> entrySet = adjustHistoryMap.entrySet();
+        Iterator <Map.Entry<String,AdjustHistory>> iterator=entrySet.iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, AdjustHistory> entry = iterator.next();
+            String key = entry.getKey();
+            AdjustHistory value=entry.getValue();
+            ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage);
+            ImageAdjustment.setProcessedImage();
+            imageToHistory(value);
+            tempImage= ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
+        }
+        renewAll(tempImage);
+    }
+
     /**
      * @Description  用于根据某一条历史记录调整图像。注意每次调整都需要刷新bufferedImage。
      * @param history
