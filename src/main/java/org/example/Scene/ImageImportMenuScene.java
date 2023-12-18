@@ -269,34 +269,42 @@ public class ImageImportMenuScene extends SuperScene {
 
                 // 显示文件选择对话框
                 File selectedDirectory = directoryChooser.showDialog(stage.getStage());
-                for(ImageObj imageObj:outImages){
-                    // 构造完整的文件路径
-                    String filePath =selectedDirectory.getPath()+File.separator + imageObj.getImageName();
-                    BufferedImage bufferedImage;
-                    if(outputState==0)
-                        bufferedImage = SwingFXUtils.fromFXImage(imageObj.getEditingImage(),null);
-                    else{
-                        if(imageObj.getAdjustHistory().isEmpty())
-                        {
-                            bufferedImage=SwingFXUtils.fromFXImage(imageObj.getOriginalImage(),null);
-                        }else{
-                            bufferedImage = SwingFXUtils.fromFXImage(imageObj.AdjustRealImage(),null);
+                Task<Void> task = new Task<>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        for(ImageObj imageObj:outImages){
+                            // 构造完整的文件路径
+                            String filePath =selectedDirectory.getPath()+File.separator + imageObj.getImageName();
+                            BufferedImage bufferedImage;
+                            if(outputState==0)//低品质导出
+                                bufferedImage = SwingFXUtils.fromFXImage(imageObj.getEditingImage(),null);
+                            else{//高品质导出
+                                if(imageObj.getAdjustHistory().isEmpty())//未编辑则导出原图
+                                {
+                                    bufferedImage=SwingFXUtils.fromFXImage(imageObj.getOriginalImage(),null);
+                                }else{//编辑后导出新图
+                                    bufferedImage = SwingFXUtils.fromFXImage(imageObj.AdjustRealImage(),null);
+                                }
+                            }
+                            // 保存BufferedImage到文件
+                            try {
+                                File file = new File(filePath);
+                                ImageIO.write(bufferedImage, "png", file); // 这里可以根据需要选择其他图片格式
+                                System.out.println("Image saved to: " + file.getAbsolutePath());
+                            } catch (IOException event1) {
+                                event1.printStackTrace();
+                            }
                         }
+                        return null;
                     }
-
-                    // 保存BufferedImage到文件
-                    try {
-                        File file = new File(filePath);
-                        int lastDotIndex = filePath.lastIndexOf('.');
-                        // 获取文件拓展名
-                        String fileExtension =filePath.substring(lastDotIndex + 1);
-                        ImageIO.write(bufferedImage, fileExtension, file); // 这里可以根据需要选择其他图片格式
-                        System.out.println("Image saved to: " + file.getAbsolutePath());
-                    } catch (IOException event1) {
-                        event1.printStackTrace();
-                    }
-                }
-                stage.close();
+                };
+                // 启动任务
+                new Thread(task).start();
+                // 设置任务完成时的回调
+                task.setOnSucceeded(event1 -> {
+                    // 在 JavaFX 线程上更新 UI
+                    Platform.runLater(stage::close);
+                });
             });
             noButton.setOnAction(event -> {
                 for(ImageObj imageObj:outImages){
