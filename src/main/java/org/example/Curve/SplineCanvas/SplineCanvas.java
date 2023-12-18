@@ -162,7 +162,8 @@ public class SplineCanvas extends StackPane{
                 SplineBrightnessAdjustment.applyLUTToImage();
                 javafx.application.Platform.runLater(() -> {
                     Image adjustedImage = ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
-                    StaticValues.editingImageObj.renewAll(adjustedImage);
+                    if(StaticValues.editingImageObj!=null)
+                        StaticValues.editingImageObj.renewAll(adjustedImage);
                     ImageEditScene.initEditImagePane();
                     System.out.println("曲线调整成功");
                 });

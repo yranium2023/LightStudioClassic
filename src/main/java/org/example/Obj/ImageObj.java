@@ -64,9 +64,9 @@ public class ImageObj implements Serializable {
     //创建一个枚举类型，存储当前滑动条是四个滑动条中的哪一条
     private transient sliderType_1 nowSlider_1 = null;
     //历史记录
-    private final List<AdjustHistory> adjustHistory = new ArrayList<>();
+    private List<AdjustHistory> adjustHistory = new ArrayList<>();
 
-    private final Map<String,AdjustHistory> adjustHistoryMap=new HashMap<>();
+    private Map<String,AdjustHistory> adjustHistoryMap=new HashMap<>();
     public enum sliderType_1 {
         CONTRAST,
         EXPOSURE,
@@ -408,6 +408,22 @@ public class ImageObj implements Serializable {
 
     public void setOriginalImage(Image originalImage) {
         this.originalImage = originalImage;
+    }
+
+    public void setClipImages(List<Image> clipImages) {
+        this.clipImages = clipImages;
+    }
+
+    public void setAdjustHistory(List<AdjustHistory> adjustHistory) {
+        this.adjustHistory = adjustHistory;
+    }
+
+    public Map<String, AdjustHistory> getAdjustHistoryMap() {
+        return adjustHistoryMap;
+    }
+
+    public void setAdjustHistoryMap(Map<String, AdjustHistory> adjustHistoryMap) {
+        this.adjustHistoryMap = adjustHistoryMap;
     }
 
     // 序列化方法，接受一个包含多个 ImageObj 对象的列表，将它们保存到指定文件夹，并清空序列化文件
