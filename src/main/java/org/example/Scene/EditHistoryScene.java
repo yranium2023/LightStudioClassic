@@ -19,6 +19,7 @@ import org.example.ImageModification.ImageSaturationAdjustment;
 import org.example.ImageModification.ImageTemperatureAdjustment;
 import org.example.Obj.AdjustHistory;
 import org.example.Obj.HSLColor;
+import org.example.Obj.ImageObj;
 
 import java.time.Instant;
 import java.time.ZoneId;
@@ -116,6 +117,21 @@ public class EditHistoryScene extends SuperScene{
     public static HSLColor getColor(int index){
         HSLColor[] values=HSLColor.values();
         return values[index];
+    }
+    /**
+     * @Description  在切换所选对象时更新表
+     * @param editingImageObj
+     * @author 吴鹄远
+     * @date 2023/12/18 18:32
+    **/
+
+    public static void renewEditHistoryScene(ImageObj editingImageObj){
+        historyTable.getItems().clear();
+        if(!editingImageObj.getAdjustHistory().isEmpty()){
+            for(var history:editingImageObj.getAdjustHistory()){
+                addLabel(history);
+            }
+        }
     }
     @Override
     public String title() {

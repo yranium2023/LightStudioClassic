@@ -64,7 +64,7 @@ public class ImageObj implements Serializable {
     //创建一个枚举类型，存储当前滑动条是四个滑动条中的哪一条
     private transient sliderType_1 nowSlider_1 = null;
     //历史记录
-    private final Stack<AdjustHistory> adjustHistory = new Stack<>();
+    private final List<AdjustHistory> adjustHistory = new ArrayList<>();
 
     private final Map<String,AdjustHistory> adjustHistoryMap=new HashMap<>();
     public enum sliderType_1 {
@@ -398,7 +398,7 @@ public class ImageObj implements Serializable {
         return hslInfos;
     }
 
-    public Stack<AdjustHistory> getAdjustHistory() {
+    public List<AdjustHistory> getAdjustHistory() {
         return adjustHistory;
     }
 
@@ -433,7 +433,7 @@ public class ImageObj implements Serializable {
         return imageObjs;
     }
     public void addHistory(AdjustHistory History){
-        adjustHistory.push(History);
+        adjustHistory.add(History);
         adjustHistoryMap.put(History.getAdjustProperty(), History);
         EditHistoryScene.addLabel(History);
     }
