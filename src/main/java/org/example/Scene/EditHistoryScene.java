@@ -64,7 +64,7 @@ public class EditHistoryScene extends SuperScene{
 
     }
 
-    public static void addLabel(AdjustHistory history){
+    public static void addLabel(AdjustHistory history,VTableView tableView){
         var key=history.getAdjustProperty();
         var newHis=new AdjustHistory(history);
         System.out.println(key);
@@ -91,7 +91,7 @@ public class EditHistoryScene extends SuperScene{
             HSLColor color1=getColor(index);
             newHis.setAdjustProperty("HSL明度调整 "+color1);
         }
-        historyTable.getItems().add(newHis);
+        tableView.getItems().add(newHis);
     }
     /**
      * @Description  截取正则表达式中的数字
@@ -130,7 +130,7 @@ public class EditHistoryScene extends SuperScene{
         historyTable.getItems().clear();
         if(!editingImageObj.getAdjustHistory().isEmpty()){
             for(var history:editingImageObj.getAdjustHistory()){
-                addLabel(history);
+                addLabel(history,historyTable);
             }
         }
     }

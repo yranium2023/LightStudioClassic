@@ -111,6 +111,7 @@ public class LSMain extends Application {
         InputButton.setOnAction(e -> {
             StaticValues.importHistogramPane(imageImportScene.histogramPane);
             sceneGroup.show(imageImportScene, VSceneShowMethod.FROM_LEFT);
+            ImageImportScene.renewHistoryTable();
         });
         ImageEditButton.setOnAction(e -> {
             StaticValues.importHistogramPane(imageEditScene.histogramPane);

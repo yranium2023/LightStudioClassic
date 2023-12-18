@@ -9,9 +9,12 @@ import io.vproxy.vfx.ui.scene.VSceneHideMethod;
 import io.vproxy.vfx.ui.scene.VSceneRole;
 import io.vproxy.vfx.ui.scene.VSceneShowMethod;
 import io.vproxy.vfx.ui.stage.VStage;
+import io.vproxy.vfx.ui.table.VTableColumn;
+import io.vproxy.vfx.ui.table.VTableView;
 import io.vproxy.vfx.util.FXUtils;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.geometry.Pos;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -21,6 +24,8 @@ import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 import org.example.ImageTools.ImportImageResource;
 import org.example.LSMain;
+import org.example.Obj.AdjustHistory;
+import org.example.Obj.ImageObj;
 import org.example.StaticValues;
 
 import java.util.List;
@@ -53,7 +58,12 @@ public class ImageImportScene extends SuperScene {
         setHgap(50);
         setVgap(25);
     }};
-
+    //新建历史记录表单
+   private static VTableView historyTable=new VTableView<AdjustHistory>(){{
+        getNode().setPrefHeight(600);
+        getNode().setPrefWidth(320);
+    }};
+   private static VTableColumn<AdjustHistory, String> labelCol=new VTableColumn<AdjustHistory,String>("修改内容", data->data.getAdjustProperty());
 
     public ImageImportScene(Supplier<VSceneGroup> sceneGroupSup) {
         super(VSceneRole.MAIN);
@@ -147,15 +157,36 @@ public class ImageImportScene extends SuperScene {
                System.out.println("删除成功");
            }
         });
+
+        //绑定x坐标
+        historyTable.getNode().layoutXProperty().bind(opPane.getNode().layoutXProperty());
+        historyTable.getNode().layoutYProperty().bind(opPane.getNode().layoutYProperty().add(opPane.getNode().heightProperty()).add(20));
+        historyTable.getNode().prefHeightProperty().bind(
+                scrollImportFlowPane.getNode().layoutYProperty().add(scrollImportFlowPane.getNode().heightProperty())
+                        .subtract(historyTable.getNode().layoutYProperty())
+        );
+        historyTable.getNode().prefWidthProperty().bind(opPane.getNode().widthProperty());
+        historyTable.getColumns().add(labelCol);
+        labelCol.setAlignment(Pos.CENTER);
+
         opPane.getContentPane().getChildren().add(deleteBUtton);
         getContentPane().getChildren().add(opPane.getNode());
+        getContentPane().getChildren().add(historyTable.getNode());
         getContentPane().getChildren().add(flowPaneRec);
         getContentPane().getChildren().add(menuBtn);
         getContentPane().getChildren().add(scrollImportFlowPane.getNode());
         scrollImportFlowPane.setContent(flowImportPane);
 
     }
-
+    public static void renewHistoryTable(){
+        ImageObj editingImageObj= StaticValues.editingImageObj;
+        historyTable.getItems().clear();
+        if(editingImageObj!=null&&!editingImageObj.getAdjustHistory().isEmpty()){
+            for(var history:editingImageObj.getAdjustHistory()){
+                EditHistoryScene.addLabel(history,historyTable);
+            }
+        }
+    }
 
 
     @Override
