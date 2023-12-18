@@ -48,7 +48,6 @@ public class ImageExposureAdjustment extends ImageAdjustment {
                     bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
                     ImageAdjustment.setProcessedImage();
                     editingImageObj.setNowSlider_1(ImageObj.sliderType_1.EXPOSURE);
-                    System.out.println("sliderType_1 changed");
                 }
                 System.out.println(editingImageObj.getNowSlider_1());
                 double newValue = -1 + exposureSlider.getPercentage() * 2;//-1 0 1

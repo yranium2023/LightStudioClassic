@@ -257,10 +257,7 @@ public class ImageEditScene extends SuperScene{
             if(StaticValues.editingImageObj!=null){
                 prePane.getChildren().clear();
                 ImageAdjustment.bufferedImage = ImageTransfer.toBufferedImage(StaticValues.editingImageObj.getEditingImage());
-                ImageAdjustment.processedImage = new BufferedImage(
-                        ImageAdjustment.bufferedImage.getWidth(),
-                        ImageAdjustment.bufferedImage.getHeight(),
-                        BufferedImage.TYPE_INT_ARGB);
+                ImageAdjustment.setProcessedImage();
                 prePane.getChildren().addAll(
                         littleModulePane.getNode(),
                         contrastLabel,

@@ -21,5 +21,12 @@ public class ImageAdjustment {
              BufferedImage.TYPE_INT_ARGB
      );
     }
+    public static void setBufferedImage(){
+        bufferedImage=new BufferedImage(
+                processedImage.getWidth(),
+                processedImage.getHeight(),
+                BufferedImage.TYPE_INT_ARGB
+        );
+    }
 
 }

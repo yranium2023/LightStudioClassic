@@ -435,11 +435,25 @@ public class ImageObj implements Serializable {
     }
 
     public Image AdjustRealImage(){
-        ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(this.originalImage);
-        adjustHistoryMap.forEach((key,value)->{
+        Image tempImage=null;
+        if(clipImages.isEmpty()){
+            tempImage=this.originalImage;
+        }else{
+            int lastIndex=clipImages.size()-1;
+            tempImage=this.clipImages.get(lastIndex);
+        }
+        ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage);
+        Set<Map.Entry<String, AdjustHistory>> entrySet = adjustHistoryMap.entrySet();
+        Iterator <Map.Entry<String,AdjustHistory>> iterator=entrySet.iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, AdjustHistory> entry = iterator.next();
+            String key = entry.getKey();
+            AdjustHistory value=entry.getValue();
+            ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage);
             ImageAdjustment.setProcessedImage();
             imageToHistory(value);
-        });
+            tempImage= ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
+        }
         return ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
     }
     /**
@@ -448,7 +462,6 @@ public class ImageObj implements Serializable {
      * @author 吴鹄远
      * @date 2023/12/18 10:05
     **/
-
     public void imageToHistory(AdjustHistory history){
         var key=history.getAdjustProperty();
         var value=history;
