@@ -647,6 +647,7 @@ public class ImageImportMenuScene extends SuperScene {
                     imageObj.getCopyVBox().setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(5), null)));
                     imageObj.getImageButton().setDisable(true);
                     imageObj.getCopyButton().setDisable(true);
+                    ImageImportScene.renewHistoryTable();
                 }
             });
             copy.setOnAction(e -> {
@@ -672,6 +673,7 @@ public class ImageImportMenuScene extends SuperScene {
                     imageObj.getImageButton().setDisable(true);
                     imageObj.getCopyButton().setDisable(true);
                     ImageEditScene.initEditImagePane();
+                    ImageImportScene.renewHistoryTable();
                 }
             });
             double selectedImageHeight = imageObj.getEditingImage().getHeight();
