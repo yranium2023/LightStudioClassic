@@ -80,7 +80,7 @@ public class HSLColorAdjustment extends ImageAdjustment {
             //判断间隔
             double threshold =0.03;
             lastValue[0]=-0.18+hueSlider_HSL.getPercentage()*0.36;;
-            lastValue[1]=-0.3+hueSlider_HSL.getPercentage()*0.6;
+            lastValue[1]=-0.3+saturationSlider_HSL.getPercentage()*0.6;
             lastValue[2]=-0.2+0.4*luminanceSlider_HSL.getPercentage();
             //色相轴
             hueListener=(ob,old,now)->{
@@ -222,7 +222,6 @@ public class HSLColorAdjustment extends ImageAdjustment {
                            case 1:
                                hsl[1] +=satuPer;
                                hsl[1]=Math.max(0.0,Math.min(1.0,hsl[1]));
-
                                break;
                            default:
                                hsl[2] +=lumPer;

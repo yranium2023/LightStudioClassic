@@ -21,6 +21,7 @@ import org.example.StaticValues;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.security.Key;
 import java.util.*;
 
 /**
@@ -513,7 +514,9 @@ public class ImageObj implements Serializable {
             ImageTemperatureAdjustment.setKelvin(value.getFirstValue());
             ImageTemperatureAdjustment.adjustTemperatureAsync();
         } else if ("HSL色相调整".equals(key.substring(0,key.length()-1))) {
+            //System.out.println(history.getAdjustProperty());
             HSLColorAdjustment.setSelectedColor(Character.getNumericValue(key.charAt(7)));
+            //System.out.println(Character.getNumericValue(key.charAt(7)));
             HSLColorAdjustment.setHuePer(value.getFirstValue());
             HSLColorAdjustment.setSelectedProperty(0);
             HSLColorAdjustment.HSLAdjust();
