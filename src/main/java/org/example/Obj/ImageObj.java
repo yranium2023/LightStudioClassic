@@ -432,10 +432,16 @@ public class ImageObj implements Serializable {
 
         return imageObjs;
     }
+    /**
+     * @Description  此方法用于添加历史记录
+     * @param History
+     * @author 吴鹄远
+     * @date 2023/12/18 19:58
+    **/
+
     public void addHistory(AdjustHistory History){
         adjustHistory.add(History);
         adjustHistoryMap.put(History.getAdjustProperty(), History);
-        EditHistoryScene.addLabel(History);
     }
     /**
      * @Description  此方法用于导出最高品质的图像

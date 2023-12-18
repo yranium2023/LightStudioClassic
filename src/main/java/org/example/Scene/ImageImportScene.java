@@ -9,6 +9,8 @@ import io.vproxy.vfx.ui.scene.VSceneHideMethod;
 import io.vproxy.vfx.ui.scene.VSceneRole;
 import io.vproxy.vfx.ui.scene.VSceneShowMethod;
 import io.vproxy.vfx.ui.stage.VStage;
+import io.vproxy.vfx.ui.table.VTableColumn;
+import io.vproxy.vfx.ui.table.VTableView;
 import io.vproxy.vfx.util.FXUtils;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -20,6 +22,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 import org.example.ImageTools.ImportImageResource;
+import org.example.Obj.AdjustHistory;
+import org.example.Obj.ImageObj;
 import org.example.StaticValues;
 
 import java.util.List;
@@ -52,6 +56,13 @@ public class ImageImportScene extends SuperScene {
         setHgap(50);
         setVgap(25);
     }};
+    //新建历史记录表单
+    private static VTableView historyTable=new VTableView<AdjustHistory>(){{
+        getNode().setLayoutY(50);
+        getNode().setPrefHeight(600);
+        getNode().setPrefWidth(320);
+    }};
+    private static VTableColumn<AdjustHistory, String> labelCol=new VTableColumn<AdjustHistory,String>("修改内容", data->data.getAdjustProperty());
 
 
     public ImageImportScene(Supplier<VSceneGroup> sceneGroupSup) {
@@ -119,26 +130,43 @@ public class ImageImportScene extends SuperScene {
             getNode().setLayoutX(1010);
         }};
         //删除按钮 用于删除图像
-        var deleteBUtton = new FusionButton("删除图片") {{
+        var deleteButton = new FusionButton("删除图片") {{
             setLayoutX(40);
             setPrefWidth(125);
             setPrefHeight(50);
             setOnlyAnimateWhenNotClicked(true);
         }};
 
-        deleteBUtton.setOnAction(e -> {
+        deleteButton.setOnAction(e -> {
            if(StaticValues.editingImageObj!=null){
                 StaticValues.editingImageObj.delete();
                System.out.println("删除成功");
            }
         });
-        opPane.getContentPane().getChildren().add(deleteBUtton);
+        opPane.getContentPane().getChildren().add(deleteButton);
         getContentPane().getChildren().add(opPane.getNode());
+        //绑定x坐标
+        historyTable.getNode().layoutXProperty().bind(opPane.getNode().layoutXProperty());
+        historyTable.getNode().layoutYProperty().bind(opPane.getNode().layoutYProperty().add(opPane.getNode().heightProperty()).add(20));
+        historyTable.getNode().prefHeightProperty().bind(scrollImportFlowPane.getNode().layoutYProperty()
+                .add(scrollImportFlowPane.getNode().heightProperty().subtract(getNode().heightProperty()))
+        );
+
+
         getContentPane().getChildren().add(flowPaneRec);
         getContentPane().getChildren().add(menuBtn);
         getContentPane().getChildren().add(scrollImportFlowPane.getNode());
         scrollImportFlowPane.setContent(flowImportPane);
 
+    }
+    public static void renewHistoryTable(){
+        ImageObj editingImageObj= StaticValues.editingImageObj;
+        historyTable.getItems().clear();
+        if(!editingImageObj.getAdjustHistory().isEmpty()){
+            for(var history:editingImageObj.getAdjustHistory()){
+                EditHistoryScene.addLabel(history);
+            }
+        }
     }
 
 
