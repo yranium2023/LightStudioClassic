@@ -222,7 +222,12 @@ public class ImageImportMenuScene extends SuperScene {
                 FusionImageButton outImageButton = new FusionImageButton();
                 imageObj.setOutPutImageVBox(outVox);
                 outVox.getChildren().add(outImageButton);
-                Label descriptionLabel = new Label(Integer.toString((int) imageObj.getOriginalImage().getWidth()) + '×' + (int) imageObj.getOriginalImage().getHeight());
+                Label descriptionLabel;
+                if(imageObj.getClipImages().isEmpty())
+                    descriptionLabel = new Label(Integer.toString((int) imageObj.getOriginalImage().getWidth()) + '×' + (int) imageObj.getOriginalImage().getHeight());
+                else{
+                    descriptionLabel = new Label(Integer.toString((int) imageObj.getClipImages().get(imageObj.getClipImages().size()-1).getWidth()) + '×' + (int) imageObj.getClipImages().get(imageObj.getClipImages().size()-1).getHeight());
+                }
                 descriptionLabel.setTextFill(Color.WHITE);
                 outVox.getChildren().add(descriptionLabel);
                 outVox.setAlignment(Pos.CENTER); // 居中对齐
@@ -270,8 +275,10 @@ public class ImageImportMenuScene extends SuperScene {
                     BufferedImage bufferedImage=null;
                     if(outputState==0)
                         bufferedImage = SwingFXUtils.fromFXImage(imageObj.getEditingImage(),null);
-                    else
+                    else{
                         bufferedImage = SwingFXUtils.fromFXImage(imageObj.AdjustRealImage(),null);
+                    }
+
                     // 保存BufferedImage到文件
                     try {
                         File file = new File(filePath);

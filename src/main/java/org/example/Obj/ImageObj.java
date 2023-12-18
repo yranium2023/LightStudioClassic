@@ -291,10 +291,13 @@ public class ImageObj implements Serializable {
         Image newEditingImage = ImageObj.resizeNormalImage(nowImage);
         setEditingImage(newEditingImage);
         Histogram.drawHistogram(newEditingImage);
-        this.buttonVBox.getChildren().remove(1);
-        Label descriptionLabel = new Label(Integer.toString((int) newEditingImage.getWidth()) + '×' + (int) newEditingImage.getHeight());
-        descriptionLabel.setTextFill(Color.WHITE);
-        this.buttonVBox.getChildren().add(descriptionLabel);
+        if(!this.getClipImages().isEmpty()){
+            Image newClipImage=this.getClipImages().get(this.clipImages.size()-1);
+            this.buttonVBox.getChildren().remove(1);
+            Label descriptionLabel = new Label(Integer.toString((int) newClipImage.getWidth()) + '×' + (int) newClipImage.getHeight());
+            descriptionLabel.setTextFill(Color.WHITE);
+            this.buttonVBox.getChildren().add(descriptionLabel);
+        }
     }
 
     /***
