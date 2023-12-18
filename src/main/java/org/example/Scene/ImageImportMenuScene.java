@@ -55,6 +55,8 @@ public class ImageImportMenuScene extends SuperScene {
     public static List<VBox> copyImageButtonsVbox = new ArrayList<>();
 
     public static List<ImportHistory> importHistories = new ArrayList<>();
+    //输出情况 默认为1 1为高品质 0为低品质
+    int outputState=1;
 
     public ImageImportMenuScene(Supplier<VSceneGroup> sceneGroupSup) {
 
@@ -220,7 +222,7 @@ public class ImageImportMenuScene extends SuperScene {
                 FusionImageButton outImageButton = new FusionImageButton();
                 imageObj.setOutPutImageVBox(outVox);
                 outVox.getChildren().add(outImageButton);
-                Label descriptionLabel = new Label(Integer.toString((int) imageObj.getEditingImage().getWidth()) + '×' + (int) imageObj.getEditingImage().getHeight());
+                Label descriptionLabel = new Label(Integer.toString((int) imageObj.getOriginalImage().getWidth()) + '×' + (int) imageObj.getOriginalImage().getHeight());
                 descriptionLabel.setTextFill(Color.WHITE);
                 outVox.getChildren().add(descriptionLabel);
                 outVox.setAlignment(Pos.CENTER); // 居中对齐
@@ -238,13 +240,13 @@ public class ImageImportMenuScene extends SuperScene {
                 });
                 flowOutputPane.getChildren().add(outVox);
             }
+
             var OPpane = new FusionPane() {{
                 getNode().setPrefHeight(50);
                 getNode().setPrefWidth(300);
                 getNode().setLayoutX(530);
                 getNode().setLayoutY(530);
             }};
-            getContentPane().getChildren().add(OPpane.getNode());
             FusionButton yesButton = new FusionButton("确定") {{
                 setPrefWidth(125);
                 setPrefHeight(OPpane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);
@@ -265,7 +267,11 @@ public class ImageImportMenuScene extends SuperScene {
                 for(ImageObj imageObj:outImages){
                     // 构造完整的文件路径
                     String filePath =selectedDirectory.getPath()+File.separator + imageObj.getImageName();
-                    BufferedImage bufferedImage = SwingFXUtils.fromFXImage(imageObj.getEditingImage(),null);
+                    BufferedImage bufferedImage=null;
+                    if(outputState==0)
+                        bufferedImage = SwingFXUtils.fromFXImage(imageObj.getEditingImage(),null);
+                    else
+                        bufferedImage = SwingFXUtils.fromFXImage(imageObj.AdjustRealImage(),null);
                     // 保存BufferedImage到文件
                     try {
                         File file = new File(filePath);
@@ -288,9 +294,57 @@ public class ImageImportMenuScene extends SuperScene {
             });
             OPpane.getContentPane().getChildren().add(yesButton);
             OPpane.getContentPane().getChildren().add(noButton);
+
+            var qualityPane = new FusionPane() {{
+                getNode().setPrefHeight(50);
+                getNode().setPrefWidth(300);
+                getNode().setLayoutX(70);
+                getNode().setLayoutY(530);
+            }};
+            FusionButton highButton = new FusionButton("高品质") {{
+                setPrefWidth(125);
+                setPrefHeight(OPpane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);
+                setOnlyAnimateWhenNotClicked(true);
+            }};
+            FusionButton lowButton = new FusionButton("压缩后") {{
+                setPrefWidth(125);
+                setPrefHeight(OPpane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);
+                setLayoutX(155);
+                setOnlyAnimateWhenNotClicked(true);
+            }};
+
+            if (outputState==1)
+            {
+                highButton.setDisable(true);
+                lowButton.setDisable(false);
+            }else{
+                highButton.setDisable(false);
+                lowButton.setDisable(true);
+            }
+
+            highButton.setOnAction(event -> {
+                if(outputState==0){
+                    outputState=1;
+                    highButton.setDisable(true);
+                    lowButton.setDisable(false);
+                }
+            });
+
+            lowButton.setOnAction(event -> {
+                if(outputState==1){
+                    outputState=0;
+                    highButton.setDisable(false);
+                    lowButton.setDisable(true);
+                }
+            });
+
+            qualityPane.getContentPane().getChildren().add(highButton);
+            qualityPane.getContentPane().getChildren().add(lowButton);
+
             stage.getInitialScene().getContentPane().getChildren().add(flowPaneRec);
             stage.getInitialScene().getContentPane().getChildren().add(scrollOutputFlowPane.getNode());
             stage.getInitialScene().getContentPane().getChildren().add(OPpane.getNode());
+            stage.getInitialScene().getContentPane().getChildren().add(qualityPane.getNode());
             stage.show();
         });
         //以下为历史记录的部分
