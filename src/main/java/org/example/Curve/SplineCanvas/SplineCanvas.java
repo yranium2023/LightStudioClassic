@@ -40,7 +40,6 @@ public class SplineCanvas extends StackPane{
     int DraggingIndex=-1;
     Canvas canvas;
     GraphicsContext gc ;
-    private ExecutorService executor = Executors.newSingleThreadExecutor();
     private Future<?> currentTask = null; // 当前任务
     public SplineCanvas(double prefWidth) {
         this.setPrefWidth(prefWidth);
@@ -156,6 +155,7 @@ public class SplineCanvas extends StackPane{
             int y=(int)((1-point.getY()/CANVAS_WIDTH)*255.0);
             ResultLUT.addXToY(x,y);
         }
+        ExecutorService executor = Executors.newSingleThreadExecutor();
         if (currentTask == null || currentTask.isDone()) {
             // 如果当前任务为空或者已经完成，则提交新任务
             currentTask = executor.submit(()->{
@@ -168,6 +168,8 @@ public class SplineCanvas extends StackPane{
                     System.out.println("曲线调整成功");
                 });
              });
+            //ImageAdjustment.bufferedImage.flush();
+            //ImageAdjustment.processedImage.flush();
         }else{
             currentTask.cancel(true);
             currentTask = executor.submit(()->{
@@ -179,7 +181,10 @@ public class SplineCanvas extends StackPane{
                     System.out.println("曲线调整成功");
                 });
             });
+            //ImageAdjustment.bufferedImage.flush();
+            //ImageAdjustment.processedImage.flush();
         }
+        executor.shutdown();
         gc.strokePolyline(curveXPoints, curveYPoints, curvePoints.size());
         curvePoints.clear();
     }
