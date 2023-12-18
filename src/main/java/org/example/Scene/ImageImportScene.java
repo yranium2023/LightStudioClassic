@@ -82,7 +82,7 @@ public class ImageImportScene extends SuperScene {
         Rectangle flowPaneRec = new Rectangle(scrollImportFlowPane.getNode().getLayoutX(), scrollImportFlowPane.getNode().getLayoutY(), flowImportPane.getPrefWidth() , flowImportPane.getPrefHeight()) {{
             setFill(Color.TRANSPARENT);
             setStroke(Color.WHITE); // 设置矩形的边框颜色
-            setStrokeType(StrokeType.INSIDE);//边框为内嵌式，不会超出pane的范围
+            setStrokeType(StrokeType.OUTSIDE);//边框为内嵌式，不会超出pane的范围
             xProperty().bind(scrollImportFlowPane.getNode().layoutXProperty());
             yProperty().bind(scrollImportFlowPane.getNode().layoutYProperty());
             widthProperty().bind(scrollImportFlowPane.getNode().widthProperty());
