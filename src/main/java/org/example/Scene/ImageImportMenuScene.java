@@ -162,15 +162,15 @@ public class ImageImportMenuScene extends SuperScene {
 
                 // 启动任务
                 new Thread(task).start();
-                VStage stage = new VStage();
-                stage.getStage().setResizable(false);
-                stage.getStage().setHeight(110);
-                stage.getStage().setWidth(500);
-                stage.getInitialScene().getContentPane().getChildren().add(vBox);
+                VStage progressStage = new VStage();
+                progressStage.getStage().setResizable(false);
+                progressStage.getStage().setHeight(110);
+                progressStage.getStage().setWidth(500);
+                progressStage.getInitialScene().getContentPane().getChildren().add(vBox);
                 vBox.setAlignment(Pos.CENTER);
                 vBox.setLayoutX(50);
                 vBox.setLayoutY(25);
-                stage.show();
+                progressStage.show();
                 // 设置任务完成时的回调
                 task.setOnSucceeded(event -> {
                     // 在 JavaFX 线程上更新 UI
@@ -180,7 +180,7 @@ public class ImageImportMenuScene extends SuperScene {
                         // 清空之前选中的图片
                         selectedImages.clear();
                         System.out.println("图片全部传入成功");
-                        stage.close();
+                        progressStage.close();
                         sceneGroupSup.get().hide(this, VSceneHideMethod.TO_LEFT);
                         FXUtils.runDelay(VScene.ANIMATION_DURATION_MILLIS, () -> sceneGroupSup.get().removeScene(this));
                     });
@@ -188,10 +188,10 @@ public class ImageImportMenuScene extends SuperScene {
             }
         });
         OutPutButton.setOnAction(e -> {
-            VStage stage = new VStage();
-            stage.getStage().setResizable(false);
-            stage.getStage().setHeight(610);
-            stage.getStage().setWidth(900);
+            VStage outputStage = new VStage();
+            outputStage.getStage().setResizable(false);
+            outputStage.getStage().setHeight(610);
+            outputStage.getStage().setWidth(900);
             VScrollPane scrollOutputFlowPane = new VScrollPane() {{
                 getNode().setLayoutX(70);
                 getNode().setLayoutY(70);
@@ -264,47 +264,79 @@ public class ImageImportMenuScene extends SuperScene {
                 setOnlyAnimateWhenNotClicked(true);
             }};
             yesButton.setOnAction(event -> {
-                DirectoryChooser directoryChooser = new DirectoryChooser();
-                directoryChooser.setTitle("选择导出路径");
+                if(!outImages.isEmpty()){
+                    DirectoryChooser directoryChooser = new DirectoryChooser();
+                    directoryChooser.setTitle("选择导出路径");
 
-                // 显示文件选择对话框
-                File selectedDirectory = directoryChooser.showDialog(stage.getStage());
-                Task<Void> task = new Task<>() {
-                    @Override
-                    protected Void call() throws Exception {
-                        for(ImageObj imageObj:outImages){
-                            // 构造完整的文件路径
-                            String filePath =selectedDirectory.getPath()+File.separator + imageObj.getImageName();
-                            BufferedImage bufferedImage;
-                            if(outputState==0)//低品质导出
-                                bufferedImage = SwingFXUtils.fromFXImage(imageObj.getEditingImage(),null);
-                            else{//高品质导出
-                                if(imageObj.getAdjustHistory().isEmpty())//未编辑则导出原图
-                                {
-                                    bufferedImage=SwingFXUtils.fromFXImage(imageObj.getOriginalImage(),null);
-                                }else{//编辑后导出新图
-                                    bufferedImage = SwingFXUtils.fromFXImage(imageObj.AdjustRealImage(),null);
+                    // 显示文件选择对话框
+                    File selectedDirectory = directoryChooser.showDialog(outputStage.getStage());
+                    Label label =new Label();
+                    label.setTextFill(Color.WHITE);
+                    VProgressBar progressBar = new VProgressBar();
+                    progressBar.setLength(400);
+                    VBox vBox = new VBox(
+                            label,
+                            new VPadding(10),
+                            progressBar
+                    );
+                    Task<Void> task = new Task<>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            int totalImages = outImages.size();
+                            int tmpNum = 0;
+                            for(ImageObj imageObj:outImages){
+                                Platform.runLater(() -> label.setText(imageObj.getImageName()));
+                                // 构造完整的文件路径
+                                String filePath =selectedDirectory.getPath()+File.separator + imageObj.getImageName();
+                                BufferedImage bufferedImage;
+                                if(outputState==0)//低品质导出
+                                    bufferedImage = SwingFXUtils.fromFXImage(imageObj.getEditingImage(),null);
+                                else{//高品质导出
+                                    if(imageObj.getAdjustHistory().isEmpty())//未编辑则导出原图
+                                    {
+                                        bufferedImage=SwingFXUtils.fromFXImage(imageObj.getOriginalImage(),null);
+                                    }else{//编辑后导出新图
+                                        bufferedImage = SwingFXUtils.fromFXImage(imageObj.AdjustRealImage(),null);
+                                    }
                                 }
+                                // 保存BufferedImage到文件
+                                try {
+                                    File file = new File(filePath);
+                                    ImageIO.write(bufferedImage, "png", file); // 这里可以根据需要选择其他图片格式
+                                    System.out.println("Image saved to: " + file.getAbsolutePath());
+                                } catch (IOException event1) {
+                                    event1.printStackTrace();
+                                }
+                                tmpNum++;
+                                // 更新进度
+                                progressBar.setProgress((double)(tmpNum)/(double)(totalImages));
                             }
-                            // 保存BufferedImage到文件
-                            try {
-                                File file = new File(filePath);
-                                ImageIO.write(bufferedImage, "png", file); // 这里可以根据需要选择其他图片格式
-                                System.out.println("Image saved to: " + file.getAbsolutePath());
-                            } catch (IOException event1) {
-                                event1.printStackTrace();
-                            }
+                            return null;
                         }
-                        return null;
-                    }
-                };
-                // 启动任务
-                new Thread(task).start();
-                // 设置任务完成时的回调
-                task.setOnSucceeded(event1 -> {
-                    // 在 JavaFX 线程上更新 UI
-                    Platform.runLater(stage::close);
-                });
+                    };
+                    // 启动任务
+                    new Thread(task).start();
+                    VStage outputProgressStage = new VStage();
+                    outputProgressStage.getStage().setResizable(false);
+                    outputProgressStage.getStage().setHeight(110);
+                    outputProgressStage.getStage().setWidth(500);
+                    outputProgressStage.getInitialScene().getContentPane().getChildren().add(vBox);
+                    vBox.setAlignment(Pos.CENTER);
+                    vBox.setLayoutX(50);
+                    vBox.setLayoutY(25);
+                    outputProgressStage.show();
+                    // 设置任务完成时的回调
+                    task.setOnSucceeded(event1 -> {
+                        // 在 JavaFX 线程上更新 UI
+                        Platform.runLater(() -> {
+                            // 清空之前选中的图片
+                            outImages.clear();
+                            System.out.println("图片全部导出成功");
+                            outputProgressStage.close();
+                            outputStage.close();
+                        });
+                    });
+                }
             });
             noButton.setOnAction(event -> {
                 for(ImageObj imageObj:outImages){
@@ -361,11 +393,11 @@ public class ImageImportMenuScene extends SuperScene {
             qualityPane.getContentPane().getChildren().add(highButton);
             qualityPane.getContentPane().getChildren().add(lowButton);
 
-            stage.getInitialScene().getContentPane().getChildren().add(flowPaneRec);
-            stage.getInitialScene().getContentPane().getChildren().add(scrollOutputFlowPane.getNode());
-            stage.getInitialScene().getContentPane().getChildren().add(OPpane.getNode());
-            stage.getInitialScene().getContentPane().getChildren().add(qualityPane.getNode());
-            stage.show();
+            outputStage.getInitialScene().getContentPane().getChildren().add(flowPaneRec);
+            outputStage.getInitialScene().getContentPane().getChildren().add(scrollOutputFlowPane.getNode());
+            outputStage.getInitialScene().getContentPane().getChildren().add(OPpane.getNode());
+            outputStage.getInitialScene().getContentPane().getChildren().add(qualityPane.getNode());
+            outputStage.show();
         });
         //以下为历史记录的部分
         VScrollPane scrollHisFlowPane = new VScrollPane() {{
@@ -389,7 +421,14 @@ public class ImageImportMenuScene extends SuperScene {
             setStroke(Color.WHITE); // 设置矩形的边框颜色
             setStrokeType(StrokeType.INSIDE);//边框为内嵌式，不会超出pane的范围
         }};
-
+        File tmpFile = new File("./src/main/resources/serializedData/testData.dat");
+        if(!tmpFile.exists()){
+            try {
+                tmpFile.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         //反序列化过程
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("./src/main/resources/serializedData/testData.dat"))) {
             // 读取整个列表
