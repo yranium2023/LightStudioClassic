@@ -484,11 +484,9 @@ public class ImageImportMenuScene extends SuperScene {
                     //以下为传入过程
 
                     errorFlag=0;
-                    List<ImageObj> errorList=new ArrayList<>();
                     int len=totalImages.size();
                     for(int i=0;i<len;i++)
                         totalImages.get(0).delete();
-                    totalImages.addAll(importHistory.getTotalImageObj());
                     Label label =new Label();
                     label.setTextFill(Color.WHITE);
                     VProgressBar progressBar = new VProgressBar();
@@ -501,10 +499,9 @@ public class ImageImportMenuScene extends SuperScene {
                     Task<Void> task = new Task<>() {
                         @Override
                         protected Void call() throws Exception {
-
-                            int totalNum =totalImages.size();
+                            int totalNum =importHistory.getTotalImageObj().size();
                             int tmpNum = 0;
-                            for(ImageObj imageObj:totalImages){
+                            for(ImageObj imageObj:importHistory.getTotalImageObj()){
                                 URL url =new URL(imageObj.getImagePath());
                                 URI uri =url.toURI();
                                 String filePath = uri.getPath();
@@ -512,19 +509,26 @@ public class ImageImportMenuScene extends SuperScene {
                                 System.out.println(imageObj.getImagePath());
                                 if(!selectedFile.exists()){
                                     errorFlag=1;
-                                    errorList.add(imageObj);
                                     tmpNum++;
                                     continue;
                                 }
+                                Platform.runLater(() -> label.setText(selectedFile.getName()));
                                 Image selectedImage = new Image(imageObj.getImagePath());
-                                imageObj.setImageName(selectedFile.getName());
                                 imageObj.setOriginalImage(selectedImage);
                                 Platform.runLater(() -> label.setText(imageObj.getImageName()));
-                                if(historyState==0||imageObj.getAdjustHistory().isEmpty())
-                                    imageObj.setEditingImage(ImageObj.resizeNormalImage(imageObj.getOriginalImage()));
-                                else
-                                    imageObj.setEditingImage(ImageObj.resizeNormalImage(imageObj.AdjustRealImage()));
-                                selectedImages.add(imageObj);
+                                ImageObj newImageObj= new ImageObj(selectedImage);
+                                newImageObj.setImageName(selectedFile.getName());
+                                newImageObj.setAdjustHistory(imageObj.getAdjustHistory());
+                                newImageObj.setAdjustHistoryMap(imageObj.getAdjustHistoryMap());
+                                imageObj.setClipImages(new ArrayList<>());
+                                if(historyState==1&&(!imageObj.getAdjustHistory().isEmpty()))
+                                {
+                                    Image newOrigianlImage =imageObj.AdjustRealImage();
+                                    newImageObj.setOriginalImage(newOrigianlImage);
+                                }
+                                newImageObj.setEditingImage(ImageObj.resizeNormalImage(newImageObj.getOriginalImage()));
+                                selectedImages.add(newImageObj);
+                                totalImages.add(newImageObj);
                                 tmpNum++;
                                 // 更新进度
                                 progressBar.setProgress((double)(tmpNum)/(double)(totalNum));
@@ -562,7 +566,7 @@ public class ImageImportMenuScene extends SuperScene {
                     task.setOnSucceeded(event1 -> {
                         // 在 JavaFX 线程上更新 UI
                         Platform.runLater(() -> {
-                            // 清空之前选中的图片
+                            // 关闭窗口
                             inputProgressStage.close();
                             // 生成特殊的按钮
                             fusionImageButtonsVbox = createImageButtonsVbox();
@@ -576,7 +580,7 @@ public class ImageImportMenuScene extends SuperScene {
                                 VBox errorVbox=new VBox();
                                 //还需要输出报错信息
                                 VStage errorInformStage = new VStage();
-                                Label errorInformation = new Label("部分图片已被删除或移动到其他位置，共"+errorList.size()+"张图片导入出错");
+                                Label errorInformation = new Label("部分图片已被删除或移动到其他位置");
                                 errorInformation.setTextFill(Color.WHITE);
                                 errorVbox.getChildren().add(errorInformation);
                                 errorInformStage.getStage().setResizable(false);
@@ -587,7 +591,6 @@ public class ImageImportMenuScene extends SuperScene {
                                 errorVbox.setLayoutX(50);
                                 errorVbox.setLayoutY(25);
                                 errorInformStage.show();
-                                totalImages.removeAll(errorList);
                                 errorFlag=0;
                             }
                         });
