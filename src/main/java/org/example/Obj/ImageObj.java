@@ -480,7 +480,7 @@ public class ImageObj implements Serializable {
         ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage.get());
         Set<Map.Entry<String, AdjustHistory>> entrySet = adjustHistoryMap.entrySet();
         Iterator <Map.Entry<String,AdjustHistory>> iterator=entrySet.iterator();
-        ExecutorService executor = Executors.newCachedThreadPool();
+        ExecutorService executor = Executors.newSingleThreadExecutor();
             while (iterator.hasNext()) {
                 Map.Entry<String, AdjustHistory> entry = iterator.next();
                 String key = entry.getKey();
@@ -511,8 +511,7 @@ public class ImageObj implements Serializable {
         ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage.get());
         Set<Map.Entry<String, AdjustHistory>> entrySet = adjustHistoryMap.entrySet();
         Iterator <Map.Entry<String,AdjustHistory>> iterator=entrySet.iterator();
-        ExecutorService executor = Executors.newCachedThreadPool();
-
+        ExecutorService executor = Executors.newSingleThreadExecutor();
             while (iterator.hasNext()) {
                 Map.Entry<String, AdjustHistory> entry = iterator.next();
                 String key = entry.getKey();
