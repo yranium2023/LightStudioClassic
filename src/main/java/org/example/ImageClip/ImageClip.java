@@ -168,6 +168,7 @@ public class ImageClip {
             //把生成的Image加入clipImage的List中
             editingImageObj.getClipImages().add(clippedImage);
             editingImageObj.renewAll(clippedImage);
+            editingImageObj.editingImageToHistory();
             //将当前界面上的图片进行替换
             int index=imagePane.getChildren().indexOf(imageView);
             copyImageViewProperties(ImageScaler.getImageView(editingImageObj.getEditingImage(),imagePane),imageView,imagePane);
@@ -213,6 +214,7 @@ public class ImageClip {
             //生成和替换缩略图
             Image newButtonImage=ImageObj.resizeButtonImage(preImage);
             editingImageObj.renewAll(preImage);
+            editingImageObj.editingImageToHistory();
             //将当前界面上的图片进行替换
             int index=imagePane.getChildren().indexOf(imageView);
             copyImageViewProperties(ImageScaler.getImageView(editingImageObj.getEditingImage(), imagePane),imageView,imagePane);
@@ -248,6 +250,7 @@ public class ImageClip {
             ImageClipScene.getResetButton().setDisable(true);
             ImageClipScene.getCancelButton().setDisable(true);
             editingImageObj.renewAll(originImage);
+            editingImageObj.editingImageToHistory();
             //将当前界面上的图片进行替换
             int index=imagePane.getChildren().indexOf(imageView);
             copyImageViewProperties(ImageScaler.getImageView(editingImageObj.getEditingImage(),imagePane),imageView,imagePane);
