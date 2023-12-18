@@ -151,13 +151,18 @@ public class LSMain extends Application {
                 throw new RuntimeException(e);
             }
         }
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("./src/main/resources/serializedData/testData.dat"))) {
-            // 写入整个列表
-            oos.writeObject(ImageImportMenuScene.importHistories);
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(!ImageImportMenuScene.importHistories.isEmpty()){
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("./src/main/resources/serializedData/testData.dat"))) {
+                // 写入整个列表
+                oos.writeObject(ImageImportMenuScene.importHistories);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("序列化结束");
         }
-        System.out.println("序列化结束");
+        else{
+            System.out.println("无需序列化");
+        }
         super.stop();
     }
 
