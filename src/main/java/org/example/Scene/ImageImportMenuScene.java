@@ -36,6 +36,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.net.URI;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -439,19 +441,42 @@ public class ImageImportMenuScene extends SuperScene {
         //开始添加按钮
         if(importHistories!=null){
             for(ImportHistory importHistory:importHistories){
+                if(importHistory.getTotalImageObj().isEmpty())
+                    continue;
                 FusionButton hisButton = new FusionButton(importHistory.getDate()) {{
                     setPrefWidth(320);
                     setPrefHeight(50);
                     setOnlyAnimateWhenNotClicked(true);
                 }};
-
                 hisButton.setOnAction(e->{
+                    VStage selectModelStage = new VStage();
+                    selectModelStage.getStage().setResizable(false);
+                    selectModelStage.getStage().setHeight(110);
+                    selectModelStage.getStage().setWidth(500);
+                    var selectPane = new FusionPane() {{
+                        getNode().setPrefHeight(50);
+                        getNode().setPrefWidth(300);
+                        getNode().setLayoutX(70);
+                        getNode().setLayoutY(530);
+                    }};
+                    FusionButton yesHisButton = new FusionButton("是") {{
+                        setPrefWidth(125);
+                        setPrefHeight(selectPane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);
+                        setOnlyAnimateWhenNotClicked(true);
+                    }};
+                    FusionButton noHisButton = new FusionButton("否") {{
+                        setPrefWidth(125);
+                        setPrefHeight(selectPane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);
+                        setLayoutX(155);
+                        setOnlyAnimateWhenNotClicked(true);
+                    }};
+                    selectModelStage.show();
                     errorFlag=0;
                     List<ImageObj> errorList=new ArrayList<>();
                     int len=totalImages.size();
                     for(int i=0;i<len;i++)
                         totalImages.get(0).delete();
-                    totalImages=importHistory.getTotalImageObj();
+                    totalImages.addAll(importHistory.getTotalImageObj());
                     Label label =new Label();
                     label.setTextFill(Color.WHITE);
                     VProgressBar progressBar = new VProgressBar();
@@ -464,10 +489,14 @@ public class ImageImportMenuScene extends SuperScene {
                     Task<Void> task = new Task<>() {
                         @Override
                         protected Void call() throws Exception {
+
                             int totalNum =totalImages.size();
                             int tmpNum = 0;
                             for(ImageObj imageObj:totalImages){
-                                File selectedFile = new File(imageObj.getImagePath());
+                                URL url =new URL(imageObj.getImagePath());
+                                URI uri =url.toURI();
+                                String filePath = uri.getPath();
+                                File selectedFile = new File(filePath);
                                 System.out.println(imageObj.getImagePath());
                                 if(!selectedFile.exists()){
                                     errorFlag=1;
@@ -479,10 +508,10 @@ public class ImageImportMenuScene extends SuperScene {
                                 imageObj.setImageName(selectedFile.getName());
                                 imageObj.setOriginalImage(selectedImage);
                                 Platform.runLater(() -> label.setText(imageObj.getImageName()));
-                                if(historyState==1)
-                                    imageObj.setEditingImage(ImageObj.resizeNormalImage(imageObj.AdjustRealImage()));
-                                else
+                                if(historyState==0||imageObj.getAdjustHistory().isEmpty())
                                     imageObj.setEditingImage(ImageObj.resizeNormalImage(imageObj.getOriginalImage()));
+                                else
+                                    imageObj.setEditingImage(ImageObj.resizeNormalImage(imageObj.AdjustRealImage()));
                                 selectedImages.add(imageObj);
                                 tmpNum++;
                                 // 更新进度
