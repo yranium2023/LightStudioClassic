@@ -57,7 +57,10 @@ public class ImageImportMenuScene extends SuperScene {
     public static List<ImportHistory> importHistories = new ArrayList<>();
     //输出情况 默认为1 1为高品质 0为低品质
     int outputState=1;
-
+    //是否有错误出现 默认为0 无错误
+    int errorFlag=0;
+    //序列化情况 是否要根据历史记录进行修改 1为要 0为不要
+    int historyState=0;
     public ImageImportMenuScene(Supplier<VSceneGroup> sceneGroupSup) {
 
         super(VSceneRole.DRAWER_VERTICAL);
@@ -282,7 +285,7 @@ public class ImageImportMenuScene extends SuperScene {
                     Task<Void> task = new Task<>() {
                         @Override
                         protected Void call() throws Exception {
-                            int totalImages = outImages.size();
+                            int totalNum = outImages.size();
                             int tmpNum = 0;
                             for(ImageObj imageObj:outImages){
                                 Platform.runLater(() -> label.setText(imageObj.getImageName()));
@@ -309,7 +312,7 @@ public class ImageImportMenuScene extends SuperScene {
                                 }
                                 tmpNum++;
                                 // 更新进度
-                                progressBar.setProgress((double)(tmpNum)/(double)(totalImages));
+                                progressBar.setProgress((double)(tmpNum)/(double)(totalNum));
                             }
                             return null;
                         }
@@ -443,11 +446,97 @@ public class ImageImportMenuScene extends SuperScene {
                 }};
 
                 hisButton.setOnAction(e->{
+                    errorFlag=0;
+                    List<ImageObj> errorList=new ArrayList<>();
                     int len=totalImages.size();
                     for(int i=0;i<len;i++)
                         totalImages.get(0).delete();
+                    totalImages=importHistory.getTotalImageObj();
+                    Label label =new Label();
+                    label.setTextFill(Color.WHITE);
+                    VProgressBar progressBar = new VProgressBar();
+                    progressBar.setLength(400);
+                    VBox vBox = new VBox(
+                            label,
+                            new VPadding(10),
+                            progressBar
+                    );
+                    Task<Void> task = new Task<>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            int totalNum =totalImages.size();
+                            int tmpNum = 0;
+                            for(ImageObj imageObj:totalImages){
+                                File selectedFile = new File(imageObj.getImagePath());
+                                System.out.println(imageObj.getImagePath());
+                                if(!selectedFile.exists()){
+                                    errorFlag=1;
+                                    errorList.add(imageObj);
+                                    tmpNum++;
+                                    continue;
+                                }
+                                Image selectedImage = new Image(imageObj.getImagePath());
+                                imageObj.setImageName(selectedFile.getName());
+                                imageObj.setOriginalImage(selectedImage);
+                                Platform.runLater(() -> label.setText(imageObj.getImageName()));
+                                if(historyState==1)
+                                    imageObj.setEditingImage(ImageObj.resizeNormalImage(imageObj.AdjustRealImage()));
+                                else
+                                    imageObj.setEditingImage(ImageObj.resizeNormalImage(imageObj.getOriginalImage()));
+                                selectedImages.add(imageObj);
+                                tmpNum++;
+                                // 更新进度
+                                progressBar.setProgress((double)(tmpNum)/(double)(totalNum));
+                            }
+                            return null;
+                        }
+                    };
+                    // 启动任务
+                    new Thread(task).start();
+                    VStage inputProgressStage = new VStage();
+                    inputProgressStage.getStage().setResizable(false);
+                    inputProgressStage.getStage().setHeight(110);
+                    inputProgressStage.getStage().setWidth(500);
+                    inputProgressStage.getInitialScene().getContentPane().getChildren().add(vBox);
+                    vBox.setAlignment(Pos.CENTER);
+                    vBox.setLayoutX(50);
+                    vBox.setLayoutY(25);
+                    inputProgressStage.show();
+                    // 设置任务完成时的回调
+                    task.setOnSucceeded(event1 -> {
+                        // 在 JavaFX 线程上更新 UI
+                        Platform.runLater(() -> {
+                            // 清空之前选中的图片
+                            inputProgressStage.close();
+                            // 生成特殊的按钮
+                            fusionImageButtonsVbox = createImageButtonsVbox();
+                            // 清空之前选中的图片
+                            selectedImages.clear();
+                            if(errorFlag==0)
+                                System.out.println("图片全部传入成功");
+                            sceneGroupSup.get().hide(this, VSceneHideMethod.TO_LEFT);
+                            FXUtils.runDelay(VScene.ANIMATION_DURATION_MILLIS, () -> sceneGroupSup.get().removeScene(this));
+                            if(errorFlag==1){
+                                VBox errorVbox=new VBox();
+                                //还需要输出报错信息
+                                VStage errorInformStage = new VStage();
+                                Label errorInformation = new Label("部分图片已被删除或移动到其他位置，共"+errorList.size()+"张图片导入出错");
+                                errorInformation.setTextFill(Color.WHITE);
+                                errorVbox.getChildren().add(errorInformation);
+                                errorInformStage.getStage().setResizable(false);
+                                errorInformStage.getStage().setHeight(110);
+                                errorInformStage.getStage().setWidth(500);
+                                errorInformStage.getInitialScene().getContentPane().getChildren().add(errorVbox);
+                                errorVbox.setAlignment(Pos.CENTER);
+                                errorVbox.setLayoutX(50);
+                                errorVbox.setLayoutY(25);
+                                errorInformStage.show();
+                                totalImages.removeAll(errorList);
+                                errorFlag=0;
+                            }
+                        });
+                    });
                 });
-
                 hisFlowPane.getChildren().add(hisButton);
             }
         }
