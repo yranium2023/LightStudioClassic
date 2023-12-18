@@ -169,6 +169,17 @@ public class ImageImportScene extends SuperScene {
         historyTable.getColumns().add(labelCol);
         labelCol.setAlignment(Pos.CENTER);
 
+        //新建一个矩形用于包裹opPane和table
+        Rectangle opTableRec = new Rectangle() {{
+            setFill(Color.TRANSPARENT);
+            setStroke(Color.WHITE); // 设置矩形的边框颜色
+            setStrokeType(StrokeType.OUTSIDE);//边框为内嵌式，不会超出pane的范围
+            layoutXProperty().bind(opPane.getNode().layoutXProperty());
+            layoutYProperty().bind(opPane.getNode().layoutYProperty());
+            widthProperty().bind(opPane.getNode().widthProperty());
+            heightProperty().bind(opPane.getNode().heightProperty().add(20).add(historyTable.getNode().heightProperty()));
+        }};
+        getContentPane().getChildren().add(opTableRec);
         opPane.getContentPane().getChildren().add(deleteBUtton);
         getContentPane().getChildren().add(opPane.getNode());
         getContentPane().getChildren().add(historyTable.getNode());
