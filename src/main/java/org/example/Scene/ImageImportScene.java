@@ -20,6 +20,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.util.Duration;
 import org.example.ImageTools.ImportImageResource;
+import org.example.LSMain;
 import org.example.StaticValues;
 
 import java.util.List;
@@ -36,16 +37,16 @@ public class ImageImportScene extends SuperScene {
     public static Pane histogramPane=new Pane();
 
     public static VScrollPane scrollImportFlowPane = new VScrollPane() {{
-        getNode().setLayoutX(100);
+        getNode().setLayoutX(70);
         getNode().setLayoutY(100);
-        getNode().setPrefWidth(850);
+        getNode().setPrefWidth(900);
         getNode().setPrefHeight(550);
     }};
 
     // 创建 FlowPane 用于放图片按钮
     public static FlowPane flowImportPane = new FlowPane() {{
-        setLayoutX(0);
-        setLayoutY(0);
+        setLayoutX(5);
+        setLayoutY(5);
         setPrefHeight(scrollImportFlowPane.getNode().getPrefHeight());
         setPrefWidth(scrollImportFlowPane.getNode().getPrefWidth());
         // 设置行列间距
@@ -67,16 +68,25 @@ public class ImageImportScene extends SuperScene {
             setLayoutY(-1);
         }};
         //新建VScrollPane用于生成滑动窗口，并存放flowPane
-
+        //绑定图片按钮显示pane和窗口
+        FXUtils.observeWidthHeight(LSMain.getStage().getInitialScene().getContentPane(),scrollImportFlowPane.getNode(),-350,-200);
         //绑定两个pane的宽和高
         FXUtils.observeWidthHeight(scrollImportFlowPane.getNode(), flowImportPane);
-
+        //绑定直方图和editImagePane的距离关系
+        //绑定layoutX
+        histogramPane.layoutXProperty().bind(scrollImportFlowPane.getNode().layoutXProperty().add(scrollImportFlowPane.getNode().widthProperty().add(30)));
+        //绑定layoutY
+        histogramPane.layoutYProperty().bind(scrollImportFlowPane.getNode().layoutYProperty());
 
         // 创建一个矩形用于显示flowPane的边框
-        Rectangle flowPaneRec = new Rectangle(scrollImportFlowPane.getNode().getLayoutX() - 20, scrollImportFlowPane.getNode().getLayoutY() - 10, flowImportPane.getPrefWidth() + 20, flowImportPane.getPrefHeight() + 10) {{
+        Rectangle flowPaneRec = new Rectangle(scrollImportFlowPane.getNode().getLayoutX(), scrollImportFlowPane.getNode().getLayoutY(), flowImportPane.getPrefWidth() , flowImportPane.getPrefHeight()) {{
             setFill(Color.TRANSPARENT);
             setStroke(Color.WHITE); // 设置矩形的边框颜色
             setStrokeType(StrokeType.INSIDE);//边框为内嵌式，不会超出pane的范围
+            xProperty().bind(scrollImportFlowPane.getNode().layoutXProperty());
+            yProperty().bind(scrollImportFlowPane.getNode().layoutYProperty());
+            widthProperty().bind(scrollImportFlowPane.getNode().widthProperty());
+            heightProperty().bind(scrollImportFlowPane.getNode().heightProperty());
         }};
         menuScene.enableAutoContentWidthHeight();
 
@@ -105,26 +115,31 @@ public class ImageImportScene extends SuperScene {
             refreshTimeline.play();
         });
 
-        histogramPane.layoutXProperty().bind(scrollImportFlowPane.getNode().layoutXProperty().add(scrollImportFlowPane.getNode().widthProperty().add(60)));
-        histogramPane.layoutYProperty().bind(scrollImportFlowPane.getNode().layoutYProperty());
         StaticValues.importHistogramPane(histogramPane);
 
         getContentPane().getChildren().add(histogramPane);
 
         //新建一个opPane用于存放文件操作按钮
         FusionPane opPane=new FusionPane(){{
+            enableAutoContentWidthHeight();
             getNode().setPrefWidth(220);
-            getNode().setPrefHeight(370);
-            getNode().setLayoutY(280);
-            getNode().setLayoutX(1010);
+            getNode().setPrefHeight(50);
+            getNode().setLayoutY(200);
+            getNode().setLayoutX(1000);
         }};
+        //绑定操作窗口和histogramPane的距离
+        opPane.getNode().layoutYProperty().bind(histogramPane.layoutYProperty().add(200));
+        //绑定和editImagePane的距离
+        opPane.getNode().layoutXProperty().bind(histogramPane.layoutXProperty());
+
         //删除按钮 用于删除图像
         var deleteBUtton = new FusionButton("删除图片") {{
-            setLayoutX(40);
-            setPrefWidth(125);
-            setPrefHeight(50);
+            setLayoutX(42);
+            setPrefWidth(120);
+            setPrefHeight(30);
             setOnlyAnimateWhenNotClicked(true);
         }};
+
 
         deleteBUtton.setOnAction(e -> {
            if(StaticValues.editingImageObj!=null){
