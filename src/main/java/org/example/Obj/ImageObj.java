@@ -512,17 +512,17 @@ public class ImageObj implements Serializable {
         } else if ("色温调整".equals(key)) {
             ImageTemperatureAdjustment.setKelvin(value.getFirstValue());
             ImageTemperatureAdjustment.adjustTemperatureAsync();
-        } else if ("HSL色相调整{0-6}".matches(key)) {
+        } else if ("HSL色相调整".equals(key.substring(0,7))) {
             HSLColorAdjustment.setSelectedColor(Character.getNumericValue(key.charAt(7)));
             HSLColorAdjustment.setHuePer(value.getFirstValue());
             HSLColorAdjustment.setSelectedProperty(0);
             HSLColorAdjustment.HSLAdjust();
-        } else if ("HSL饱和度调整{0-6}".matches(key)) {
+        } else if ("HSL饱和度调整".equals(key.substring(0,8))) {
             HSLColorAdjustment.setSelectedColor(Character.getNumericValue(key.charAt(8)));
             HSLColorAdjustment.setSatuPer(value.getFirstValue());
             HSLColorAdjustment.setSelectedProperty(1);
             HSLColorAdjustment.HSLAdjust();
-        } else if ("HSL明度调整{0-6}".matches(key)) {
+        } else if ("HSL明度调整".equals(key.substring(0,7))) {
             HSLColorAdjustment.setSelectedColor(Character.getNumericValue(key.charAt(7)));
             HSLColorAdjustment.setLumPer(value.getFirstValue());
             HSLColorAdjustment.setSelectedProperty(2);
