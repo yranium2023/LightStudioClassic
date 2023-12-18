@@ -449,6 +449,7 @@ public class ImageImportMenuScene extends SuperScene {
                     setOnlyAnimateWhenNotClicked(true);
                 }};
                 hisButton.setOnAction(e->{
+                    //以下为模式选择
                     VStage selectModelStage = new VStage();
                     selectModelStage.getStage().setResizable(false);
                     selectModelStage.getStage().setHeight(110);
@@ -456,8 +457,8 @@ public class ImageImportMenuScene extends SuperScene {
                     var selectPane = new FusionPane() {{
                         getNode().setPrefHeight(50);
                         getNode().setPrefWidth(300);
-                        getNode().setLayoutX(70);
-                        getNode().setLayoutY(530);
+                        getNode().setLayoutX(150);
+                        getNode().setLayoutY(30);
                     }};
                     FusionButton yesHisButton = new FusionButton("是") {{
                         setPrefWidth(125);
@@ -470,7 +471,18 @@ public class ImageImportMenuScene extends SuperScene {
                         setLayoutX(155);
                         setOnlyAnimateWhenNotClicked(true);
                     }};
+                    Label tipInform =new Label("是否要导入之前进行的修改"){{
+                        setTextFill(Color.WHITE);
+                        setLayoutX(100);
+                    }};
+                    selectPane.getContentPane().getChildren().add(yesHisButton);
+                    selectPane.getContentPane().getChildren().add(noHisButton);
+                    selectModelStage.getInitialScene().getContentPane().getChildren().add(tipInform);
+                    selectModelStage.getInitialScene().getContentPane().getChildren().add(selectPane.getNode());
                     selectModelStage.show();
+
+                    //以下为传入过程
+
                     errorFlag=0;
                     List<ImageObj> errorList=new ArrayList<>();
                     int len=totalImages.size();
@@ -520,8 +532,7 @@ public class ImageImportMenuScene extends SuperScene {
                             return null;
                         }
                     };
-                    // 启动任务
-                    new Thread(task).start();
+
                     VStage inputProgressStage = new VStage();
                     inputProgressStage.getStage().setResizable(false);
                     inputProgressStage.getStage().setHeight(110);
@@ -530,7 +541,23 @@ public class ImageImportMenuScene extends SuperScene {
                     vBox.setAlignment(Pos.CENTER);
                     vBox.setLayoutX(50);
                     vBox.setLayoutY(25);
-                    inputProgressStage.show();
+
+                    yesHisButton.setOnAction(event -> {
+                        historyState=1;
+                        inputProgressStage.show();
+                        // 启动任务
+                        new Thread(task).start();
+                        selectModelStage.close();
+                    });
+
+                    noHisButton.setOnAction(event -> {
+                        historyState=0;
+                        inputProgressStage.show();
+                        // 启动任务
+                        new Thread(task).start();
+                        selectModelStage.close();
+                    });
+
                     // 设置任务完成时的回调
                     task.setOnSucceeded(event1 -> {
                         // 在 JavaFX 线程上更新 UI
