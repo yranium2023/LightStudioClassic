@@ -66,60 +66,6 @@ public class ImageObj implements Serializable {
     private final Stack<AdjustHistory> adjustHistory = new Stack<>();
 
     private final Map<String,AdjustHistory> adjustHistoryMap=new HashMap<>();
-    public void addHistory(AdjustHistory History){
-        adjustHistory.push(History);
-        adjustHistoryMap.put(History.getAdjustProperty(), History);
-        EditHistoryScene.addLabel(History);
-    }
-
-    public Image AdjustRealImage(){
-        ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(this.originalImage);
-
-        adjustHistoryMap.forEach((key,value)->{
-           ImageAdjustment.setProcessedImage();
-            switch (key){
-                case "点曲线调整"->{
-                    SplineCanvas.setResultLUT(value.getLUTValue());
-                    SplineBrightnessAdjustment.applyLUTToImage();
-                }
-                case "对比度调整"->{
-                    ImageContrastAdjustment.setContrastValue(value.getFirstValue());
-                    ImageContrastAdjustment.adjustContrastAsync();
-                }
-                case "饱和度调整"->{
-                    ImageSaturationAdjustment.setSaturationValue(value.getFirstValue());
-                    ImageSaturationAdjustment.adjustSaturationAsync();
-                }
-                case "曝光度调整"->{
-                    ImageExposureAdjustment.setExposureValue(value.getFirstValue());
-                    ImageExposureAdjustment.adjustExposureAsync();
-                }
-                case "色温调整"->{
-                    ImageTemperatureAdjustment.setKelvin(value.getFirstValue());
-                    ImageTemperatureAdjustment.adjustTemperatureAsync();
-                }
-                case "HSL色相调整"-> {
-                    HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
-                    HSLColorAdjustment.setHuePer(value.getSecondValue());
-                    HSLColorAdjustment.setSelectedProperty(0);
-                    HSLColorAdjustment.HSLAdjust();
-                }
-                case "HSL饱和度调整"->{
-                    HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
-                    HSLColorAdjustment.setSatuPer(value.getSecondValue());
-                    HSLColorAdjustment.setSelectedProperty(1);
-                    HSLColorAdjustment.HSLAdjust();
-                }
-                case "HSL明度调整"->{
-                    HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
-                    HSLColorAdjustment.setLumPer(value.getSecondValue());
-                    HSLColorAdjustment.setSelectedProperty(2);
-                    HSLColorAdjustment.HSLAdjust();
-                }
-            }
-        });
-        return ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
-    }
     public enum sliderType_1 {
         CONTRAST,
         EXPOSURE,
@@ -481,6 +427,71 @@ public class ImageObj implements Serializable {
         }
 
         return imageObjs;
+    }
+    public void addHistory(AdjustHistory History){
+        adjustHistory.push(History);
+        adjustHistoryMap.put(History.getAdjustProperty(), History);
+        EditHistoryScene.addLabel(History);
+    }
+
+    public Image AdjustRealImage(){
+        ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(this.originalImage);
+        adjustHistoryMap.forEach((key,value)->{
+            ImageAdjustment.setProcessedImage();
+            imageToHistory(value);
+        });
+        return ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
+    }
+    /**
+     * @Description  用于根据某一条历史记录调整图像。注意每次调整都需要刷新bufferedImage。
+     * @param history
+     * @author 吴鹄远
+     * @date 2023/12/18 10:05
+    **/
+
+    public void imageToHistory(AdjustHistory history){
+        var key=history.getAdjustProperty();
+        var value=history;
+        switch (key){
+            case "点曲线调整"->{
+                SplineCanvas.setResultLUT(value.getLUTValue());
+                SplineBrightnessAdjustment.applyLUTToImage();
+            }
+            case "对比度调整"->{
+                ImageContrastAdjustment.setContrastValue(value.getFirstValue());
+                ImageContrastAdjustment.adjustContrastAsync();
+            }
+            case "饱和度调整"->{
+                ImageSaturationAdjustment.setSaturationValue(value.getFirstValue());
+                ImageSaturationAdjustment.adjustSaturationAsync();
+            }
+            case "曝光度调整"->{
+                ImageExposureAdjustment.setExposureValue(value.getFirstValue());
+                ImageExposureAdjustment.adjustExposureAsync();
+            }
+            case "色温调整"->{
+                ImageTemperatureAdjustment.setKelvin(value.getFirstValue());
+                ImageTemperatureAdjustment.adjustTemperatureAsync();
+            }
+            case "HSL色相调整"-> {
+                HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
+                HSLColorAdjustment.setHuePer(value.getSecondValue());
+                HSLColorAdjustment.setSelectedProperty(0);
+                HSLColorAdjustment.HSLAdjust();
+            }
+            case "HSL饱和度调整"->{
+                HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
+                HSLColorAdjustment.setSatuPer(value.getSecondValue());
+                HSLColorAdjustment.setSelectedProperty(1);
+                HSLColorAdjustment.HSLAdjust();
+            }
+            case "HSL明度调整"->{
+                HSLColorAdjustment.setSelectedColor((int)value.getFirstValue());
+                HSLColorAdjustment.setLumPer(value.getSecondValue());
+                HSLColorAdjustment.setSelectedProperty(2);
+                HSLColorAdjustment.HSLAdjust();
+            }
+        }
     }
 
 }
