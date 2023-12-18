@@ -532,6 +532,7 @@ public class ImageEditScene extends SuperScene{
             if(!sceneGroupSup.get().getScenes().contains(historyScene)){
                 sceneGroupSup.get().addScene(historyScene,VSceneHideMethod.TO_LEFT);
             }
+            EditHistoryScene.renewEditHistoryScene();
             sceneGroupSup.get().show(historyScene,VSceneShowMethod.FROM_LEFT);
         });
 
