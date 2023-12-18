@@ -10,11 +10,21 @@ import javafx.geometry.Insets;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
+import org.example.Curve.SplineCanvas.SplineBrightnessAdjustment;
+import org.example.Curve.SplineCanvas.SplineCanvas;
+import org.example.HSL.HSLColorAdjustment;
+import org.example.ImageModification.ImageContrastAdjustment;
+import org.example.ImageModification.ImageExposureAdjustment;
+import org.example.ImageModification.ImageSaturationAdjustment;
+import org.example.ImageModification.ImageTemperatureAdjustment;
 import org.example.Obj.AdjustHistory;
+import org.example.Obj.HSLColor;
 
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author 吴鹄远
@@ -42,7 +52,7 @@ public class EditHistoryScene extends SuperScene{
                 CornerRadii.EMPTY,
                 Insets.EMPTY
         )));
-        labelCol.setPrefWidth(130);
+        labelCol.setPrefWidth(170);
         historyTable.getColumns().addAll(labelCol,timeCol);
         FXUtils.observeWidthCenter(getContentPane(),historyTable.getNode());
         timeCol.setTextBuilder(MiscUtils.YYYYMMddHHiissDateTimeFormatter::format);
@@ -53,7 +63,59 @@ public class EditHistoryScene extends SuperScene{
     }
 
     public static void addLabel(AdjustHistory history){
-        historyTable.getItems().add(history);
+        var key=history.getAdjustProperty();
+        var newHis=new AdjustHistory(history);
+        System.out.println(key);
+        if ("点曲线调整".equals(key)) {
+            newHis.setAdjustProperty(key);
+        } else if ("对比度调整".equals(key)) {
+            newHis.setAdjustProperty(key+" "+String.format("%.6f",newHis.getFirstValue()));
+        } else if ("饱和度调整".equals(key)) {
+            newHis.setAdjustProperty(key+" "+String.format("%.6f",newHis.getFirstValue()));
+        } else if ("曝光度调整".equals(key)) {
+            newHis.setAdjustProperty(key+" "+String.format("%.6f",newHis.getFirstValue()));
+        } else if ("色温调整".equals(key)) {
+            newHis.setAdjustProperty(key+" "+String.format("%.2f",newHis.getFirstValue()));
+        } else if ("HSL色相调整".equals(key.substring(0,key.length()-1))) {
+            int index=extractNumber(key);
+            HSLColor color1=getColor(index);
+            newHis.setAdjustProperty("HSL色相调整 "+color1);
+        } else if ("HSL饱和度调整".equals(key.substring(0,key.length()-1))) {
+            int index=extractNumber(key);
+            HSLColor color1=getColor(index);
+            newHis.setAdjustProperty("HSL饱和度调整 "+color1);
+        } else if ("HSL明度调整".equals(key.substring(0,key.length()-1))) {
+            int index=extractNumber(key);
+            HSLColor color1=getColor(index);
+            newHis.setAdjustProperty("HSL明度调整 "+color1);
+        }
+        historyTable.getItems().add(newHis);
+    }
+    /**
+     * @Description  截取正则表达式中的数字
+     * @param input
+     * @return int
+     * @author 吴鹄远
+     * @date 2023/12/18 17:08
+    **/
+
+    private static int extractNumber(String input) {
+        // 定义匹配数字的正则表达式
+        Pattern pattern = Pattern.compile("\\d+");
+        Matcher matcher = pattern.matcher(input);
+
+        // 查找匹配的数字
+        if (matcher.find()) {
+            // 将找到的数字字符串转换为整数
+            return Integer.parseInt(matcher.group());
+        } else {
+            // 如果没有找到数字，可以返回默认值或抛出异常，这里返回 -1 作为示例
+            return -1;
+        }
+    }
+    public static HSLColor getColor(int index){
+        HSLColor[] values=HSLColor.values();
+        return values[index];
     }
     @Override
     public String title() {
