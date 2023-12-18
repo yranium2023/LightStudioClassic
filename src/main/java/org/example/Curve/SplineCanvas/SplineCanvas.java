@@ -156,9 +156,7 @@ public class SplineCanvas extends StackPane{
             ResultLUT.addXToY(x,y);
         }
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        if (currentTask == null || currentTask.isDone()) {
-            // 如果当前任务为空或者已经完成，则提交新任务
-            currentTask = executor.submit(()->{
+        executor.submit(()->{
                 SplineBrightnessAdjustment.applyLUTToImage();
                 javafx.application.Platform.runLater(() -> {
                     Image adjustedImage = ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
@@ -167,23 +165,12 @@ public class SplineCanvas extends StackPane{
                     ImageEditScene.initEditImagePane();
                     System.out.println("曲线调整成功");
                 });
-             });
+        });
             //ImageAdjustment.bufferedImage.flush();
             //ImageAdjustment.processedImage.flush();
-        }else{
-            currentTask.cancel(true);
-            currentTask = executor.submit(()->{
-                SplineBrightnessAdjustment.applyLUTToImage();
-                javafx.application.Platform.runLater(() -> {
-                    Image adjustedImage = ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
-                    StaticValues.editingImageObj.renewAll(adjustedImage);
-                    ImageEditScene.initEditImagePane();
-                    System.out.println("曲线调整成功");
-                });
-            });
             //ImageAdjustment.bufferedImage.flush();
             //ImageAdjustment.processedImage.flush();
-        }
+
         executor.shutdown();
         gc.strokePolyline(curveXPoints, curveYPoints, curvePoints.size());
         curvePoints.clear();
