@@ -68,7 +68,7 @@ public class SplineBrightnessAdjustment extends ImageAdjustment {
 
 
     static class LUTTask extends RecursiveAction{
-        private static final int Max =10000;
+        private static final int Max =250000;
         private final int startX, startY, endX, endY;
         private final LUT L;
         LUTTask(int startX, int startY, int endX, int endY,LUT L){
