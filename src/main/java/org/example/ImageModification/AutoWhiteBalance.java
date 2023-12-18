@@ -39,8 +39,18 @@ public class AutoWhiteBalance {
     public static void autoWhiteBalance(ImageObj editingImageObj){
         bufferedImage=ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
         processedImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
-        calculateRGBGain();
-        WhiteBalance(editingImageObj);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.submit(() -> {
+            WhiteBalance();
+            javafx.application.Platform.runLater(() -> {
+                Image adjustedImage = SwingFXUtils.toFXImage(processedImage, null);
+                //设置新图像
+                editingImageObj.renewAll(adjustedImage);
+                //刷新显示的图像
+                ImageEditScene.initEditImagePane();
+            });
+        });
+        executor.shutdown();
     }
 
     private static void calculateRGBGain(){
@@ -74,9 +84,8 @@ public class AutoWhiteBalance {
         blueGain = grayValue / averageBlue;
     }
 
-    private static void WhiteBalance(ImageObj editingImageObj){
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        executor.submit(() -> {
+    public static void WhiteBalance(){
+           calculateRGBGain();
             new ThreadProcess(bufferedImage, processedImage) {
                 @Override
                 public int calculateRGB(int rgb) {
@@ -92,15 +101,6 @@ public class AutoWhiteBalance {
                     return  (alpha << 24)|(red << 16) | (green << 8) | blue;
                 }
             }.run();
-            javafx.application.Platform.runLater(() -> {
-                Image adjustedImage = SwingFXUtils.toFXImage(processedImage, null);
-                //设置新图像
-                editingImageObj.renewAll(adjustedImage);
-                //刷新显示的图像
-                ImageEditScene.initEditImagePane();
-            });
-        });
-        executor.shutdown();
     }
 
 }
