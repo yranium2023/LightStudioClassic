@@ -80,6 +80,7 @@ public class ImageImportMenuScene extends SuperScene {
             getNode().setLayoutY(700);
         }};
         getContentPane().getChildren().add(IOpane.getNode());
+        IOpane.getNode().layoutYProperty().bind(getContentPane().heightProperty().add(-60));
         FusionButton ImageImportButton = new FusionButton("导入图片") {{
             setPrefWidth(125);
             setPrefHeight(IOpane.getNode().getPrefHeight() - FusionPane.PADDING_V * 2);
@@ -420,12 +421,16 @@ public class ImageImportMenuScene extends SuperScene {
             setVgap(5);
         }};
 
+        FXUtils.observeHeight(this.getContentPane(),scrollHisFlowPane.getNode(),-90);
+
         // 创建一个矩形用于显示flowPane的边框
-        Rectangle hisFlowPaneRec = new Rectangle(scrollHisFlowPane.getNode().getLayoutX() - 5, scrollHisFlowPane.getNode().getLayoutY() - 5, hisFlowPane.getPrefWidth() + 5, hisFlowPane.getPrefHeight() + 5) {{
+        Rectangle hisFlowPaneRec = new Rectangle(scrollHisFlowPane.getNode().getLayoutX()-5, scrollHisFlowPane.getNode().getLayoutY()-5 , hisFlowPane.getPrefWidth() , hisFlowPane.getPrefHeight() ) {{
             setFill(Color.TRANSPARENT);
             setStroke(Color.WHITE); // 设置矩形的边框颜色
             setStrokeType(StrokeType.INSIDE);//边框为内嵌式，不会超出pane的范围
         }};
+        hisFlowPaneRec.heightProperty().bind(scrollHisFlowPane.getNode().heightProperty());
+        hisFlowPaneRec.widthProperty().bind(scrollHisFlowPane.getNode().widthProperty());
         File tmpFile = new File("./src/main/resources/serializedData/testData.dat");
         if(tmpFile.exists()&&tmpFile.length() > 0){
             //反序列化过程
