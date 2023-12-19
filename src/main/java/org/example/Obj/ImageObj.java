@@ -4,6 +4,7 @@ import io.vproxy.vfx.ui.button.FusionImageButton;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.example.Curve.SplineCanvas.SplineBrightnessAdjustment;
@@ -470,14 +471,15 @@ public class ImageObj implements Serializable {
     **/
 
     public Image AdjustRealImage(){
-        AtomicReference<Image> tempImage=null;
+        Image tempImage=null;
         if(clipImages.isEmpty()){
-            tempImage.set(this.originalImage);
+            tempImage=originalImage;
         }else{
             int lastIndex=clipImages.size()-1;
-            tempImage.set(this.clipImages.get(lastIndex));
+            tempImage=clipImages.get(lastIndex);
         }
-        ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage.get());
+
+        ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage);
         Set<Map.Entry<String, AdjustHistory>> entrySet = adjustHistoryMap.entrySet();
         Iterator <Map.Entry<String,AdjustHistory>> iterator=entrySet.iterator();
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -485,7 +487,7 @@ public class ImageObj implements Serializable {
                 Map.Entry<String, AdjustHistory> entry = iterator.next();
                 String key = entry.getKey();
                 AdjustHistory value=entry.getValue();
-                ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage.get());
+                ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage);
                 ImageAdjustment.setProcessedImage();
                 Future<?> future = executor.submit(()->{
                     imageToHistory(value);
@@ -495,7 +497,7 @@ public class ImageObj implements Serializable {
                 } catch (InterruptedException | ExecutionException e) {
                     e.printStackTrace();
                 }
-                tempImage.set(ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage));
+                tempImage=ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
             }
             executor.shutdown();
         return ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);

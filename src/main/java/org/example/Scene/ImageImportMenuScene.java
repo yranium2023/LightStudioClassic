@@ -520,18 +520,22 @@ public class ImageImportMenuScene extends SuperScene {
                                 Platform.runLater(() -> label.setText(selectedFile.getName()));
                                 Image selectedImage = new Image(imageObj.getImagePath());
                                 imageObj.setOriginalImage(selectedImage);
-                                Platform.runLater(() -> label.setText(imageObj.getImageName()));
+                                imageObj.setEditingImage(ImageObj.resizeNormalImage(selectedImage));
                                 ImageObj newImageObj= new ImageObj(selectedImage);
                                 newImageObj.setImageName(selectedFile.getName());
-                                newImageObj.setAdjustHistory(imageObj.getAdjustHistory());
-                                newImageObj.setAdjustHistoryMap(imageObj.getAdjustHistoryMap());
+                                if(!imageObj.getAdjustHistory().isEmpty()){
+                                    newImageObj.setAdjustHistory(imageObj.getAdjustHistory());
+                                    newImageObj.setAdjustHistoryMap(imageObj.getAdjustHistoryMap());
+                                }
                                 imageObj.setClipImages(new ArrayList<>());
                                 if(historyState==1&&(!imageObj.getAdjustHistory().isEmpty()))
                                 {
                                     Image newOrigianlImage =imageObj.AdjustRealImage();
                                     newImageObj.setOriginalImage(newOrigianlImage);
+                                    newImageObj.setEditingImage(ImageObj.resizeNormalImage(newOrigianlImage));
+                                }else{
+                                    newImageObj.setEditingImage(ImageObj.resizeNormalImage(newImageObj.getOriginalImage()));
                                 }
-                                newImageObj.setEditingImage(ImageObj.resizeNormalImage(newImageObj.getOriginalImage()));
                                 selectedImages.add(newImageObj);
                                 totalImages.add(newImageObj);
                                 tmpNum++;
