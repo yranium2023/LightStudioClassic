@@ -217,7 +217,7 @@ public class ImageImportMenuScene extends SuperScene {
             Rectangle flowPaneRec = new Rectangle(scrollOutputFlowPane.getNode().getLayoutX() - 20, scrollOutputFlowPane.getNode().getLayoutY() - 10, flowOutputPane.getPrefWidth() + 20, flowOutputPane.getPrefHeight() + 10) {{
                 setFill(Color.TRANSPARENT);
                 setStroke(Color.WHITE); // 设置矩形的边框颜色
-                setStrokeType(StrokeType.INSIDE);//边框为内嵌式，不会超出pane的范围
+                setStrokeType(StrokeType.OUTSIDE);//边框为外嵌式
             }};
             //绑定两个pane的宽和高
             FXUtils.observeWidthHeight(scrollOutputFlowPane.getNode(), flowOutputPane);
