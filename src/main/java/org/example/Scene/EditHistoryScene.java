@@ -128,7 +128,7 @@ public class EditHistoryScene extends SuperScene{
     public static void renewEditHistoryScene(){
         ImageObj editingImageObj= StaticValues.editingImageObj;
         historyTable.getItems().clear();
-        if(!editingImageObj.getAdjustHistory().isEmpty()){
+        if(editingImageObj!=null&&!editingImageObj.getAdjustHistory().isEmpty()){
             for(var history:editingImageObj.getAdjustHistory()){
                 addLabel(history,historyTable);
             }
