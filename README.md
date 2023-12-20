@@ -1,4 +1,8 @@
 # LightStudioClassic
+
+    北京航空航天大学软件学院2022级面向对象程序设计大作业
+    
+
 这是一个基于JavaFX框架开发的类似Adobe Lightroom Classic的照片管理、编辑软件
 
 - 受限于时间和能力，最后仅实现了草图中的部分功能😇
