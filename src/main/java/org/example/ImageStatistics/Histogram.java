@@ -35,7 +35,14 @@ public class Histogram{
     private static int[] blueHistogram = new int[NUM_BINS];
     private static AreaChart<Number, Number> Histogram;
     private static BufferedImage bufferedImage;
+    /**
+     * @Description 该方法实现直方图的绘制
+     * @param image
+     * @author 申雄全
+     * @date 2023/12/23 23:28
+     */
     public static void drawHistogram(Image image){
+
         //清空
         StaticValues.histogramPane.initHistogramPane();
         //读取图像
@@ -92,6 +99,12 @@ public class Histogram{
         return histogram1;
     }
 
+    /**
+     * @Description 该方法实现图像灰度，rgb的统计
+     * @param image
+     * @author 申雄全
+     * @date 2023/12/23 23:29
+     */
     private static void grayCount(Image image){
 
 
@@ -103,6 +116,12 @@ public class Histogram{
         forkJoinPool.shutdown();
 
     }
+
+    /**
+     * @Description 该类用fork/join框架进行统计计算
+     * @author 申雄全
+     * @date 2023/12/23 23:29
+     */
 
     static class ParallelHistogramTask extends RecursiveAction{
 

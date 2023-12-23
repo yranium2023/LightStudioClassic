@@ -70,7 +70,15 @@ public class HSLColorAdjustment extends ImageAdjustment {
         isColor[5]=HSLColorAdjustment::isBlue;
         isColor[6]=HSLColorAdjustment::isPurple;
     }
+    /**
+     * @Description  该方法实现按钮和slider的绑定和监听
+     * @param hslColor
+     * @param editingImageObj
+     * @author 申雄全
+     * @date 2023/12/23 23:19
+     */
     public static void hslButtonBind(HSLColor hslColor, ImageObj editingImageObj){
+
         System.out.println("绑定"+hslColor+"成功");
         if(editingImageObj!=null){
             var hueSlider_HSL=ImageEditScene.hueSlider_HSL;
@@ -216,7 +224,13 @@ public class HSLColorAdjustment extends ImageAdjustment {
     public static void setSelectedProperty(int selectedProperty) {
         HSLColorAdjustment.selectedProperty = selectedProperty;
     }
+    /**
+     * @Description  该方法实现HSL调整算法
+     * @author 申雄全
+     * @date 2023/12/23 23:19
+     */
     public static void HSLAdjust(){
+
             new ThreadProcess(bufferedImage,processedImage){
                 @Override
                 public int calculateRGB(int rgb) {
@@ -251,8 +265,17 @@ public class HSLColorAdjustment extends ImageAdjustment {
                 }
             }.run();
     }
-
+    /**
+     * @Description 该方法实现rgb空间到hsl空间的转换
+     * @param r
+     * @param g
+     * @param b
+     * @return double[]
+     * @author 申雄全
+     * @date 2023/12/23 23:20
+     */
     private static double[] rgbToHsl(int r, int g, int b) {
+
         double[] hsl = new double[3];
         double var_R = (r / 255.0);
         double var_G = (g / 255.0);
@@ -297,8 +320,18 @@ public class HSLColorAdjustment extends ImageAdjustment {
         return hsl;
     }
 
-
+    /**
+     * @Description 该方法实现hsl空间到rgb空间的转换
+     * @param h
+     * @param s
+     * @param l
+     * @param alpha
+     * @return int
+     * @author 申雄全
+     * @date 2023/12/23 23:23
+     */
     private static int hslToRgb(double h, double s, double l,int alpha) {
+
         int r, g, b;
 
         if (s ==0.0) {

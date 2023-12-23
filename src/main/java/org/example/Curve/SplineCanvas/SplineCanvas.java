@@ -44,8 +44,16 @@ public class SplineCanvas extends StackPane{
     int DraggingIndex=-1;
     Canvas canvas;
     GraphicsContext gc ;
-    private Future<?> currentTask = null; // 当前任务
+
+    /**
+     * @Description 构造函数，创建一个实现三次曲线插值的 Canvas
+     * @param prefWidth
+     * @return null
+     * @author 申雄全
+     * @date 2023/12/23 23:32
+     */
     public SplineCanvas(double prefWidth) {
+
         this.setPrefWidth(prefWidth);
         this.setPrefHeight(prefWidth);
 
@@ -95,8 +103,13 @@ public class SplineCanvas extends StackPane{
         StackPane.setAlignment(canvas, Pos.CENTER);
         StackPane.setMargin(canvas, new Insets(20));
     }
-
+    /**
+     * @Description 重新绘制 Canvas，包括网格、控制点和曲线。
+     * @author 申雄全
+     * @date 2023/12/23 23:32
+     */
     private void redraw(){
+
 
         gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         drawGrids();
@@ -115,9 +128,12 @@ public class SplineCanvas extends StackPane{
         }
         drawControlPoints();
     }
-
+    /**
+     * @Description 绘制直线曲线
+     * @author 申雄全
+     * @date 2023/12/23 23:33
+     */
     private void drawStraightLine() {
-
 
         int n = controlPoints.getSize() - 1;
         double step = 0.1;
@@ -132,8 +148,16 @@ public class SplineCanvas extends StackPane{
         addRightStraight(n);
         DrawCurve();
     }
-
+    /**
+     * @Description 添加直线上的点。
+     * @param step
+     * @param p1
+     * @param p2
+     * @author 申雄全
+     * @date 2023/12/23 23:33
+     */
     private void addLine(double step, MyPoint2D p1, MyPoint2D p2) {
+
         double step1=step/(255.0*Tools2D.Xdistance(p1.getX(),p2.getX())/CANVAS_WIDTH);
         if(step1< 1.0/255.0){
             step1=1.0/255.0;
@@ -143,8 +167,13 @@ public class SplineCanvas extends StackPane{
             curvePoints.add(point);
         }
     }
-
+    /**
+     * @Description 使用 LUT 将曲线应用于图像。
+     * @author 申雄全
+     * @date 2023/12/23 23:33
+     */
     private void DrawCurve() {
+
         ResultLUT=new LUT();
         double[] curveXPoints = new double[curvePoints.size()];
         double[] curveYPoints = new double[curvePoints.size()];
@@ -174,8 +203,13 @@ public class SplineCanvas extends StackPane{
         gc.strokePolyline(curveXPoints, curveYPoints, curvePoints.size());
         curvePoints.clear();
     }
-
+    /**
+     * @Description 绘制网格
+     * @author 申雄全
+     * @date 2023/12/23 23:33
+     */
     private void drawGrids(){
+
         gc.setStroke(GRID_COLOR);
         gc.setLineWidth(Grid_THICKNESS);
         double gridWidth = CANVAS_WIDTH / 4;
@@ -187,6 +221,11 @@ public class SplineCanvas extends StackPane{
             gc.strokeLine(0, y, CANVAS_WIDTH , y);
         }
     }
+    /**
+     * @Description 绘制 Canvas 边界
+     * @author 申雄全
+     * @date 2023/12/23 23:34
+     */
     private void drawOutLine(){
         gc.setStroke(Color.BLACK);
         gc.setLineWidth(Grid_THICKNESS);
@@ -201,13 +240,22 @@ public class SplineCanvas extends StackPane{
             drawControlPoint(point);
         }
     }
-
+    /**
+     * @Description 绘制单个控制点
+     * @param point
+     * @author 申雄全
+     * @date 2023/12/23 23:34
+     */
     private void drawControlPoint(MyPoint2D point) {
         gc.setFill(CONTROL_POINT_COLOR);
         gc.fillOval(point.getX() - CANVAS_POINT_RADIUS, point.getY() - CANVAS_POINT_RADIUS, 2*CANVAS_POINT_RADIUS, 2*CANVAS_POINT_RADIUS);
     }
 
-
+    /**
+     * @Description 绘制三次样条曲线
+     * @author 申雄全
+     * @date 2023/12/23 23:34
+     */
     private void drawSplineCurve(){
 
         int n = controlPoints.getSize();//控制点的个数
@@ -307,8 +355,8 @@ public class SplineCanvas extends StackPane{
     private  double CLIP_RANGE(double value, int min, int max) {
     return (value) > (max) ? (max) :  (((value) < (min)) ? (min) : (value));
 }
-    private void addRightStraight(int n) {
 
+    private void addRightStraight(int n) {
 
         if(controlPoints.getPoint(n).getX()<CANVAS_WIDTH){
             MyPoint2D p1 =  controlPoints.getPoint(n);

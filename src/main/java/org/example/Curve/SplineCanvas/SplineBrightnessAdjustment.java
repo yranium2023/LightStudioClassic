@@ -56,7 +56,13 @@ public class SplineBrightnessAdjustment extends ImageAdjustment {
             FXUtils.observeWidthCenter(curvePane,stackPane);
         }
     }
+    /**
+     * @Description 调用LUT对图片进行修改
+     * @author 申雄全
+     * @date 2023/12/23 23:35
+     */
     public static void applyLUTToImage(){
+
         SplineCanvas.ResultLUT.checkLUT();
         ForkJoinPool forkJoinPool=new ForkJoinPool();
         forkJoinPool.invoke(new LUTTask(0,0,bufferedImage.getWidth(),bufferedImage.getHeight(),SplineCanvas.ResultLUT));
@@ -66,7 +72,11 @@ public class SplineBrightnessAdjustment extends ImageAdjustment {
     }
 
 
-
+        /**
+        * @Description 该类实现fork/join框架实现算法调整rgb
+        * @author 申雄全
+        * @date 2023/12/23 23:36
+        */
     static class LUTTask extends RecursiveAction{
         private static final int Max =250000;
         private final int startX, startY, endX, endY;

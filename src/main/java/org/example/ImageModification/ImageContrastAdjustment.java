@@ -84,8 +84,13 @@ public class ImageContrastAdjustment extends ImageAdjustment {
     public static void setContrastValue(double contrastValue) {
         ImageContrastAdjustment.contrastValue = contrastValue;
     }
-
+    /**
+     * @Description 该方法实现对比度调整算法
+     * @author 申雄全
+     * @date 2023/12/23 23:24
+     */
     public static void adjustContrastAsync() {
+
             new ThreadProcess(bufferedImage, processedImage) {
                 @Override
                 public int calculateRGB(int rgb) {

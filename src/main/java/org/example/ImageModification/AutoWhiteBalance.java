@@ -49,8 +49,13 @@ public class AutoWhiteBalance extends ImageAdjustment{
         });
         executor.shutdown();
     }
-
+    /**
+     * @Description 计算rgb的增益值
+     * @author 申雄全
+     * @date 2023/12/23 23:23
+     */
     private static void calculateRGBGain(){
+
         // 计算图像的红色、绿色和蓝色通道的平均值
         double totalRed = 0.0, totalGreen = 0.0, totalBlue = 0.0;
         int width = bufferedImage.getWidth();

@@ -151,7 +151,4 @@ public class ControlPoints {
 
         return true;
     }
-
-
-
 }

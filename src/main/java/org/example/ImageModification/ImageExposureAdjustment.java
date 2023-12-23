@@ -84,8 +84,13 @@ public class ImageExposureAdjustment extends ImageAdjustment {
             });
         }
     }
-
+    /**
+     * @Description 该方法实现曝光度调整算法
+     * @author 申雄全
+     * @date 2023/12/23 23:24
+     */
     public static void adjustExposureAsync() {
+
            new ThreadProcess(bufferedImage,processedImage){
                @Override
                public int calculateRGB(int rgb) {

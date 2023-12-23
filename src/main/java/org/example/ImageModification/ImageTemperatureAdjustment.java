@@ -82,7 +82,13 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
             });
         }
     }
+    /**
+     * @Description 该方法实现色温调整算法
+     * @author 申雄全
+     * @date 2023/12/23 23:26
+     */
     public static void adjustTemperatureAsync() {
+
             TemperatureToRGB();
             new ThreadProcess(bufferedImage, processedImage) {
                 @Override
@@ -104,7 +110,12 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
     public static void setKelvin(double kelvin) {
         ImageTemperatureAdjustment.kelvin = kelvin;
     }
-
+    /**
+     * @Description 该方法计算图片初始色温
+     * @return double
+     * @author 申雄全
+     * @date 2023/12/23 23:26
+     */
     private static double calculateColorTemperature( ){
 
         // 计算图像的红色、绿色和蓝色通道的平均值
@@ -139,7 +150,13 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
         return (449 * Math.pow(n, 3)) + (3525 * Math.pow(n, 2)) + (6823.3 * n) + 5520.33;
 
     }
+    /**
+     * @Description 该方法实现色温到rgb的转换
+     * @author 申雄全
+     * @date 2023/12/23 23:25
+     */
     private static void TemperatureToRGB(){
+
         double Temperature = kelvin / 100;
 
         if (Temperature < 66) {
@@ -169,7 +186,6 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
                 blueStrength = Math.max(0, Math.min(blueStrength, 255));
             }
         }
-
 
     }
 }

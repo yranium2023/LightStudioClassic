@@ -25,11 +25,6 @@ public class IntroScene extends SuperScene {
 
         getContentPane().getChildren().add(label);
         FXUtils.observeWidthHeightCenter(getContentPane(),label);
-
-
-
-
-
     }
 
     @Override

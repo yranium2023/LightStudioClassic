@@ -19,7 +19,7 @@ public abstract class ThreadProcess {
       this.processedImage=processedImage;
     }
     /**
-     * @Description
+     * @Description 该方法实现对rgb值的具体算法，不同调整类型的具体算法不同
      * @param rgb
      * @return int
      * @author 申雄全
@@ -27,13 +27,24 @@ public abstract class ThreadProcess {
      */
     public abstract int calculateRGB(int rgb);
 
+    /**
+     * @Description 该方法调用fork/join框架处理图片
+     * @author 申雄全
+     * @date 2023/12/23 23:27
+     */
     public void run() {
+
             ForkJoinPool forkJoinPool = new ForkJoinPool();
             forkJoinPool.invoke(new Task(0, 0, originalImage.getWidth(), originalImage.getHeight()));
             originalImage.flush();
             processedImage.flush();
             forkJoinPool.shutdown();
     }
+    /**
+     * @Description 该类是任务类，实现具体的fork/join框架
+     * @author 申雄全
+     * @date 2023/12/23 23:28
+     */
     class Task extends RecursiveAction {
         private static final int Max = 250000;
 

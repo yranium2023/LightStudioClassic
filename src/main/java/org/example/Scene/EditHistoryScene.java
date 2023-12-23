@@ -63,8 +63,15 @@ public class EditHistoryScene extends SuperScene{
 
 
     }
-
+    /**
+     * @Description 该类实现历史记录的调整
+     * @param history
+     * @param tableView
+     * @author 申雄全
+     * @date 2023/12/23 23:30
+     */
     public static void addLabel(AdjustHistory history,VTableView tableView){
+
         var key=history.getAdjustProperty();
         var newHis=new AdjustHistory(history);
         System.out.println(key);
