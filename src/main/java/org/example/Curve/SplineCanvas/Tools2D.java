@@ -1,8 +1,9 @@
 package org.example.Curve.SplineCanvas;
 /**
- * @Description 该类实现坐标参数的计算
- * @author 申雄全，吴鹄远
- * @date 2023/12/20 22:58
+ *  该类实现坐标参数的计算
+ * @author 申雄全
+ * @author 吴鹄远
+ * Date 2023/12/20 22:58
  */
 public class Tools2D {
     public static double distance(double x1, double y1, double x2, double y2) {

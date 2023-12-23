@@ -9,9 +9,10 @@ import java.time.LocalTime;
 import java.util.*;
 
 /**
- * @author 申雄全,吴鹄远
- * @Description 本类实现历史记录
- * @date 2023/12/13 21:46
+ *  本类实现历史记录
+ * @author 申雄全
+ * @author 吴鹄远
+ * Date 2023/12/13 21:46
  */
 public class AdjustHistory implements Serializable {
 
@@ -33,11 +34,10 @@ public class AdjustHistory implements Serializable {
         this.LUTValue=LUTValue;
     }
     /**
-     * @Description  拷贝构造，仅仅用作显示历史记录
+     *   拷贝构造，仅仅用作显示历史记录
      * @param other
-     * @return null
      * @author 吴鹄远
-     * @date 2023/12/18 17:01
+     * Date 2023/12/18 17:01
     **/
 
     public AdjustHistory(AdjustHistory other) {

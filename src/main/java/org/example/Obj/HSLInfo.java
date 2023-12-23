@@ -1,10 +1,10 @@
 package org.example.Obj;
 
 /**
+ *  新创一个HSLInfo类用于存hsl
  * @author 吴鹄远
- * @Description
- * @date 2023/12/16 22:57
- */ //新创一个HSLInfo类用于存hsl
+ * Date 2023/12/16 22:57
+ */
 public class HSLInfo {
     private double huePercent = 0.5;
     private double saturationPercent = 0.5;
@@ -12,9 +12,9 @@ public class HSLInfo {
     private HSLColor hslColor;
 
     /**
-     * @Description 该类对应HSL的三种类型轴
+     *  该类对应HSL的三种类型轴
      * @author 申雄全
-     * @date 2023/12/24 1:05
+     * Date 2023/12/24 1:05
      */
     public enum sliderType{
         /*

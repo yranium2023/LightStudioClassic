@@ -1,9 +1,9 @@
 package org.example.Obj;
 
 /**
+ *  该类实现HSL对应颜色判断
  * @author 吴鹄远
- * @Description 该类实现HSL对应颜色判断
- * @date 2023/12/16 22:57
+ * Date 2023/12/16 22:57
  */
 public enum HSLColor {
     /*

@@ -1,9 +1,10 @@
 package org.example.ImageModification;
 
 /**
- * @author 申雄全,吴鹄远
- * @Description 该类实现图片饱和度的调整
- * @date 2023/12/9 15:00
+ *  该类实现图片饱和度的调整
+ * @author 申雄全
+ * @author 吴鹄远
+ * Date 2023/12/9 15:00
  */
 
 import io.vproxy.vfx.ui.slider.VSlider;
@@ -30,11 +31,11 @@ public class ImageSaturationAdjustment extends ImageAdjustment {
 
 
     /**
-     * @Description  该方法用于绑定饱和度调整滑动条
+     *   该方法用于绑定饱和度调整滑动条
      * @param saturationSlider
      * @param editingImageObj
      * @author 吴鹄远
-     * @date 2023/12/12 16:44
+     * Date 2023/12/12 16:44
     **/
 
     public static void saturationAdjustBind(VSlider saturationSlider, ImageObj editingImageObj){
@@ -83,9 +84,9 @@ public class ImageSaturationAdjustment extends ImageAdjustment {
         }
     }
     /**
-     * @Description 该方法实现饱和度调整算法
+     *  该方法实现饱和度调整算法
      * @author 申雄全
-     * @date 2023/12/23 23:24
+     * Date 2023/12/23 23:24
      */
     public static void adjustSaturationAsync() {
             new ThreadProcess(bufferedImage,processedImage){

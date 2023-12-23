@@ -17,9 +17,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * @Description 该类实现图片的曝光度调整
+ *  该类实现图片的曝光度调整
  * @author 申雄全,吴鹄远
- * @date 2023/12/22 22:38
+ * Date 2023/12/22 22:38
  */
 public class ImageExposureAdjustment extends ImageAdjustment {
 
@@ -29,11 +29,11 @@ public class ImageExposureAdjustment extends ImageAdjustment {
     private static ChangeListener<Number> SliderListener;
 
     /**
-     * @Description  该方法用于绑定曝光度调整滑动条
+     * 该方法用于绑定曝光度调整滑动条
      * @param exposureSlider
      * @param editingImageObj
      * @author 吴鹄远
-     * @date 2023/12/12 16:27
+     * Date 2023/12/12 16:27
     **/
 
     public static void exposerAdjustBind(VSlider exposureSlider, ImageObj editingImageObj){
@@ -85,9 +85,9 @@ public class ImageExposureAdjustment extends ImageAdjustment {
         }
     }
     /**
-     * @Description 该方法实现曝光度调整算法
+     * 该方法实现曝光度调整算法
      * @author 申雄全
-     * @date 2023/12/23 23:24
+     * Date 2023/12/23 23:24
      */
     public static void adjustExposureAsync() {
 

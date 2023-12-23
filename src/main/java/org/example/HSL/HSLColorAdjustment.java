@@ -25,26 +25,27 @@ import java.util.concurrent.Executors;
 
 
 /**
- * @Description  该接口的方法实现对颜色的判断
- * @author 申雄全，吴鹄远
- * @date 2023/12/22 22:41
+ *   该接口的方法实现对颜色的判断
+ * @author 申雄全 
+ * @author 吴鹄远
+ * Date 2023/12/22 22:41
  */
 interface MyFunction {
     /**
-     * @Description 判断某rgb值所代表的颜色
+     *  判断某rgb值所代表的颜色
      * @param rgb
      * @return boolean
      * @author 申雄全
-     * @date 2023/12/23 22:50
+     * Date 2023/12/23 22:50
      */
     boolean isSelectedColor(int rgb);
 
 }
 
 /**
+ *  该类实现HSL调整，对每个颜色调整色相，饱和度，亮度
  * @author 申雄全
- * @Description 该类实现HSL调整，对每个颜色调整色相，饱和度，亮度
- * @date 2023/12/9 13:48
+ * Date 2023/12/9 13:48
  */
 
 public class HSLColorAdjustment extends ImageAdjustment {
@@ -71,11 +72,11 @@ public class HSLColorAdjustment extends ImageAdjustment {
         isColor[6]=HSLColorAdjustment::isPurple;
     }
     /**
-     * @Description  该方法实现按钮和slider的绑定和监听
+     *   该方法实现按钮和slider的绑定和监听
      * @param hslColor
      * @param editingImageObj
      * @author 申雄全
-     * @date 2023/12/23 23:19
+     * Date 2023/12/23 23:19
      */
     public static void hslButtonBind(HSLColor hslColor, ImageObj editingImageObj){
 
@@ -225,9 +226,9 @@ public class HSLColorAdjustment extends ImageAdjustment {
         HSLColorAdjustment.selectedProperty = selectedProperty;
     }
     /**
-     * @Description  该方法实现HSL调整算法
+     *   该方法实现HSL调整算法
      * @author 申雄全
-     * @date 2023/12/23 23:19
+     * Date 2023/12/23 23:19
      */
     public static void HSLAdjust(){
 
@@ -266,13 +267,13 @@ public class HSLColorAdjustment extends ImageAdjustment {
             }.run();
     }
     /**
-     * @Description 该方法实现rgb空间到hsl空间的转换
+     *  该方法实现rgb空间到hsl空间的转换
      * @param r
      * @param g
      * @param b
      * @return double[]
      * @author 申雄全
-     * @date 2023/12/23 23:20
+     * Date 2023/12/23 23:20
      */
     private static double[] rgbToHsl(int r, int g, int b) {
 
@@ -321,14 +322,14 @@ public class HSLColorAdjustment extends ImageAdjustment {
     }
 
     /**
-     * @Description 该方法实现hsl空间到rgb空间的转换
+     *  该方法实现hsl空间到rgb空间的转换
      * @param h
      * @param s
      * @param l
      * @param alpha
      * @return int
      * @author 申雄全
-     * @date 2023/12/23 23:23
+     * Date 2023/12/23 23:23
      */
     private static int hslToRgb(double h, double s, double l,int alpha) {
 

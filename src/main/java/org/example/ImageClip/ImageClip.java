@@ -23,9 +23,10 @@ import org.example.StaticValues;
 
 
 /**
- * @author 申雄全，吴鹄远
- * @Description 此类实现行图片裁剪
- * @date 2023/12/3 20:22
+ * @author 申雄全 
+ * @author 吴鹄远
+ *  此类实现行图片裁剪
+ * Date 2023/12/3 20:22
  */
 
 
@@ -37,11 +38,11 @@ public class ImageClip {
 
     private static Rectangle imageViewRect;
     /**
-     * @Description 此方法实现图片的裁剪
+     *  此方法实现图片的裁剪
      * @param editingImageObj
      * @param imagePane
      * @author 申雄全
-     * @updateTime 2023/12/23 22:54
+     * Date 2023/12/23 22:54
      */
     public static void imageClip(ImageObj editingImageObj, ImagePane imagePane) {
 
@@ -309,9 +310,9 @@ public class ImageClip {
         });
     }
     /**
-     * @Description 实现在Rec的变化中clip一直都不超出rec的区域
+     *  实现在Rec的变化中clip一直都不超出rec的区域
      * @author 吴鹄远
-     * @date 2023/12/9 14:03
+     * Date 2023/12/9 14:03
     **/
 
     public static void enSureClipInRec(){
@@ -350,11 +351,11 @@ public class ImageClip {
 
     }
     /**
-     * @Description 复制ImageView属性的方法 
+     *  复制ImageView属性的方法
      * @param sourceImageView
      * @param targetImageView
      * @author 吴鹄远
-     * @date 2023/12/9 22:38
+     * Date 2023/12/9 22:38
     **/
     
     private static void copyImageViewProperties(ImageView sourceImageView, ImageView targetImageView,ImagePane imagePane) {
@@ -376,11 +377,11 @@ public class ImageClip {
         }
     }
     /**
-     * @Description 绑定rect的所有属性
+     *  绑定rect的所有属性
      * @param imageViewRect
      * @param imageView
      * @author 吴鹄远
-     * @date 2023/12/9 23:33
+     * Date 2023/12/9 23:33
     **/
 
     private static void bindAll(Rectangle imageViewRect,ImageView imageView){
@@ -390,11 +391,11 @@ public class ImageClip {
         imageViewRect.yProperty().bind(imageView.yProperty());
     }
     /**
-     * @Description 解绑rect的所有属性
+     *  解绑rect的所有属性
      * @param imageViewRect
      * @param imageView
      * @author 吴鹄远
-     * @date 2023/12/9 23:34
+     * Date 2023/12/9 23:34
     **/
 
     private static void unBindAll(Rectangle imageViewRect,ImageView imageView){
@@ -404,11 +405,11 @@ public class ImageClip {
         imageViewRect.yProperty().unbind();
     }
     /**
-     * @Description  重新生成遮罩
+     *   重新生成遮罩
      * @param imageViewRect
      * @param imageView
      * @author 吴鹄远
-     * @date 2023/12/9 23:34
+     * Date 2023/12/9 23:34
     **/
 
     private static void initImageViewRect(Rectangle imageViewRect,ImageView imageView){

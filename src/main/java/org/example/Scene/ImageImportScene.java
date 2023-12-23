@@ -32,9 +32,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 /**
+ *  用于文件管理 暂时用于测试
  * @author 张喆宇
- * @Description: 用于文件管理 暂时用于测试
- * @date 2023/12/3 20:56
+ * Date 2023/12/3 20:56
  */
 public class ImageImportScene extends SuperScene {
 

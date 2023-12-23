@@ -29,9 +29,9 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
+ *  统一管理每个导入的图片 有其原图 精致压缩（用于编辑）和粗糙压缩（用于当图标使用）的图片
  * @author 张喆宇
- * @Description: 统一管理每个导入的图片 有其原图 精致压缩（用于编辑）和粗糙压缩（用于当图标使用）的图片
- * @date 2023/12/9 11:05
+ * Date 2023/12/9 11:05
  */
 public class ImageObj implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -73,9 +73,9 @@ public class ImageObj implements Serializable {
     private Map<String,AdjustHistory> adjustHistoryMap=new HashMap<>();
 
     /**
-     * @Description 该枚举类实现轴对应的类型
+     *  该枚举类实现轴对应的类型
      * @author 申雄全
-     * @date 2023/12/24 1:01
+     * Date 2023/12/24 1:01
      */
     public enum sliderType_1 {
         /*
@@ -110,11 +110,10 @@ public class ImageObj implements Serializable {
     }};
 
     /***
-     * @Description 构造函数 用于构建Image对象
+     *  构造函数 用于构建Image对象
      * @param originalImage
-     * @return null
      * @author 张喆宇
-     * @date 2023/12/9 11:09
+     * Date 2023/12/9 11:09
      **/
 
     public ImageObj(Image originalImage) {
@@ -123,10 +122,10 @@ public class ImageObj implements Serializable {
     }
 
     /***
-     * @Description 传入按钮图片
+     *  传入按钮图片
      * @param buttonImage
      * @author 张喆宇
-     * @date 2023/12/9 11:13
+     * Date 2023/12/9 11:13
      **/
 
     public void setButtonImage(Image buttonImage) {
@@ -134,10 +133,10 @@ public class ImageObj implements Serializable {
     }
 
     /***
-     * @Description 传入编辑用图片
+     *  传入编辑用图片
      * @param editingImage
      * @author 张喆宇
-     * @date 2023/12/9 11:13
+     * Date 2023/12/9 11:13
      **/
 
     public void setEditingImage(Image editingImage) {
@@ -145,10 +144,10 @@ public class ImageObj implements Serializable {
     }
 
     /***
-     * @Description 获取原图
+     *  获取原图
      * @return javafx.scene.image.Image
      * @author 张喆宇
-     * @date 2023/12/9 11:14
+     * Date 2023/12/9 11:14
      **/
 
     public Image getOriginalImage() {
@@ -156,10 +155,10 @@ public class ImageObj implements Serializable {
     }
 
     /***
-     * @Description 获取按钮图片
+     *  获取按钮图片
      * @return javafx.scene.image.Image
      * @author 张喆宇
-     * @date 2023/12/9 11:14
+     * Date 2023/12/9 11:14
      **/
 
     public Image getButtonImage() {
@@ -167,10 +166,10 @@ public class ImageObj implements Serializable {
     }
 
     /***
-     * @Description 获取编辑中图片
+     *  获取编辑中图片
      * @return javafx.scene.image.Image
      * @author 张喆宇
-     * @date 2023/12/9 11:14
+     * Date 2023/12/9 11:14
      **/
 
     public Image getEditingImage() {
@@ -178,10 +177,10 @@ public class ImageObj implements Serializable {
     }
 
     /***
-     * @Description 获取图片路径
+     *  获取图片路径
      * @return java.lang.String
      * @author 张喆宇
-     * @date 2023/12/9 11:14
+     * Date 2023/12/9 11:14
      **/
 
     public String getImagePath() {
@@ -189,9 +188,9 @@ public class ImageObj implements Serializable {
     }
 
     /***
-     * @Description 获取裁剪图片列表
+     *  获取裁剪图片列表
      * @author 张喆宇
-     * @date 2023/12/9 11:26
+     * Date 2023/12/9 11:26
      **/
 
     public List<Image> getClipImages() {
@@ -199,11 +198,11 @@ public class ImageObj implements Serializable {
     }
 
     /***
-     * @Description 用于压缩图片 普通压缩
+     *  用于压缩图片 普通压缩
      * @param image
      * @return javafx.scene.image.Image
      * @author 张喆宇
-     * @date 2023/12/9 21:47
+     * Date 2023/12/9 21:47
      **/
 
     public static Image resizeNormalImage(Image image) {
@@ -228,11 +227,11 @@ public class ImageObj implements Serializable {
     }
 
     /***
-     * @Description 用于压缩图片 按钮级别压缩
+     *  用于压缩图片 按钮级别压缩
      * @param image
      * @return javafx.scene.image.Image
      * @author 张喆宇
-     * @date 2023/12/9 21:49
+     * Date 2023/12/9 21:49
      **/
 
     public static Image resizeButtonImage(Image image) {
@@ -253,10 +252,10 @@ public class ImageObj implements Serializable {
     }
 
     /***
-     * @Description 存入图库中按钮
+     *  存入图库中按钮
      * @param imageButton
      * @author 张喆宇
-     * @date 2023/12/10 0:30
+     * Date 2023/12/10 0:30
      **/
 
     public void setImageButton(FusionImageButton imageButton) {
@@ -272,10 +271,10 @@ public class ImageObj implements Serializable {
     }
 
     /***
-     * @Description 存入横版按钮
+     *  存入横版按钮
      * @param copyButton
      * @author 张喆宇
-     * @date 2023/12/10 0:30
+     * Date 2023/12/10 0:30
      **/
 
     public void setCopyButton(FusionImageButton copyButton) {
@@ -283,10 +282,10 @@ public class ImageObj implements Serializable {
     }
 
     /***
-     * @Description 更新图片
+     *  更新图片
      * @return null
      * @author 张喆宇
-     * @date 2023/12/10 0:32
+     * Date 2023/12/10 0:32
      **/
     private void renewButton() {
         this.imageButton.getImageView().setImage(buttonImage);
@@ -299,9 +298,9 @@ public class ImageObj implements Serializable {
 
     /**
      * @param nowImage
-     * @Description 这个类用来生成新的压缩图片、图标图片、直方图、和图片面熟
+     *  这个类用来生成新的压缩图片、图标图片、直方图、和图片面熟
      * @author 吴鹄远
-     * @date 2023/12/11 15:24
+     * Date 2023/12/11 15:24
      **/
 
     public void renewAll(Image nowImage) {
@@ -323,9 +322,9 @@ public class ImageObj implements Serializable {
     }
 
     /***
-     * @Description 用于从两个图片按钮以及总图片中移除所有产生的按钮
+     *  用于从两个图片按钮以及总图片中移除所有产生的按钮
      * @author 张喆宇
-     * @date 2023/12/12 22:17
+     * Date 2023/12/12 22:17
      **/
 
     public void delete() {
@@ -470,10 +469,10 @@ public class ImageObj implements Serializable {
         return imageObjs;
     }
     /**
-     * @Description  此方法用于添加历史记录
+     *   此方法用于添加历史记录
      * @param History
      * @author 吴鹄远
-     * @date 2023/12/18 19:58
+     * Date 2023/12/18 19:58
     **/
 
     public void addHistory(AdjustHistory History){
@@ -481,10 +480,10 @@ public class ImageObj implements Serializable {
         adjustHistoryMap.put(History.getAdjustProperty(), History);
     }
     /**
-     * @Description  此方法用于导出最高品质的图像
+     *   此方法用于导出最高品质的图像
      * @return javafx.scene.image.Image
      * @author 吴鹄远
-     * @date 2023/12/18 14:33
+     * Date 2023/12/18 14:33
     **/
 
     public Image AdjustRealImage(){
@@ -520,9 +519,9 @@ public class ImageObj implements Serializable {
         return ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
     }
     /**
-     * @Description  此方法用于裁剪过程中对裁剪好的图像进行渲染
+     *   此方法用于裁剪过程中对裁剪好的图像进行渲染
      * @author 吴鹄远
-     * @date 2023/12/18 14:39
+     * Date 2023/12/18 14:39
     **/
 
     public void editingImageToHistory(){
@@ -552,10 +551,10 @@ public class ImageObj implements Serializable {
     }
 
     /**
-     * @Description  用于根据某一条历史记录调整图像。注意每次调整都需要刷新bufferedImage。
+     *   用于根据某一条历史记录调整图像。注意每次调整都需要刷新bufferedImage。
      * @param history
      * @author 吴鹄远
-     * @date 2023/12/18 10:05
+     * Date 2023/12/18 10:05
     **/
     public void imageToHistory(AdjustHistory history){
         var key=history.getAdjustProperty();

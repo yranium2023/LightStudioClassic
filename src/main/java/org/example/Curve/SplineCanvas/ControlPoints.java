@@ -4,9 +4,10 @@ package org.example.Curve.SplineCanvas;
 import java.util.LinkedList;
 import java.util.ListIterator;
 /**
- * @Description 管理控制点，支持在控制点序列中添加、删除和移动点，以及提供一些辅助方法。
- * @author 申雄全，吴鹄远
- * @date 2023/12/20 23:04
+ *  管理控制点，支持在控制点序列中添加、删除和移动点，以及提供一些辅助方法。
+ * @author 申雄全
+ * @author 吴鹄远
+ * Date 2023/12/20 23:04
  */
 public class ControlPoints {
     private final MyPoint2D LeftBottom;

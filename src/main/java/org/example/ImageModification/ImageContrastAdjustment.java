@@ -17,9 +17,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * @Description  该类实现图像对比度调整
- * @author 申雄全，吴鹄远
- * @date 2023/12/22 22:38
+ * 该类实现图像对比度调整
+ * @author 申雄全 
+ * @author 吴鹄远
+ * Date 2023/12/22 22:38
  */
 public class ImageContrastAdjustment extends ImageAdjustment {
     private static double lastValue = 0.0;
@@ -27,11 +28,11 @@ public class ImageContrastAdjustment extends ImageAdjustment {
     private static ChangeListener<Number> contrastSliderListener;
 
     /**
-     * @Description  该方法用于绑定对比度调整滑动条
+     *  该方法用于绑定对比度调整滑动条
      * @param contrastSlider
      * @param editingImageObj
      * @author 吴鹄远
-     * @date 2023/12/12 16:27
+     *  2023/12/12 16:27
     **/
 
     public static void contrastAdjustBind(VSlider contrastSlider, ImageObj editingImageObj){
@@ -85,9 +86,9 @@ public class ImageContrastAdjustment extends ImageAdjustment {
         ImageContrastAdjustment.contrastValue = contrastValue;
     }
     /**
-     * @Description 该方法实现对比度调整算法
+     * 该方法实现对比度调整算法
      * @author 申雄全
-     * @date 2023/12/23 23:24
+     * 2023/12/23 23:24
      */
     public static void adjustContrastAsync() {
 

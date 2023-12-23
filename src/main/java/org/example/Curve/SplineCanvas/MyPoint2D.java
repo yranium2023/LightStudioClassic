@@ -1,8 +1,9 @@
 package org.example.Curve.SplineCanvas;
 /**
- * @Description 该表示二维坐标中的点。
- * @author 申雄全，吴鹄远
- * @date 2023/12/23 22:59
+ *  该表示二维坐标中的点。
+ * @author 申雄全 
+ * @author 吴鹄远
+ * Date 2023/12/23 22:59
  */
 public class MyPoint2D {
 

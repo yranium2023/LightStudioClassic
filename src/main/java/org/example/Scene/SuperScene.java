@@ -5,9 +5,9 @@ import io.vproxy.vfx.ui.scene.VSceneRole;
 import javafx.scene.layout.Pane;
 
 /**
+ *  所有Scene的超类
  * @author 吴鹄远
- * @Description 所有Scene的超类
- * @date 2023/12/3 19:58
+ * Date 2023/12/3 19:58
  */
 public abstract class SuperScene extends VScene {
 

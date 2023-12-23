@@ -11,9 +11,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
 /**
+ *  这是一个Intro场景
  * @author 吴鹄远
- * @Description 这是一个Intro场景
- * @date 2023/12/3 19:59
+ * Date 2023/12/3 19:59
  */
 public class IntroScene extends SuperScene {
     public IntroScene(){

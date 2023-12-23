@@ -22,9 +22,9 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 
 /**
+ *  该类用于统计实现灰度直方图和rgb直方图
  * @author 申雄全
- * @Description 该类用于统计实现灰度直方图和rgb直方图
- * @date 2023/12/5 17:58
+ * Date 2023/12/5 17:58
  */
 
 public class Histogram{
@@ -36,10 +36,10 @@ public class Histogram{
     private static AreaChart<Number, Number> Histogram;
     private static BufferedImage bufferedImage;
     /**
-     * @Description 该方法实现直方图的绘制
+     *  该方法实现直方图的绘制
      * @param image
      * @author 申雄全
-     * @date 2023/12/23 23:28
+     * Date 2023/12/23 23:28
      */
     public static void drawHistogram(Image image){
 
@@ -100,10 +100,10 @@ public class Histogram{
     }
 
     /**
-     * @Description 该方法实现图像灰度，rgb的统计
+     *  该方法实现图像灰度，rgb的统计
      * @param image
      * @author 申雄全
-     * @date 2023/12/23 23:29
+     * Date 2023/12/23 23:29
      */
     private static void grayCount(Image image){
 
@@ -118,9 +118,9 @@ public class Histogram{
     }
 
     /**
-     * @Description 该类用fork/join框架进行统计计算
+     *  该类用fork/join框架进行统计计算
      * @author 申雄全
-     * @date 2023/12/23 23:29
+     * Date 2023/12/23 23:29
      */
 
     static class ParallelHistogramTask extends RecursiveAction{

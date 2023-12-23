@@ -4,9 +4,10 @@ package org.example.Curve.SplineCanvas;
 import java.io.Serializable;
 import java.util.Arrays;
 /**
- * @Description 表示查找表，用于存储曲线调整的结果，实现曲线到rgb值的映射。
- * @author 申雄全，吴鹄远
- * @date 2023/12/20 23:02
+ *  表示查找表，用于存储曲线调整的结果，实现曲线到rgb值的映射。
+ * @author 申雄全
+ * @author 吴鹄远
+ * Date 2023/12/20 23:02
  */
 public class LUT implements Serializable {
 
@@ -17,11 +18,11 @@ public class LUT implements Serializable {
         Arrays.fill(Curve, -1);
     }
     /**
-     * @Description 将 x 映射到 y，并将结果存储在数组中
+     *  将 x 映射到 y，并将结果存储在数组中
      * @param x
      * @param y
      * @author 申雄全
-     * @date 2023/12/23 23:37
+     * Date 2023/12/23 23:37
      */
     public void addXToY(int x,int y){
         x=x>255?255:x;
@@ -34,9 +35,9 @@ public class LUT implements Serializable {
         return Curve[x];
     }
     /**
-     * @Description 检查数组中的映射，确保没有未定义的值
+     *  检查数组中的映射，确保没有未定义的值
      * @author 申雄全
-     * @date 2023/12/23 23:36
+     * Date 2023/12/23 23:36
      */
     public void checkLUT(){
 

@@ -19,9 +19,10 @@ import java.util.concurrent.Executors;
 
 
 /**
- * @author 申雄全,吴鹄远
- * @Description 该类实现图片色温调整
- * @date 2023/12/8 22:38
+ *  该类实现图片色温调整
+ * @author 申雄全
+ * @author 吴鹄远
+ * Date 2023/12/8 22:38
  */
 public class ImageTemperatureAdjustment extends ImageAdjustment {
     private static double lastValue;
@@ -83,9 +84,9 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
         }
     }
     /**
-     * @Description 该方法实现色温调整算法
+     *  该方法实现色温调整算法
      * @author 申雄全
-     * @date 2023/12/23 23:26
+     * Date 2023/12/23 23:26
      */
     public static void adjustTemperatureAsync() {
 
@@ -111,10 +112,10 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
         ImageTemperatureAdjustment.kelvin = kelvin;
     }
     /**
-     * @Description 该方法计算图片初始色温
+     *  该方法计算图片初始色温
      * @return double
      * @author 申雄全
-     * @date 2023/12/23 23:26
+     * Date 2023/12/23 23:26
      */
     private static double calculateColorTemperature( ){
 
@@ -151,9 +152,9 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
 
     }
     /**
-     * @Description 该方法实现色温到rgb的转换
+     *  该方法实现色温到rgb的转换
      * @author 申雄全
-     * @date 2023/12/23 23:25
+     * Date 2023/12/23 23:25
      */
     private static void TemperatureToRGB(){
 

@@ -8,7 +8,11 @@ import javafx.scene.image.WritableImage;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-
+/**
+ *  该类实现图片的一些基本转换
+ * @author 申雄全
+ * Date 2023/12/24 1:50
+ */
 public class ConvertUtil {
     public static Image ConvertToFxImage(BufferedImage image) {
         WritableImage wr = null;

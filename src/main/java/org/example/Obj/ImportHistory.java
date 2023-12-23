@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 导入历史管理
  * @author 张喆宇
- * @Description:
- * @date 2023/12/17 19:42
+ * Date 2023/12/17 19:42
  */
 public class ImportHistory implements Serializable {
     private List<ImageObj> totalImageObj = new ArrayList<>();

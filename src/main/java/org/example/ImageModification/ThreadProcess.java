@@ -5,9 +5,9 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 
 /**
- * @author 申雄全,吴鹄远
- * @Description 该类实现图片算法处理多线程
- * @date 2023/12/11 21:52
+ *  该类实现图片算法处理多线程
+ * @author 申雄全
+ * Date 2023/12/11 21:52
  */
 public abstract class ThreadProcess {
 
@@ -19,18 +19,18 @@ public abstract class ThreadProcess {
       this.processedImage=processedImage;
     }
     /**
-     * @Description 该方法实现对rgb值的具体算法，不同调整类型的具体算法不同
+     *  该方法实现对rgb值的具体算法，不同调整类型的具体算法不同
      * @param rgb
      * @return int
      * @author 申雄全
-     * @updateTime 2023/12/23 22:45
+     * Date 2023/12/23 22:45
      */
     public abstract int calculateRGB(int rgb);
 
     /**
-     * @Description 该方法调用fork/join框架处理图片
+     *  该方法调用fork/join框架处理图片
      * @author 申雄全
-     * @date 2023/12/23 23:27
+     * Date 2023/12/23 23:27
      */
     public void run() {
 
@@ -41,9 +41,9 @@ public abstract class ThreadProcess {
             forkJoinPool.shutdown();
     }
     /**
-     * @Description 该类是任务类，实现具体的fork/join框架
+     *  该类是任务类，实现具体的fork/join框架
      * @author 申雄全
-     * @date 2023/12/23 23:28
+     * Date 2023/12/23 23:28
      */
     class Task extends RecursiveAction {
         private static final int Max = 250000;

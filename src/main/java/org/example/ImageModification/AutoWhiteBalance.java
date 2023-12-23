@@ -1,9 +1,10 @@
 package org.example.ImageModification;
 
 /**
- * @author 申雄全，吴鹄远
- * @Description 该类用于实现自动白平衡
- * @date 2023/12/9 14:56
+ *  该类用于实现自动白平衡
+ * @author 申雄全 
+ * @author 吴鹄远
+ * Date 2023/12/9 14:56
  */
 import io.vproxy.vfx.ui.button.ImageButton;
 import javafx.application.Application;
@@ -27,10 +28,10 @@ public class AutoWhiteBalance extends ImageAdjustment{
     private static double  redGain,greenGain,blueGain;
 
     /**
-     * @Description  该方法用于实现按钮对图片进行自动白平衡调整
+     *   该方法用于实现按钮对图片进行自动白平衡调整
      * @param editingImageObj
      * @author 吴鹄远
-     * @date 2023/12/11 15:26
+     * Date 2023/12/11 15:26
     **/
 
     public static void autoWhiteBalance(ImageObj editingImageObj){
@@ -50,9 +51,9 @@ public class AutoWhiteBalance extends ImageAdjustment{
         executor.shutdown();
     }
     /**
-     * @Description 计算rgb的增益值
+     *  计算rgb的增益值
      * @author 申雄全
-     * @date 2023/12/23 23:23
+     * Date 2023/12/23 23:23
      */
     private static void calculateRGBGain(){
 
@@ -86,9 +87,9 @@ public class AutoWhiteBalance extends ImageAdjustment{
         blueGain = grayValue / averageBlue;
     }
    /**
-    * @describle 自动白平衡算法实现
+    *  自动白平衡算法实现
     * @author 申雄全 
-    * @updateTime 2023/12/22 22:37 
+    * Date 2023/12/22 22:37 
     */
     public static void WhiteBalance(){
            calculateRGBGain();

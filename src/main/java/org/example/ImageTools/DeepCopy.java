@@ -5,7 +5,11 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.List;
 import java.util.Map;
-
+/**
+ *  该类实现图像的深拷贝
+ * @author 申雄全
+ * Date 2023/12/24 1:51
+ */
 public class DeepCopy {
     public static BufferedImage cpyBufferedImage (BufferedImage source){
         if (source == null)

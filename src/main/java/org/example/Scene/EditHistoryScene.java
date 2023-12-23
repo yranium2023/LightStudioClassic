@@ -29,9 +29,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
+ *  这个场景用于显示图像编辑的历史记录，并添加撤回、重做操作等
  * @author 吴鹄远
- * @Description 这个场景用于显示图像编辑的历史记录，并添加撤回、重做操作等
- * @date 2023/12/17 10:50
+ * Date 2023/12/17 10:50
  */
 public class EditHistoryScene extends SuperScene{
 
@@ -64,11 +64,11 @@ public class EditHistoryScene extends SuperScene{
 
     }
     /**
-     * @Description 该类实现历史记录的调整
+     *  该类实现历史记录的调整
      * @param history
      * @param tableView
      * @author 申雄全
-     * @date 2023/12/23 23:30
+     * Date 2023/12/23 23:30
      */
     public static void addLabel(AdjustHistory history,VTableView tableView){
 
@@ -101,11 +101,11 @@ public class EditHistoryScene extends SuperScene{
         tableView.getItems().add(newHis);
     }
     /**
-     * @Description  截取正则表达式中的数字
+     *   截取正则表达式中的数字
      * @param input
      * @return int
      * @author 吴鹄远
-     * @date 2023/12/18 17:08
+     * Date 2023/12/18 17:08
     **/
 
     private static int extractNumber(String input) {
@@ -127,9 +127,9 @@ public class EditHistoryScene extends SuperScene{
         return values[index];
     }
     /**
-     * @Description  在切换所选对象时更新表
+     *   在切换所选对象时更新表
      * @author 吴鹄远
-     * @date 2023/12/18 19:24
+     * Date 2023/12/18 19:24
     **/
 
     public static void renewEditHistoryScene(){

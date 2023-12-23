@@ -44,9 +44,9 @@ import java.util.List;
 import java.util.function.Supplier;
 
 /**
+ *  这个类用于创建导入图像、查看导入历史的场景
  * @author 吴鹄远
- * @Description 这个类用于创建导入图像、查看导入历史的场景
- * @date 2023/12/4 14:37
+ * Date 2023/12/4 14:37
  */
 public class ImageImportMenuScene extends SuperScene {
 
@@ -618,10 +618,10 @@ public class ImageImportMenuScene extends SuperScene {
 
 
     /***
-     * @Description 创建多个FusionButtonBox 含有图片 和文字说明
+     *  创建多个FusionButtonBox 含有图片 和文字说明
      * @return java.util.List<Button>
      * @author 张喆宇
-     * @date 2023/12/4 21:33
+     * Date 2023/12/4 21:33
      **/
     private List<VBox> createImageButtonsVbox() {
         List<VBox> buttonBoxs = new ArrayList<>();
@@ -732,10 +732,9 @@ public class ImageImportMenuScene extends SuperScene {
     }
 
     /***
-     * @Description 清除所有产生的按钮box
-     * @return null
+     *  清除所有产生的按钮box
      * @author 张喆宇
-     * @date 2023/12/5 22:29
+     * Date 2023/12/5 22:29
      **/
 
     public void clearImageButtonsVbox() {
@@ -743,10 +742,9 @@ public class ImageImportMenuScene extends SuperScene {
     }
 
     /***
-     * @Description 返回所有选中的图片
-     * @return java.util.List<org.example.Obj.ImageObj>
+     *  返回所有选中的图片
      * @author 张喆宇
-     * @date 2023/12/9 13:38
+     * Date 2023/12/9 13:38
      **/
 
     public List<ImageObj> getTotalImages() {
@@ -754,10 +752,9 @@ public class ImageImportMenuScene extends SuperScene {
     }
 
     /***
-     * @Description 传出单次选择产生的按钮Vbox
-     * @return java.util.List<io.vproxy.vfx.ui.button.FusionImageButton>
+     *  传出单次选择产生的按钮Vbox
      * @author 张喆宇
-     * @date 2023/12/9 13:37
+     * Date 2023/12/9 13:37
      **/
 
     public List<VBox> getFusionImageButtonsVbox() {
@@ -765,10 +762,9 @@ public class ImageImportMenuScene extends SuperScene {
     }
 
     /***
-     * @Description 传出单次选择产生的按钮
-     * @return java.util.List<io.vproxy.vfx.ui.button.FusionButton>
+     *  传出单次选择产生的按钮
      * @author 张喆宇
-     * @date 2023/12/9 19:18
+     * Date 2023/12/9 19:18
      **/
 
     public List<VBox> getCopyImageButtonsVboxButtons() {
@@ -776,9 +772,9 @@ public class ImageImportMenuScene extends SuperScene {
     }
 
     /***
-     * @Description 清空单次选择产生的按钮
+     *  清空单次选择产生的按钮
      * @author 张喆宇
-     * @date 2023/12/9 19:19
+     * Date 2023/12/9 19:19
      **/
 
     public void clearImageButtons() {

@@ -8,9 +8,9 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 
 /**
+ * 直方图绘制
  * @author 吴鹄远
- * @Description:
- * @date 2023/12/10 20:29
+ * Date 2023/12/10 20:29
  */
 public class HistogramPane extends Pane {
 

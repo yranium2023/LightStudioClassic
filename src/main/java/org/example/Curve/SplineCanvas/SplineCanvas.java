@@ -24,9 +24,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 /**
- * @Description 实现了一个带有GUI的三次曲线插值的Canvas，通过拖动控制点调整曲线形状。
- * @author 申雄全，吴鹄远
- * @date 2023/12/21 22:57
+ *  实现了一个带有GUI的三次曲线插值的Canvas，通过拖动控制点调整曲线形状。
+ * @author 申雄全 
+ * @author 吴鹄远
+ * Date 2023/12/21 22:57
  */
 public class SplineCanvas extends StackPane{
     private ControlPoints controlPoints;
@@ -46,11 +47,10 @@ public class SplineCanvas extends StackPane{
     GraphicsContext gc ;
 
     /**
-     * @Description 构造函数，创建一个实现三次曲线插值的 Canvas
+     *  构造函数，创建一个实现三次曲线插值的 Canvas
      * @param prefWidth
-     * @return null
      * @author 申雄全
-     * @date 2023/12/23 23:32
+     * Date 2023/12/23 23:32
      */
     public SplineCanvas(double prefWidth) {
 
@@ -104,9 +104,9 @@ public class SplineCanvas extends StackPane{
         StackPane.setMargin(canvas, new Insets(20));
     }
     /**
-     * @Description 重新绘制 Canvas，包括网格、控制点和曲线。
+     *  重新绘制 Canvas，包括网格、控制点和曲线。
      * @author 申雄全
-     * @date 2023/12/23 23:32
+     * Date 2023/12/23 23:32
      */
     private void redraw(){
 
@@ -129,9 +129,9 @@ public class SplineCanvas extends StackPane{
         drawControlPoints();
     }
     /**
-     * @Description 绘制直线曲线
+     *  绘制直线曲线
      * @author 申雄全
-     * @date 2023/12/23 23:33
+     * Date 2023/12/23 23:33
      */
     private void drawStraightLine() {
 
@@ -149,12 +149,12 @@ public class SplineCanvas extends StackPane{
         DrawCurve();
     }
     /**
-     * @Description 添加直线上的点。
+     *  添加直线上的点。
      * @param step
      * @param p1
      * @param p2
      * @author 申雄全
-     * @date 2023/12/23 23:33
+     * Date 2023/12/23 23:33
      */
     private void addLine(double step, MyPoint2D p1, MyPoint2D p2) {
 
@@ -168,9 +168,9 @@ public class SplineCanvas extends StackPane{
         }
     }
     /**
-     * @Description 使用 LUT 将曲线应用于图像。
+     *  使用 LUT 将曲线应用于图像。
      * @author 申雄全
-     * @date 2023/12/23 23:33
+     * Date 2023/12/23 23:33
      */
     private void DrawCurve() {
 
@@ -204,9 +204,9 @@ public class SplineCanvas extends StackPane{
         curvePoints.clear();
     }
     /**
-     * @Description 绘制网格
+     *  绘制网格
      * @author 申雄全
-     * @date 2023/12/23 23:33
+     * Date 2023/12/23 23:33
      */
     private void drawGrids(){
 
@@ -222,9 +222,9 @@ public class SplineCanvas extends StackPane{
         }
     }
     /**
-     * @Description 绘制 Canvas 边界
+     *  绘制 Canvas 边界
      * @author 申雄全
-     * @date 2023/12/23 23:34
+     * Date 2023/12/23 23:34
      */
     private void drawOutLine(){
         gc.setStroke(Color.BLACK);
@@ -241,10 +241,10 @@ public class SplineCanvas extends StackPane{
         }
     }
     /**
-     * @Description 绘制单个控制点
+     *  绘制单个控制点
      * @param point
      * @author 申雄全
-     * @date 2023/12/23 23:34
+     * Date 2023/12/23 23:34
      */
     private void drawControlPoint(MyPoint2D point) {
         gc.setFill(CONTROL_POINT_COLOR);
@@ -252,9 +252,9 @@ public class SplineCanvas extends StackPane{
     }
 
     /**
-     * @Description 绘制三次样条曲线
+     *  绘制三次样条曲线
      * @author 申雄全
-     * @date 2023/12/23 23:34
+     * Date 2023/12/23 23:34
      */
     private void drawSplineCurve(){
 

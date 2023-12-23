@@ -1,9 +1,9 @@
 package org.example.ImageTools;
 
 /**
+ * 该类用于编辑图片时使得图片进行合理的缩放或者扩大显示
  * @author 申雄全
- * @Description:该类用于编辑图片时使得图片进行合理的缩放或者扩大显示
- * @date 2023/12/5 16:01
+ * Date 2023/12/5 16:01
  */
 
 import javafx.scene.image.Image;

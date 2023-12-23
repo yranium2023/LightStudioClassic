@@ -28,9 +28,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ *  这是承载Application的场景
  * @author 吴鹄远
- * @Description 这是承载Application的场景
- * @date 2023/12/3 20:07
+ * Date 2023/12/3 20:07
  */
 public class LSMain extends Application {
 

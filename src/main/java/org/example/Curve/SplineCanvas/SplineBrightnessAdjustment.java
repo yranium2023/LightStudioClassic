@@ -28,8 +28,8 @@ import java.util.concurrent.RecursiveAction;
 
 /**
  * @author 申雄全
- * @Description 该类实现曲线调整后图像效果的计算
- * @date 2023/12/22 22:46
+ *  该类实现曲线调整后图像效果的计算
+ * Date 2023/12/22 22:46
  */
 public class SplineBrightnessAdjustment extends ImageAdjustment {
 
@@ -40,11 +40,11 @@ public class SplineBrightnessAdjustment extends ImageAdjustment {
         setStrokeType(StrokeType.INSIDE);
     }};
     /**
-     * @Description  这个类用于创建曲线
+     *   这个类用于创建曲线
      * @param curvePane
      * @param editingImageObj
      * @author 吴鹄远
-     * @date 2023/12/14 10:27
+     * Date 2023/12/14 10:27
     **/
     public static void addCurve(Pane curvePane, ImageObj editingImageObj){
         if(editingImageObj!=null){
@@ -57,9 +57,10 @@ public class SplineBrightnessAdjustment extends ImageAdjustment {
         }
     }
     /**
-     * @Description 调用LUT对图片进行修改
-     * @author 申雄全，吴鹄远
-     * @date 2023/12/23 23:35
+     *  调用LUT对图片进行修改
+     * @author 申雄全 
+     * @author 吴鹄远
+     * Date 2023/12/23 23:35
      */
     public static void applyLUTToImage(){
 
@@ -73,9 +74,9 @@ public class SplineBrightnessAdjustment extends ImageAdjustment {
 
 
         /**
-        * @Description 该类实现fork/join框架实现算法调整rgb
+        *  该类实现fork/join框架实现算法调整rgb
         * @author 申雄全
-        * @date 2023/12/23 23:36
+        * Date 2023/12/23 23:36
         */
     static class LUTTask extends RecursiveAction{
         private static final int Max =250000;

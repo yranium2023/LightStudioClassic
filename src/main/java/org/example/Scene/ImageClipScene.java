@@ -9,9 +9,9 @@ import org.example.Pane.ImagePane;
 import org.example.LSMain;
 
 /**
+ *  该类实现裁剪的绘制
  * @author 吴鹄远
- * @Description
- * @date 2023/12/4 17:00
+ * Date 2023/12/4 17:00
  */
 public class ImageClipScene extends SuperScene{
 
