@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  * @date 2023/12/17 10:50
  */
 public class EditHistoryScene extends SuperScene{
-    //创建一个表格用于显示历史记录
+
     public static VTableView historyTable=new VTableView<AdjustHistory>(){{
         getNode().setLayoutY(50);
        getNode().setPrefHeight(600);

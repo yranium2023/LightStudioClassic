@@ -48,7 +48,7 @@ public class ImageImportScene extends SuperScene {
         getNode().setPrefHeight(550);
     }};
 
-    // 创建 FlowPane 用于放图片按钮
+
     public static FlowPane flowImportPane = new FlowPane() {{
         setLayoutX(5);
         setLayoutY(5);
@@ -58,7 +58,7 @@ public class ImageImportScene extends SuperScene {
         setHgap(50);
         setVgap(25);
     }};
-    //新建历史记录表单
+
    private static VTableView historyTable=new VTableView<AdjustHistory>(){{
         getNode().setPrefHeight(600);
         getNode().setPrefWidth(320);

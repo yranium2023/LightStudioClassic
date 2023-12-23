@@ -49,7 +49,7 @@ import java.util.function.Supplier;
  * @date 2023/12/4 14:37
  */
 public class ImageImportMenuScene extends SuperScene {
-    //所有所选中的图片
+
     private List<ImageObj> selectedImages = new ArrayList<>();
     public static List<ImageObj> totalImages = new ArrayList<>();
     private List<VBox> fusionImageButtonsVbox = null;
@@ -57,11 +57,11 @@ public class ImageImportMenuScene extends SuperScene {
     public static List<VBox> copyImageButtonsVbox = new ArrayList<>();
 
     public static List<ImportHistory> importHistories = new ArrayList<>();
-    //输出情况 默认为1 1为高品质 0为低品质
+
     int outputState=1;
-    //是否有错误出现 默认为0 无错误
+
     int errorFlag=0;
-    //序列化情况 是否要根据历史记录进行修改 1为要 0为不要
+
     int historyState=0;
     public ImageImportMenuScene(Supplier<VSceneGroup> sceneGroupSup) {
 

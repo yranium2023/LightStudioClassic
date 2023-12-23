@@ -10,9 +10,24 @@ public class HSLInfo {
     private double saturationPercent = 0.5;
     private double luminancePercent = 0.5;
     private HSLColor hslColor;
+
+    /**
+     * @Description 该类对应HSL的三种类型轴
+     * @author 申雄全
+     * @date 2023/12/24 1:05
+     */
     public enum sliderType{
+        /*
+         *色相轴
+         */
         HUE,
+        /*
+         *饱和度轴
+         */
         SATURATION,
+        /*
+         *明度轴
+         */
         LUMINANCE
     }
     private sliderType nowType=null;

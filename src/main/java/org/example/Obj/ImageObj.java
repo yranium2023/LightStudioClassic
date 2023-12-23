@@ -35,46 +35,64 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class ImageObj implements Serializable {
     private static final long serialVersionUID = 1L;
-    //传入的原始图片
+
     private transient Image originalImage = null;
-    //压缩到80*80的小图片
+
     private transient Image buttonImage = null;
-    //压缩到2k的大图片
+
     private transient Image editingImage = null;
-    //裁减过程中产生的图片列表
+
     private transient List<Image> clipImages = new ArrayList<>();
-    //传入图片的路径
+
     String imagePath = null;
-    //图片的名称
+
     transient String imageName = null;
-    //图库中整个vbox
+
     private transient VBox buttonVBox = null;
-    //图库中按钮
+
     private transient FusionImageButton imageButton = null;
-    //横板按钮
+
     private transient FusionImageButton copyButton = null;
-    //横版中整个vbox
+
     private transient VBox copyVBox = null;
-    //导出图片中整个vbox
+
     private transient VBox outPutImageVBox = null;
-    //对比度滑动条，初始化为0.5
+
     private transient double contrastPercent = 0.5;
-    //曝光度滑动条，初始化为0.5
+
     private transient double exposurePercent = 0.5;
-    //饱和度滑动条，初始化为0.5
+
     private transient double saturationPercent = 0.5;
-    //色温滑动条，初始化为0.5
+
     private transient double temperaturePercent = 0.5;
-    //创建一个枚举类型，存储当前滑动条是四个滑动条中的哪一条
+
     private transient sliderType_1 nowSlider_1 = null;
     //历史记录
     private List<AdjustHistory> adjustHistory = new ArrayList<>();
 
     private Map<String,AdjustHistory> adjustHistoryMap=new HashMap<>();
+
+    /**
+     * @Description 该枚举类实现轴对应的类型
+     * @author 申雄全
+     * @date 2023/12/24 1:01
+     */
     public enum sliderType_1 {
+        /*
+         *对比度轴
+         */
         CONTRAST,
+        /*
+         *曝光度轴
+         */
         EXPOSURE,
+        /*
+         *饱和度轴
+         */
         SATURATION,
+        /*
+         *色温轴
+         */
         TEMPERATURE
     }
 

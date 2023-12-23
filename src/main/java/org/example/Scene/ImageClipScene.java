@@ -14,9 +14,9 @@ import org.example.LSMain;
  * @date 2023/12/4 17:00
  */
 public class ImageClipScene extends SuperScene{
-    //新建一个pane，用于存放直方图
+
     private static Pane histogramPane=new Pane();
-    //新建一个pane，用于展示图片
+
     private static ImagePane clipImagePane=new ImagePane(){{
             setWidth(900);
             setHeight(550);

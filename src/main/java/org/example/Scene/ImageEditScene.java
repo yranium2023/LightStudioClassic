@@ -44,20 +44,20 @@ import java.util.function.Supplier;
  */
 public class ImageEditScene extends SuperScene{
     private ImageClipScene imageClipScene=new ImageClipScene();
-    //新建一个pane，用于存放直方图
+
     public static Pane histogramPane=new Pane();
-    //新建一个pane，用于展示图片
+
     private static ImagePane editImagePane=new ImagePane(){{
         setWidth(900);
         setHeight(550);
         setLayoutX(70);
         setLayoutY(100);
     }};
-    //创建一个pane来包含各种组件
+
     private static Pane prePane=new Pane(){{
         setPrefWidth(220);
     }};
-    //创建一个fusionPane用于包裹fusionButton
+
     private static FusionPane littleModulePane=new FusionPane(){{
         getNode().setPrefWidth(200);
         getNode().setPrefHeight(45);
@@ -70,7 +70,7 @@ public class ImageEditScene extends SuperScene{
         getNode().setPrefHeight(100);
     }};
 
-    // 创建 FlowPane 用于放图片按钮
+
     public static HBox hEditBox = new HBox() {{
         setLayoutX(10);
         setLayoutY(10);
@@ -79,7 +79,7 @@ public class ImageEditScene extends SuperScene{
         // 设置行间距
     }};
 
-    //创建hsl的三个slider
+
     public static VSlider hueSlider_HSL =new VSlider(){{
         setLength(180);
         setPercentage(0.5);

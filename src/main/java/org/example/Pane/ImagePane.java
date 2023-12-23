@@ -49,6 +49,4 @@ public class ImagePane extends Pane {
         getChildren().add(ImagePaneStrokeRec);
     }
 
-
-
 }
