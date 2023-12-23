@@ -25,9 +25,9 @@ import java.util.concurrent.Executors;
 
 
 /**
- * @describle 该接口的方法实现对颜色的判断
- * @author 申雄全 
- * @updateTime 2023/12/22 22:41 
+ * @Description  该接口的方法实现对颜色的判断
+ * @author 申雄全，吴鹄远
+ * @date 2023/12/22 22:41
  */
 interface MyFunction {
     /**

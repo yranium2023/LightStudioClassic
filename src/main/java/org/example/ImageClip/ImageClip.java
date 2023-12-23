@@ -23,7 +23,7 @@ import org.example.StaticValues;
 
 
 /**
- * @author misssing
+ * @author 申雄全，吴鹄远
  * @Description 此类实现行图片裁剪
  * @date 2023/12/3 20:22
  */

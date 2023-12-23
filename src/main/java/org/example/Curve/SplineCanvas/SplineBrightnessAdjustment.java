@@ -58,7 +58,7 @@ public class SplineBrightnessAdjustment extends ImageAdjustment {
     }
     /**
      * @Description 调用LUT对图片进行修改
-     * @author 申雄全
+     * @author 申雄全，吴鹄远
      * @date 2023/12/23 23:35
      */
     public static void applyLUTToImage(){

@@ -1,7 +1,7 @@
 package org.example.ImageModification;
 
 /**
- * @author 申雄全
+ * @author 申雄全,吴鹄远
  * @Description 该类实现图片饱和度的调整
  * @date 2023/12/9 15:00
  */

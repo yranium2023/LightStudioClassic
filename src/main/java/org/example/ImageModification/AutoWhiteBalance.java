@@ -1,7 +1,7 @@
 package org.example.ImageModification;
 
 /**
- * @author 申雄全
+ * @author 申雄全，吴鹄远
  * @Description 该类用于实现自动白平衡
  * @date 2023/12/9 14:56
  */

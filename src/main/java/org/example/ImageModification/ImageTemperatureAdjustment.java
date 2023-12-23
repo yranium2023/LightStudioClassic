@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
 
 
 /**
- * @author 申雄全
+ * @author 申雄全,吴鹄远
  * @Description 该类实现图片色温调整
  * @date 2023/12/8 22:38
  */

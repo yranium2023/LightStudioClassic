@@ -5,7 +5,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.RecursiveAction;
 
 /**
- * @author 申雄全
+ * @author 申雄全,吴鹄远
  * @Description 该类实现图片算法处理多线程
  * @date 2023/12/11 21:52
  */

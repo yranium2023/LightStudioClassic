@@ -1,7 +1,7 @@
 package org.example.Curve.SplineCanvas;
 /**
  * @Description 该类实现坐标参数的计算
- * @author 申雄全
+ * @author 申雄全，吴鹄远
  * @date 2023/12/20 22:58
  */
 public class Tools2D {

@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 /**
  * @Description 表示查找表，用于存储曲线调整的结果，实现曲线到rgb值的映射。
- * @author 申雄全
+ * @author 申雄全，吴鹄远
  * @date 2023/12/20 23:02
  */
 public class LUT implements Serializable {

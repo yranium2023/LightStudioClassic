@@ -25,8 +25,8 @@ import java.util.concurrent.Future;
 
 /**
  * @Description 实现了一个带有GUI的三次曲线插值的Canvas，通过拖动控制点调整曲线形状。
- * @author 申雄全
- * @updateTime 2023/12/21 22:57
+ * @author 申雄全，吴鹄远
+ * @date 2023/12/21 22:57
  */
 public class SplineCanvas extends StackPane{
     private ControlPoints controlPoints;

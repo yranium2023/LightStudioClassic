@@ -17,9 +17,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * @describle 该类实现图像对比度调整
- * @author 申雄全
- * @updateTime 2023/12/22 22:38
+ * @Description  该类实现图像对比度调整
+ * @author 申雄全，吴鹄远
+ * @date 2023/12/22 22:38
  */
 public class ImageContrastAdjustment extends ImageAdjustment {
     private static double lastValue = 0.0;
