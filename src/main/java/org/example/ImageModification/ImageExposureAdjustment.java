@@ -16,6 +16,11 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * @Description 该类实现图片的曝光度调整
+ * @author 申雄全 
+ * @date 2023/12/22 22:38
+ */
 public class ImageExposureAdjustment extends ImageAdjustment {
 
 

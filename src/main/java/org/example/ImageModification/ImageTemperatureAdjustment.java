@@ -20,13 +20,13 @@ import java.util.concurrent.Executors;
 
 /**
  * @author 申雄全
- * @Description 该类实现色温调整
+ * @Description 该类实现图片色温调整
  * @date 2023/12/8 22:38
  */
 public class ImageTemperatureAdjustment extends ImageAdjustment {
     private static double lastValue;
-    private static double kelvin;//色温
-    private static double originalTemperature;//初始色温
+    private static double kelvin;
+    private static double originalTemperature;
     private static double redStrength, greenStrength, blueStrength;
     private static ChangeListener<Number> SliderListener;
 
@@ -42,7 +42,8 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
                 temperatureSlider.percentageProperty().removeListener(SliderListener);
             }
             temperatureSlider.setPercentage(StaticValues.editingImageObj.getTemperaturePercent());
-            double threshold = 0.04; // 定义阈值，每次滑动长度大于该值时认为值发生改变
+            double threshold = 0.04;
+            // 定义阈值，每次滑动长度大于该值时认为值发生改变
             lastValue=1;
             // 创建新的监听器
             SliderListener = (obs, old, now) -> {
@@ -52,7 +53,8 @@ public class ImageTemperatureAdjustment extends ImageAdjustment {
                     ImageAdjustment.setProcessedImage();
                     editingImageObj.setNowSlider_1(ImageObj.sliderType_1.TEMPERATURE);
                 }
-                double newValue = temperatureSlider.getPercentage() * 1.35;//0.65 1 1.35
+                double newValue = temperatureSlider.getPercentage() * 1.35;
+                //0.65 1 1.35
                 if (Math.abs(newValue - lastValue) > threshold) {
                     kelvin =5500*(2-newValue);
                     ExecutorService executor = Executors.newSingleThreadExecutor();

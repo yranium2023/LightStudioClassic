@@ -33,7 +33,7 @@ import java.util.List;
  * @date 2023/12/3 20:07
  */
 public class LSMain extends Application {
-    //承载所有场景
+
     private final List<SuperScene> mainScenes = new ArrayList<>();
     private VSceneGroup sceneGroup;
     private static VStage stage;

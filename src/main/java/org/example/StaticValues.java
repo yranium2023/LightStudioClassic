@@ -16,7 +16,7 @@ import org.example.Pane.HistogramPane;
  * @date 2023/12/5 22:00
  */
 public class StaticValues {
-    //全局变量 直接用 要编辑的图像
+
     public static ImageObj editingImageObj =null;
     public static HistogramPane histogramPane=new HistogramPane(){{
         setWidth(250);

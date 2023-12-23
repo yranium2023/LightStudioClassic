@@ -28,11 +28,11 @@ import java.util.concurrent.RecursiveAction;
 
 /**
  * @author 申雄全
- * @Description
- * @date 2023/12/9 22:46
+ * @Description 该类实现曲线调整后图像效果的计算
+ * @date 2023/12/22 22:46
  */
 public class SplineBrightnessAdjustment extends ImageAdjustment {
-    //创建一个矩形用来包裹curve
+
     private static Rectangle curveRec=new Rectangle(190,190){{
         setStrokeWidth(2);
         setStroke(Color.WHITE);

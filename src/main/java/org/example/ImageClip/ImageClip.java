@@ -24,7 +24,7 @@ import org.example.StaticValues;
 
 /**
  * @author misssing
- * @Description: 此类实现行图片裁剪
+ * @Description 此类实现行图片裁剪
  * @date 2023/12/3 20:22
  */
 
@@ -36,13 +36,15 @@ public class ImageClip {
     private static Shape darkenedArea;
 
     private static Rectangle imageViewRect;
-
     /**
-     * @describle 此方法实现图片的裁剪
-     * @author missing
-     * @updateTime 2023/12/4 10:59
+     * @Description 此方法实现图片的裁剪
+     * @param editingImageObj
+     * @param imagePane
+     * @author 申雄全
+     * @updateTime 2023/12/23 22:54
      */
     public static void imageClip(ImageObj editingImageObj, ImagePane imagePane) {
+
         Image image=editingImageObj.getEditingImage();
 
 
@@ -275,11 +277,7 @@ public class ImageClip {
 
     }
 
-    /**
-     * @describle 调整clip裁剪框的移动
-     * @author 申雄全
-     * @updateTime 2023/12/4 17:40
-     */
+
     private static void clipMove(ImageView imageView, Pane anchorPane, int x, int y, int width, int height) {
         anchorPane.setOnMouseDragged(mouseEvent -> {
             double deltaX = mouseEvent.getX() - mouseX;

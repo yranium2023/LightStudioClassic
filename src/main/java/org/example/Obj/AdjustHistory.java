@@ -15,13 +15,12 @@ import java.util.*;
  */
 public class AdjustHistory implements Serializable {
 
-    private String adjustProperty;//类型
+    private String adjustProperty;
 
-    private long time;//时间
+    private long time;
 
     private double [] adjustValue;
-    private LUT  LUTValue;//对于曲线
-    //每次调用历史记录，只要对相应的value进行赋值，设置相应的bufferimage和processedimage，后面直接调用每个调整类中的adjust的函数，函数执行完后获取相应类的processedimage就是我们需要的
+    private LUT  LUTValue;
     public AdjustHistory(String adjustProperty,double... adjustValue){
         this.adjustProperty=adjustProperty;
         this.time=System.currentTimeMillis();
@@ -67,9 +66,6 @@ public class AdjustHistory implements Serializable {
     }
     public LUT getLUTValue(){
         return LUTValue;
-    }
-    public double getSecondValue() {
-        return adjustValue[1];
     }
 
     public void setAdjustProperty(String adjustProperty) {

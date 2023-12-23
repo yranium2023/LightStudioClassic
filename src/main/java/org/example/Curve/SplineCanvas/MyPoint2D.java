@@ -1,5 +1,9 @@
 package org.example.Curve.SplineCanvas;
-
+/**
+ * @Description 该表示二维坐标中的点。
+ * @author 申雄全
+ * @date 2023/12/23 22:59
+ */
 public class MyPoint2D {
 
     private double x;
@@ -7,10 +11,7 @@ public class MyPoint2D {
     public MyPoint2D(double x,double y){
         this.x=x;
         this.y=y;
-
     }
-
-
 
     public double getY() {
         return y;

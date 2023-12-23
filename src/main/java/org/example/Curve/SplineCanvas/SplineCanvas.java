@@ -23,7 +23,11 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-
+/**
+ * @Description 实现了一个带有GUI的三次曲线插值的Canvas，通过拖动控制点调整曲线形状。
+ * @author 申雄全
+ * @updateTime 2023/12/21 22:57
+ */
 public class SplineCanvas extends StackPane{
     private ControlPoints controlPoints;
     private ArrayList<MyPoint2D> curvePoints=new ArrayList<>();
@@ -76,7 +80,6 @@ public class SplineCanvas extends StackPane{
                 }
             }
         });
-        // 添加鼠标拖动处理程序
         canvas.setOnMouseDragged(event -> {
             if(DraggingIndex!=-1){
                 double x = event.getX();
@@ -166,10 +169,6 @@ public class SplineCanvas extends StackPane{
                     System.out.println("曲线调整成功");
                 });
         });
-            //ImageAdjustment.bufferedImage.flush();
-            //ImageAdjustment.processedImage.flush();
-            //ImageAdjustment.bufferedImage.flush();
-            //ImageAdjustment.processedImage.flush();
 
         executor.shutdown();
         gc.strokePolyline(curveXPoints, curveYPoints, curvePoints.size());

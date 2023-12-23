@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 /**
  * @author 申雄全
- * @Description
+ * @Description 该类为图片调整的父类，存一些常用的属性和方法
  * @date 2023/12/11 22:35
  */
 public class ImageAdjustment {

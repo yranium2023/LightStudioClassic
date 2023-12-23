@@ -2,7 +2,7 @@ package org.example.ImageModification;
 
 /**
  * @author 申雄全
- * @Description 该类实现自动白平衡
+ * @Description 该类用于实现自动白平衡
  * @date 2023/12/9 14:56
  */
 import io.vproxy.vfx.ui.button.ImageButton;
@@ -80,7 +80,11 @@ public class AutoWhiteBalance extends ImageAdjustment{
         greenGain = grayValue / averageGreen;
         blueGain = grayValue / averageBlue;
     }
-
+   /**
+    * @describle 自动白平衡算法实现
+    * @author 申雄全 
+    * @updateTime 2023/12/22 22:37 
+    */
     public static void WhiteBalance(){
            calculateRGBGain();
             new ThreadProcess(bufferedImage, processedImage) {

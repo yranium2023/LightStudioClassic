@@ -3,13 +3,15 @@ package org.example.Curve.SplineCanvas;
 
 import java.util.LinkedList;
 import java.util.ListIterator;
-
+/**
+ * @Description 管理控制点，支持在控制点序列中添加、删除和移动点，以及提供一些辅助方法。
+ * @author 申雄全
+ * @date 2023/12/20 23:04
+ */
 public class ControlPoints {
-
-
-    final MyPoint2D LeftBottom;
-    final MyPoint2D RightTop;
-    final double MIN_DISTANCE_BETWEEN_POINTS;
+    private final MyPoint2D LeftBottom;
+    private final MyPoint2D RightTop;
+    private final double MIN_DISTANCE_BETWEEN_POINTS;
 
     private  LinkedList<MyPoint2D> points;
 
@@ -31,7 +33,7 @@ public class ControlPoints {
     public int getSize(){
         return points.size();
     }
-    //按x轴从左->右进行插入
+
     private boolean XsamePoint(MyPoint2D point1,MyPoint2D point2){
             return Tools2D.Xdistance(point1.getX(),point2.getX())<MIN_DISTANCE_BETWEEN_POINTS;
     }
@@ -39,6 +41,7 @@ public class ControlPoints {
         return Tools2D.distance(point1.getX(),point1.getY(),point2.getX(),point2.getY())<MIN_DISTANCE_BETWEEN_POINTS;
     }
     public int selectPoint(MyPoint2D point){
+
         ListIterator<MyPoint2D> iterator=points.listIterator();
         while (iterator.hasNext()) {
             MyPoint2D current = iterator.next();
@@ -50,6 +53,7 @@ public class ControlPoints {
         return -1;
     }
     public boolean addPoint(MyPoint2D point){
+        //按x轴从左->右进行插入
         if(points.size()<=1){
             if(points.size()<=0){
                 points.add(point);

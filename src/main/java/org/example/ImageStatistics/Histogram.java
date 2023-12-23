@@ -23,17 +23,17 @@ import java.util.concurrent.RecursiveAction;
 
 /**
  * @author 申雄全
- * @Description:该类用于统计实现灰度直方图和rgb直方图
+ * @Description 该类用于统计实现灰度直方图和rgb直方图
  * @date 2023/12/5 17:58
  */
 
 public class Histogram{
-    private static final int NUM_BINS = 256; // 灰度级别的数量
+    private static final int NUM_BINS = 256;
     private static int[] histogram = new int[NUM_BINS];
     private static int[] redHistogram = new int[NUM_BINS];
     private static int[] greenHistogram = new int[NUM_BINS];
     private static int[] blueHistogram = new int[NUM_BINS];
-    private static AreaChart<Number, Number> Histogram;//直方图，统计图片灰度和R,G,B
+    private static AreaChart<Number, Number> Histogram;
     private static BufferedImage bufferedImage;
     public static void drawHistogram(Image image){
         //清空
@@ -103,12 +103,9 @@ public class Histogram{
         forkJoinPool.shutdown();
 
     }
-    /**
-     * @describle 实现ParallelHistogramTask内部方法
-     * @author 申雄全
-     * @updateTime 2023/12/5 21:29
-     */
+
     static class ParallelHistogramTask extends RecursiveAction{
+
         private static final int Max =50000;
         private final int startX, startY, endX, endY;
 

@@ -6,18 +6,25 @@ import java.util.concurrent.RecursiveAction;
 
 /**
  * @author 申雄全
- * @Description
+ * @Description 该类实现图片算法处理多线程
  * @date 2023/12/11 21:52
  */
 public abstract class ThreadProcess {
 
     private final BufferedImage originalImage;
-    private final BufferedImage processedImage;//处理完的图形
+    private final BufferedImage processedImage;
 
     public ThreadProcess(BufferedImage originalImage,BufferedImage processedImage){
       this.originalImage=originalImage;
       this.processedImage=processedImage;
     }
+    /**
+     * @Description
+     * @param rgb
+     * @return int
+     * @author 申雄全
+     * @updateTime 2023/12/23 22:45
+     */
     public abstract int calculateRGB(int rgb);
 
     public void run() {

@@ -78,7 +78,6 @@ public class ImageObj implements Serializable {
         TEMPERATURE
     }
 
-    //创建一个属于自己的曲线，这样就不用记录了
     private transient SplineCanvas splineCanvas = new SplineCanvas(190);
 
 

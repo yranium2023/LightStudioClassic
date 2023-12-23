@@ -23,15 +23,30 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+
+/**
+ * @describle 该接口的方法实现对颜色的判断
+ * @author 申雄全 
+ * @updateTime 2023/12/22 22:41 
+ */
+interface MyFunction {
+    /**
+     * @Description 判断某rgb值所代表的颜色
+     * @param rgb
+     * @return boolean
+     * @author 申雄全
+     * @date 2023/12/23 22:50
+     */
+    boolean isSelectedColor(int rgb);
+
+}
+
 /**
  * @author 申雄全
  * @Description 该类实现HSL调整，对每个颜色调整色相，饱和度，亮度
  * @date 2023/12/9 13:48
  */
-interface MyFunction {
-    boolean doSomething(int rgb);
 
-}
 public class HSLColorAdjustment extends ImageAdjustment {
 
     private static final double [] lastValue={0,0,0};
@@ -45,6 +60,7 @@ public class HSLColorAdjustment extends ImageAdjustment {
     private static ChangeListener<Number> saturationListener;
     private static ChangeListener<Number> luminanceListener;
     private static final MyFunction[] isColor=new MyFunction[7];
+
     static{
         isColor[0]=HSLColorAdjustment::isRed;
         isColor[1]=HSLColorAdjustment::isOrange;
@@ -204,7 +220,7 @@ public class HSLColorAdjustment extends ImageAdjustment {
             new ThreadProcess(bufferedImage,processedImage){
                 @Override
                 public int calculateRGB(int rgb) {
-                    if(isColor[selectedColor].doSomething(rgb)){
+                    if(isColor[selectedColor].isSelectedColor(rgb)){
                         int alpha = (rgb >> 24) & 0xFF;
                         int r = (rgb >> 16) & 0xFF;
                         int g = (rgb >> 8) & 0xFF;
@@ -281,7 +297,7 @@ public class HSLColorAdjustment extends ImageAdjustment {
         return hsl;
     }
 
-    // 将 HSL 转换回 RGB
+
     private static int hslToRgb(double h, double s, double l,int alpha) {
         int r, g, b;
 
@@ -316,7 +332,7 @@ public class HSLColorAdjustment extends ImageAdjustment {
         return (v1);
     }
 
-    // 判断红色
+
     private static boolean isRed(int rgb) {
         int red = (rgb >> 16) & 0xFF;
         int green = (rgb >> 8) & 0xFF;
@@ -365,4 +381,5 @@ public class HSLColorAdjustment extends ImageAdjustment {
         int blue = rgb & 0xFF;
         return red > 105 && green < 195 && blue > 105;
     }
+
 }
