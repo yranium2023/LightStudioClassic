@@ -3,40 +3,39 @@ package org.example;
 import io.vproxy.vfx.control.globalscreen.GlobalScreenUtils;
 import io.vproxy.vfx.manager.task.TaskManager;
 import io.vproxy.vfx.ui.button.FusionButton;
-import io.vproxy.vfx.ui.layout.HPadding;
-import io.vproxy.vfx.ui.layout.VPadding;
 import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.VSceneGroup;
-import io.vproxy.vfx.ui.scene.VSceneHideMethod;
 import io.vproxy.vfx.ui.scene.VSceneShowMethod;
 import io.vproxy.vfx.ui.stage.VStage;
 import io.vproxy.vfx.util.FXUtils;
 import javafx.application.Application;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.example.ImageModification.AutoWhiteBalance;
-import org.example.ImageStatistics.Histogram;
 import org.example.ImageTools.ImportImageResource;
-import org.example.Obj.ImageObj;
 import org.example.Obj.ImportHistory;
 import org.example.Scene.*;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *  这是承载Application的场景
+ * 这是承载Application的场景
+ *
  * @author 吴鹄远
  * Date 2023/12/3 20:07
  */
 public class LSMain extends Application {
 
+    private static VStage stage;
     private final List<SuperScene> mainScenes = new ArrayList<>();
     private VSceneGroup sceneGroup;
-    private static VStage stage;
+
+    public static VStage getStage() {
+        return stage;
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -109,13 +108,13 @@ public class LSMain extends Application {
 
         });
         InputButton.setOnAction(e -> {
-            StaticValues.importHistogramPane(imageImportScene.histogramPane);
+            StaticValues.importHistogramPane(ImageImportScene.histogramPane);
             sceneGroup.show(imageImportScene, VSceneShowMethod.FROM_LEFT);
             ImageImportScene.renewHistoryTable();
         });
         ImageEditButton.setOnAction(e -> {
-            StaticValues.importHistogramPane(imageEditScene.histogramPane);
-            imageEditScene.initImageEditScene();
+            StaticValues.importHistogramPane(ImageEditScene.histogramPane);
+            ImageEditScene.initImageEditScene();
             sceneGroup.show(imageEditScene, VSceneShowMethod.FROM_RIGHT);
         });
 
@@ -136,7 +135,7 @@ public class LSMain extends Application {
 
     @Override
     public void stop() throws Exception {
-        if(!ImageImportMenuScene.totalImages.isEmpty())
+        if (!ImageImportMenuScene.totalImages.isEmpty())
             ImageImportMenuScene.importHistories.add(new ImportHistory(ImageImportMenuScene.totalImages));
         File tmpFile = new File("./src/main/resources/serializedData/testData.dat");
         // 获取文件的父目录
@@ -145,14 +144,14 @@ public class LSMain extends Application {
         if (!parentDirectory.exists()) {
             parentDirectory.mkdirs();
         }
-        if(!tmpFile.exists()){
+        if (!tmpFile.exists()) {
             try {
                 tmpFile.createNewFile();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        if(!ImageImportMenuScene.importHistories.isEmpty()){
+        if (!ImageImportMenuScene.importHistories.isEmpty()) {
             try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("./src/main/resources/serializedData/testData.dat"))) {
                 // 写入整个列表
                 oos.writeObject(ImageImportMenuScene.importHistories);
@@ -160,14 +159,9 @@ public class LSMain extends Application {
                 e.printStackTrace();
             }
             System.out.println("序列化结束");
-        }
-        else{
+        } else {
             System.out.println("无需序列化");
         }
         super.stop();
-    }
-
-    public static VStage getStage() {
-        return stage;
     }
 }

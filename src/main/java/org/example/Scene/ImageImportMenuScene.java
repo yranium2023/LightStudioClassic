@@ -8,7 +8,10 @@ import io.vproxy.vfx.ui.layout.HPadding;
 import io.vproxy.vfx.ui.layout.VPadding;
 import io.vproxy.vfx.ui.loading.VProgressBar;
 import io.vproxy.vfx.ui.pane.FusionPane;
-import io.vproxy.vfx.ui.scene.*;
+import io.vproxy.vfx.ui.scene.VScene;
+import io.vproxy.vfx.ui.scene.VSceneGroup;
+import io.vproxy.vfx.ui.scene.VSceneHideMethod;
+import io.vproxy.vfx.ui.scene.VSceneRole;
 import io.vproxy.vfx.ui.stage.VStage;
 import io.vproxy.vfx.util.FXUtils;
 import javafx.application.Platform;
@@ -39,30 +42,26 @@ import java.io.ObjectInputStream;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 
 /**
- *  这个类用于创建导入图像、查看导入历史的场景
+ * 这个类用于创建导入图像、查看导入历史的场景
+ *
  * @author 吴鹄远
  * Date 2023/12/4 14:37
  */
 public class ImageImportMenuScene extends SuperScene {
 
-    private List<ImageObj> selectedImages = new ArrayList<>();
     public static List<ImageObj> totalImages = new ArrayList<>();
+    public static List<VBox> copyImageButtonsVbox = new ArrayList<>();
+    public static List<ImportHistory> importHistories = new ArrayList<>();
+    int outputState = 1;
+    int errorFlag = 0;
+    int historyState = 0;
+    private final List<ImageObj> selectedImages = new ArrayList<>();
     private List<VBox> fusionImageButtonsVbox = null;
 
-    public static List<VBox> copyImageButtonsVbox = new ArrayList<>();
-
-    public static List<ImportHistory> importHistories = new ArrayList<>();
-
-    int outputState=1;
-
-    int errorFlag=0;
-
-    int historyState=0;
     public ImageImportMenuScene(Supplier<VSceneGroup> sceneGroupSup) {
 
         super(VSceneRole.DRAWER_VERTICAL);
@@ -113,7 +112,7 @@ public class ImageImportMenuScene extends SuperScene {
 
             if (selectedFiles != null && !selectedFiles.isEmpty()) {
 
-                Label label =new Label();
+                Label label = new Label();
                 label.setTextFill(Color.WHITE);
                 VProgressBar progressBar = new VProgressBar();
                 progressBar.setLength(400);
@@ -160,7 +159,7 @@ public class ImageImportMenuScene extends SuperScene {
                             }
 
                             // 更新进度
-                            progressBar.setProgress((double)(i+1)/(double)(totalFiles));
+                            progressBar.setProgress((double) (i + 1) / (double) (totalFiles));
                         }
                         return null;
                     }
@@ -222,29 +221,29 @@ public class ImageImportMenuScene extends SuperScene {
             //绑定两个pane的宽和高
             FXUtils.observeWidthHeight(scrollOutputFlowPane.getNode(), flowOutputPane);
             scrollOutputFlowPane.setContent(flowOutputPane);
-            List<ImageObj> outImages=new ArrayList<>();
-            for(ImageObj imageObj:totalImages){
+            List<ImageObj> outImages = new ArrayList<>();
+            for (ImageObj imageObj : totalImages) {
                 VBox outVox = new VBox();
                 FusionImageButton outImageButton = new FusionImageButton();
                 imageObj.setOutPutImageVBox(outVox);
                 outVox.getChildren().add(outImageButton);
                 Label descriptionLabel;
-                if(imageObj.getClipImages().isEmpty())
+                if (imageObj.getClipImages().isEmpty())
                     descriptionLabel = new Label(Integer.toString((int) imageObj.getOriginalImage().getWidth()) + '×' + (int) imageObj.getOriginalImage().getHeight());
-                else{
-                    descriptionLabel = new Label(Integer.toString((int) imageObj.getClipImages().get(imageObj.getClipImages().size()-1).getWidth()) + '×' + (int) imageObj.getClipImages().get(imageObj.getClipImages().size()-1).getHeight());
+                else {
+                    descriptionLabel = new Label(Integer.toString((int) imageObj.getClipImages().get(imageObj.getClipImages().size() - 1).getWidth()) + '×' + (int) imageObj.getClipImages().get(imageObj.getClipImages().size() - 1).getHeight());
                 }
                 descriptionLabel.setTextFill(Color.WHITE);
                 outVox.getChildren().add(descriptionLabel);
                 outVox.setAlignment(Pos.CENTER); // 居中对齐
                 outVox.setSpacing(5);
-                outImageButton.setPrefSize(80,80);
+                outImageButton.setPrefSize(80, 80);
                 outImageButton.getImageView().setImage(imageObj.getButtonImage());
                 outImageButton.setOnAction(event -> {
-                    if(outImages.contains(imageObj)){
+                    if (outImages.contains(imageObj)) {
                         outImages.remove(imageObj);
                         outVox.setBackground(null);
-                    }else{
+                    } else {
                         outImages.add(imageObj);
                         outVox.setBackground(new Background(new BackgroundFill(Color.GRAY, new CornerRadii(5), null)));
                     }
@@ -270,13 +269,13 @@ public class ImageImportMenuScene extends SuperScene {
                 setOnlyAnimateWhenNotClicked(true);
             }};
             yesButton.setOnAction(event -> {
-                if(!outImages.isEmpty()){
+                if (!outImages.isEmpty()) {
                     DirectoryChooser directoryChooser = new DirectoryChooser();
                     directoryChooser.setTitle("选择导出路径");
 
                     // 显示文件选择对话框
                     File selectedDirectory = directoryChooser.showDialog(outputStage.getStage());
-                    Label label =new Label();
+                    Label label = new Label();
                     label.setTextFill(Color.WHITE);
                     VProgressBar progressBar = new VProgressBar();
                     progressBar.setLength(400);
@@ -290,19 +289,19 @@ public class ImageImportMenuScene extends SuperScene {
                         protected Void call() throws Exception {
                             int totalNum = outImages.size();
                             int tmpNum = 0;
-                            for(ImageObj imageObj:outImages){
+                            for (ImageObj imageObj : outImages) {
                                 Platform.runLater(() -> label.setText(imageObj.getImageName()));
                                 // 构造完整的文件路径
-                                String filePath =selectedDirectory.getPath()+File.separator + imageObj.getImageName();
+                                String filePath = selectedDirectory.getPath() + File.separator + imageObj.getImageName();
                                 BufferedImage bufferedImage;
-                                if(outputState==0)//低品质导出
-                                    bufferedImage = SwingFXUtils.fromFXImage(imageObj.getEditingImage(),null);
-                                else{//高品质导出
-                                    if(imageObj.getAdjustHistory().isEmpty())//未编辑则导出原图
+                                if (outputState == 0)//低品质导出
+                                    bufferedImage = SwingFXUtils.fromFXImage(imageObj.getEditingImage(), null);
+                                else {//高品质导出
+                                    if (imageObj.getAdjustHistory().isEmpty())//未编辑则导出原图
                                     {
-                                        bufferedImage=SwingFXUtils.fromFXImage(imageObj.getOriginalImage(),null);
-                                    }else{//编辑后导出新图
-                                        bufferedImage = SwingFXUtils.fromFXImage(imageObj.AdjustRealImage(),null);
+                                        bufferedImage = SwingFXUtils.fromFXImage(imageObj.getOriginalImage(), null);
+                                    } else {//编辑后导出新图
+                                        bufferedImage = SwingFXUtils.fromFXImage(imageObj.AdjustRealImage(), null);
                                     }
                                 }
                                 // 保存BufferedImage到文件
@@ -315,7 +314,7 @@ public class ImageImportMenuScene extends SuperScene {
                                 }
                                 tmpNum++;
                                 // 更新进度
-                                progressBar.setProgress((double)(tmpNum)/(double)(totalNum));
+                                progressBar.setProgress((double) (tmpNum) / (double) (totalNum));
                             }
                             return null;
                         }
@@ -345,7 +344,7 @@ public class ImageImportMenuScene extends SuperScene {
                 }
             });
             noButton.setOnAction(event -> {
-                for(ImageObj imageObj:outImages){
+                for (ImageObj imageObj : outImages) {
                     imageObj.getOutPutImageVBox().setBackground(null);
                 }
                 outImages.clear();
@@ -371,26 +370,25 @@ public class ImageImportMenuScene extends SuperScene {
                 setOnlyAnimateWhenNotClicked(true);
             }};
 
-            if (outputState==1)
-            {
+            if (outputState == 1) {
                 highButton.setDisable(true);
                 lowButton.setDisable(false);
-            }else{
+            } else {
                 highButton.setDisable(false);
                 lowButton.setDisable(true);
             }
 
             highButton.setOnAction(event -> {
-                if(outputState==0){
-                    outputState=1;
+                if (outputState == 0) {
+                    outputState = 1;
                     highButton.setDisable(true);
                     lowButton.setDisable(false);
                 }
             });
 
             lowButton.setOnAction(event -> {
-                if(outputState==1){
-                    outputState=0;
+                if (outputState == 1) {
+                    outputState = 0;
                     highButton.setDisable(false);
                     lowButton.setDisable(true);
                 }
@@ -421,10 +419,10 @@ public class ImageImportMenuScene extends SuperScene {
             setVgap(5);
         }};
 
-        FXUtils.observeHeight(this.getContentPane(),scrollHisFlowPane.getNode(),-90);
+        FXUtils.observeHeight(this.getContentPane(), scrollHisFlowPane.getNode(), -90);
 
         // 创建一个矩形用于显示flowPane的边框
-        Rectangle hisFlowPaneRec = new Rectangle(scrollHisFlowPane.getNode().getLayoutX()-5, scrollHisFlowPane.getNode().getLayoutY()-5 , hisFlowPane.getPrefWidth() , hisFlowPane.getPrefHeight() ) {{
+        Rectangle hisFlowPaneRec = new Rectangle(scrollHisFlowPane.getNode().getLayoutX() - 5, scrollHisFlowPane.getNode().getLayoutY() - 5, hisFlowPane.getPrefWidth(), hisFlowPane.getPrefHeight()) {{
             setFill(Color.TRANSPARENT);
             setStroke(Color.WHITE); // 设置矩形的边框颜色
             setStrokeType(StrokeType.INSIDE);//边框为内嵌式，不会超出pane的范围
@@ -432,7 +430,7 @@ public class ImageImportMenuScene extends SuperScene {
         hisFlowPaneRec.heightProperty().bind(scrollHisFlowPane.getNode().heightProperty());
         hisFlowPaneRec.widthProperty().bind(scrollHisFlowPane.getNode().widthProperty());
         File tmpFile = new File("./src/main/resources/serializedData/testData.dat");
-        if(tmpFile.exists()&&tmpFile.length() > 0){
+        if (tmpFile.exists() && tmpFile.length() > 0) {
             //反序列化过程
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("./src/main/resources/serializedData/testData.dat"))) {
                 // 读取整个列表
@@ -440,20 +438,20 @@ public class ImageImportMenuScene extends SuperScene {
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
-        }else{
-            importHistories= new ArrayList<>();
+        } else {
+            importHistories = new ArrayList<>();
         }
         //开始添加按钮
-        if(importHistories!=null){
-            for(ImportHistory importHistory:importHistories){
-                if(importHistory.getTotalImageObj().isEmpty())
+        if (importHistories != null) {
+            for (ImportHistory importHistory : importHistories) {
+                if (importHistory.getTotalImageObj().isEmpty())
                     continue;
                 FusionButton hisButton = new FusionButton(importHistory.getDate()) {{
                     setPrefWidth(320);
                     setPrefHeight(50);
                     setOnlyAnimateWhenNotClicked(true);
                 }};
-                hisButton.setOnAction(e->{
+                hisButton.setOnAction(e -> {
                     //以下为模式选择
                     VStage selectModelStage = new VStage();
                     selectModelStage.getStage().setResizable(false);
@@ -476,7 +474,7 @@ public class ImageImportMenuScene extends SuperScene {
                         setLayoutX(155);
                         setOnlyAnimateWhenNotClicked(true);
                     }};
-                    Label tipInform =new Label("是否要导入之前进行的修改"){{
+                    Label tipInform = new Label("是否要导入之前进行的修改") {{
                         setTextFill(Color.WHITE);
                         setLayoutX(100);
                     }};
@@ -488,11 +486,11 @@ public class ImageImportMenuScene extends SuperScene {
 
                     //以下为传入过程
 
-                    errorFlag=0;
-                    int len=totalImages.size();
-                    for(int i=0;i<len;i++)
+                    errorFlag = 0;
+                    int len = totalImages.size();
+                    for (int i = 0; i < len; i++)
                         totalImages.get(0).delete();
-                    Label label =new Label();
+                    Label label = new Label();
                     label.setTextFill(Color.WHITE);
                     VProgressBar progressBar = new VProgressBar();
                     progressBar.setLength(400);
@@ -504,16 +502,16 @@ public class ImageImportMenuScene extends SuperScene {
                     Task<Void> task = new Task<>() {
                         @Override
                         protected Void call() throws Exception {
-                            int totalNum =importHistory.getTotalImageObj().size();
+                            int totalNum = importHistory.getTotalImageObj().size();
                             int tmpNum = 0;
-                            for(ImageObj imageObj:importHistory.getTotalImageObj()){
-                                URL url =new URL(imageObj.getImagePath());
-                                URI uri =url.toURI();
+                            for (ImageObj imageObj : importHistory.getTotalImageObj()) {
+                                URL url = new URL(imageObj.getImagePath());
+                                URI uri = url.toURI();
                                 String filePath = uri.getPath();
                                 File selectedFile = new File(filePath);
                                 System.out.println(imageObj.getImagePath());
-                                if(!selectedFile.exists()){
-                                    errorFlag=1;
+                                if (!selectedFile.exists()) {
+                                    errorFlag = 1;
                                     tmpNum++;
                                     continue;
                                 }
@@ -521,26 +519,25 @@ public class ImageImportMenuScene extends SuperScene {
                                 Image selectedImage = new Image(imageObj.getImagePath());
                                 imageObj.setOriginalImage(selectedImage);
                                 imageObj.setEditingImage(ImageObj.resizeNormalImage(selectedImage));
-                                ImageObj newImageObj= new ImageObj(selectedImage);
+                                ImageObj newImageObj = new ImageObj(selectedImage);
                                 newImageObj.setImageName(selectedFile.getName());
-                                if(!imageObj.getAdjustHistory().isEmpty()){
+                                if (!imageObj.getAdjustHistory().isEmpty()) {
                                     newImageObj.setAdjustHistory(imageObj.getAdjustHistory());
                                     newImageObj.setAdjustHistoryMap(imageObj.getAdjustHistoryMap());
                                 }
                                 imageObj.setClipImages(new ArrayList<>());
-                                if(historyState==1&&(!imageObj.getAdjustHistory().isEmpty()))
-                                {
-                                    Image newOrigianlImage =imageObj.AdjustRealImage();
+                                if (historyState == 1 && (!imageObj.getAdjustHistory().isEmpty())) {
+                                    Image newOrigianlImage = imageObj.AdjustRealImage();
                                     newImageObj.setOriginalImage(newOrigianlImage);
                                     newImageObj.setEditingImage(ImageObj.resizeNormalImage(newOrigianlImage));
-                                }else{
+                                } else {
                                     newImageObj.setEditingImage(ImageObj.resizeNormalImage(newImageObj.getOriginalImage()));
                                 }
                                 selectedImages.add(newImageObj);
                                 totalImages.add(newImageObj);
                                 tmpNum++;
                                 // 更新进度
-                                progressBar.setProgress((double)(tmpNum)/(double)(totalNum));
+                                progressBar.setProgress((double) (tmpNum) / (double) (totalNum));
                             }
                             return null;
                         }
@@ -556,7 +553,7 @@ public class ImageImportMenuScene extends SuperScene {
                     vBox.setLayoutY(25);
 
                     yesHisButton.setOnAction(event -> {
-                        historyState=1;
+                        historyState = 1;
                         inputProgressStage.show();
                         // 启动任务
                         new Thread(task).start();
@@ -564,7 +561,7 @@ public class ImageImportMenuScene extends SuperScene {
                     });
 
                     noHisButton.setOnAction(event -> {
-                        historyState=0;
+                        historyState = 0;
                         inputProgressStage.show();
                         // 启动任务
                         new Thread(task).start();
@@ -581,12 +578,12 @@ public class ImageImportMenuScene extends SuperScene {
                             fusionImageButtonsVbox = createImageButtonsVbox();
                             // 清空之前选中的图片
                             selectedImages.clear();
-                            if(errorFlag==0)
+                            if (errorFlag == 0)
                                 System.out.println("图片全部传入成功");
                             sceneGroupSup.get().hide(this, VSceneHideMethod.TO_LEFT);
                             FXUtils.runDelay(VScene.ANIMATION_DURATION_MILLIS, () -> sceneGroupSup.get().removeScene(this));
-                            if(errorFlag==1){
-                                VBox errorVbox=new VBox();
+                            if (errorFlag == 1) {
+                                VBox errorVbox = new VBox();
                                 //还需要输出报错信息
                                 VStage errorInformStage = new VStage();
                                 Label errorInformation = new Label("部分图片已被删除或移动到其他位置");
@@ -600,7 +597,7 @@ public class ImageImportMenuScene extends SuperScene {
                                 errorVbox.setLayoutX(50);
                                 errorVbox.setLayoutY(25);
                                 errorInformStage.show();
-                                errorFlag=0;
+                                errorFlag = 0;
                             }
                         });
                     });
@@ -642,14 +639,13 @@ public class ImageImportMenuScene extends SuperScene {
                     System.out.println("选择成功");
                     StaticValues.editingImageObj = imageObj;
                     Histogram.drawHistogram(StaticValues.editingImageObj.getEditingImage());
-                    for(ImageObj imageObj1:totalImages){
-                        if(imageObj1.getImageButton().isDisable())
-                        {
+                    for (ImageObj imageObj1 : totalImages) {
+                        if (imageObj1.getImageButton().isDisable()) {
                             imageObj1.getImageButton().setDisable(false);
                             imageObj1.getButtonVBox().setBackground(null);
                         }
 
-                        if(imageObj1.getCopyButton().isDisable()){
+                        if (imageObj1.getCopyButton().isDisable()) {
                             imageObj1.getCopyButton().setDisable(false);
                             imageObj1.getCopyVBox().setBackground(null);
                         }
@@ -667,14 +663,13 @@ public class ImageImportMenuScene extends SuperScene {
                     System.out.println("选择成功");
                     StaticValues.editingImageObj = imageObj;
                     Histogram.drawHistogram(StaticValues.editingImageObj.getEditingImage());
-                    for(ImageObj imageObj1:totalImages){
-                        if(imageObj1.getImageButton().isDisable())
-                        {
+                    for (ImageObj imageObj1 : totalImages) {
+                        if (imageObj1.getImageButton().isDisable()) {
                             imageObj1.getImageButton().setDisable(false);
                             imageObj1.getButtonVBox().setBackground(null);
                         }
 
-                        if(imageObj1.getCopyButton().isDisable()){
+                        if (imageObj1.getCopyButton().isDisable()) {
                             imageObj1.getCopyButton().setDisable(false);
                             imageObj1.getCopyVBox().setBackground(null);
                         }

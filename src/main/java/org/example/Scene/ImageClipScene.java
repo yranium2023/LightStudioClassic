@@ -5,42 +5,43 @@ import io.vproxy.vfx.ui.pane.FusionPane;
 import io.vproxy.vfx.ui.scene.VSceneRole;
 import io.vproxy.vfx.util.FXUtils;
 import javafx.scene.layout.Pane;
-import org.example.Pane.ImagePane;
 import org.example.LSMain;
+import org.example.Pane.ImagePane;
 
 /**
- *  该类实现裁剪的绘制
+ * 该类实现裁剪的绘制
+ *
  * @author 吴鹄远
  * Date 2023/12/4 17:00
  */
-public class ImageClipScene extends SuperScene{
+public class ImageClipScene extends SuperScene {
 
-    private static Pane histogramPane=new Pane();
+    private static final Pane histogramPane = new Pane();
 
-    private static ImagePane clipImagePane=new ImagePane(){{
-            setWidth(900);
-            setHeight(550);
-            setLayoutX(60);
-            setLayoutY(100);
+    private static final ImagePane clipImagePane = new ImagePane() {{
+        setWidth(900);
+        setHeight(550);
+        setLayoutX(60);
+        setLayoutY(100);
     }};
-    private static FusionPane modulePane=new FusionPane(){{
+    private static final FusionPane modulePane = new FusionPane() {{
         getNode().setPrefWidth(220);
         getNode().setPrefHeight(550);
         getNode().setLayoutX(1100);
         getNode().setLayoutY(350);
     }};
     //创建确认按钮
-    private static FusionButton affirmButton=new FusionButton("确认裁剪"){{
+    private static final FusionButton affirmButton = new FusionButton("确认裁剪") {{
         setLayoutY(30);
         setPrefWidth(130);
         setPrefHeight(50);
     }};
-    private static FusionButton cancelButton=new FusionButton("取消裁剪"){{
+    private static final FusionButton cancelButton = new FusionButton("取消裁剪") {{
         setDisable(true);
         setPrefWidth(130);
         setPrefHeight(50);
     }};
-    private static FusionButton resetButton=new FusionButton("复位"){{
+    private static final FusionButton resetButton = new FusionButton("复位") {{
         setDisable(true);
         setPrefWidth(130);
         setPrefHeight(50);
@@ -60,13 +61,13 @@ public class ImageClipScene extends SuperScene{
         histogramPane.layoutYProperty().bind(clipImagePane.layoutYProperty());
 
 
-        FXUtils.observeWidthCenter(modulePane.getContentPane(),affirmButton);//使得确认按钮居中显示
-        FXUtils.observeWidthHeightCenter(modulePane.getContentPane(),cancelButton);//使得取消按钮居中显示
+        FXUtils.observeWidthCenter(modulePane.getContentPane(), affirmButton);//使得确认按钮居中显示
+        FXUtils.observeWidthHeightCenter(modulePane.getContentPane(), cancelButton);//使得取消按钮居中显示
         //使得取消按钮居中显示
-        resetButton.layoutYProperty().bind(modulePane.getContentPane().heightProperty().add(-30-50));
-        FXUtils.observeWidthCenter(modulePane.getContentPane(),resetButton);
-        FXUtils.observeWidthHeight(LSMain.getStage().getInitialScene().getContentPane(),clipImagePane,-350,-200);
-        FXUtils.observeHeight(LSMain.getStage().getInitialScene().getContentPane(),modulePane.getNode(),-450);
+        resetButton.layoutYProperty().bind(modulePane.getContentPane().heightProperty().add(-30 - 50));
+        FXUtils.observeWidthCenter(modulePane.getContentPane(), resetButton);
+        FXUtils.observeWidthHeight(LSMain.getStage().getInitialScene().getContentPane(), clipImagePane, -350, -200);
+        FXUtils.observeHeight(LSMain.getStage().getInitialScene().getContentPane(), modulePane.getNode(), -450);
 
         getContentPane().getChildren().add(histogramPane);
         getContentPane().getChildren().add(clipImagePane);
@@ -75,10 +76,11 @@ public class ImageClipScene extends SuperScene{
     }
 
 
-    public static ImagePane getClipImagePane(){
+    public static ImagePane getClipImagePane() {
         return clipImagePane;
     }
-    public static void InitClipImagePane(){
+
+    public static void InitClipImagePane() {
         clipImagePane.InitImagePane();
     }
 

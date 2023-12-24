@@ -1,41 +1,38 @@
 package org.example.ImageModification;
 
 
-import io.vproxy.vfx.ui.button.ImageButton;
-import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
 import org.example.ImageTools.ImageTransfer;
 import org.example.Obj.ImageObj;
 import org.example.Scene.ImageEditScene;
 
 import java.awt.image.BufferedImage;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
- *  该类用于实现自动白平衡
+ * 该类用于实现自动白平衡
+ *
  * @author 申雄全
  * @author 吴鹄远
  * Date 2023/12/9 14:56
  */
 
-public class AutoWhiteBalance extends ImageAdjustment{
+public class AutoWhiteBalance extends ImageAdjustment {
 
-    private static double  redGain,greenGain,blueGain;
+    private static double redGain, greenGain, blueGain;
 
     /**
-     *   该方法用于实现按钮对图片进行自动白平衡调整
+     * 该方法用于实现按钮对图片进行自动白平衡调整
+     *
      * @param editingImageObj
      * @author 吴鹄远
      * Date 2023/12/11 15:26
-    **/
+     **/
 
-    public static void autoWhiteBalance(ImageObj editingImageObj){
-        bufferedImage=ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
+    public static void autoWhiteBalance(ImageObj editingImageObj) {
+        bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
         processedImage = new BufferedImage(bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
         ExecutorService executor = Executors.newSingleThreadExecutor();
         executor.submit(() -> {
@@ -50,12 +47,14 @@ public class AutoWhiteBalance extends ImageAdjustment{
         });
         executor.shutdown();
     }
+
     /**
-     *  计算rgb的增益值
+     * 计算rgb的增益值
+     *
      * @author 申雄全
      * Date 2023/12/23 23:23
      */
-    private static void calculateRGBGain(){
+    private static void calculateRGBGain() {
 
         // 计算图像的红色、绿色和蓝色通道的平均值
         double totalRed = 0.0, totalGreen = 0.0, totalBlue = 0.0;
@@ -86,28 +85,30 @@ public class AutoWhiteBalance extends ImageAdjustment{
         greenGain = grayValue / averageGreen;
         blueGain = grayValue / averageBlue;
     }
-   /**
-    *  自动白平衡算法实现
-    * @author 申雄全 
-    * Date 2023/12/22 22:37 
-    */
-    public static void WhiteBalance(){
-           calculateRGBGain();
-            new ThreadProcess(bufferedImage, processedImage) {
-                @Override
-                public int calculateRGB(int rgb) {
-                    int alpha = (rgb >> 24) & 0xFF;
-                    int red = (int) (((rgb >> 16) & 0xFF) * redGain);
-                    int green = (int) (((rgb >> 8) & 0xFF) * greenGain);
-                    int blue = (int) ((rgb & 0xFF) * blueGain);
-                    // Clamp the values to the valid range [0, 255]
-                    red = Math.min(255, Math.max(0, red));
-                    green = Math.min(255, Math.max(0, green));
-                    blue = Math.min(255, Math.max(0, blue));
-                    // 更新调整后的颜色值
-                    return  (alpha << 24)|(red << 16) | (green << 8) | blue;
-                }
-            }.run();
+
+    /**
+     * 自动白平衡算法实现
+     *
+     * @author 申雄全
+     * Date 2023/12/22 22:37
+     */
+    public static void WhiteBalance() {
+        calculateRGBGain();
+        new ThreadProcess(bufferedImage, processedImage) {
+            @Override
+            public int calculateRGB(int rgb) {
+                int alpha = (rgb >> 24) & 0xFF;
+                int red = (int) (((rgb >> 16) & 0xFF) * redGain);
+                int green = (int) (((rgb >> 8) & 0xFF) * greenGain);
+                int blue = (int) ((rgb & 0xFF) * blueGain);
+                // Clamp the values to the valid range [0, 255]
+                red = Math.min(255, Math.max(0, red));
+                green = Math.min(255, Math.max(0, green));
+                blue = Math.min(255, Math.max(0, blue));
+                // 更新调整后的颜色值
+                return (alpha << 24) | (red << 16) | (green << 8) | blue;
+            }
+        }.run();
     }
 
 }

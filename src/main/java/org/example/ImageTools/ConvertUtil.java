@@ -8,8 +8,10 @@ import javafx.scene.image.WritableImage;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+
 /**
- *  该类实现图片的一些基本转换
+ * 该类实现图片的一些基本转换
+ *
  * @author 申雄全
  * Date 2023/12/24 1:50
  */
@@ -64,8 +66,8 @@ public class ConvertUtil {
             //双线性压缩
             w = srcImg.getWidth();
             h = srcImg.getHeight();
-            double scaleX = (double) targetWidth / w;
-            double scaleY = (double) targetHeight / h;
+            double scaleX = targetWidth / w;
+            double scaleY = targetHeight / h;
             BufferedImage tmp = new BufferedImage((int) targetWidth, (int) targetHeight, type);
             Graphics2D g2 = tmp.createGraphics();
             g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);

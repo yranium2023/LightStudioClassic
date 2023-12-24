@@ -6,7 +6,8 @@ import javafx.scene.image.Image;
 import java.awt.image.BufferedImage;
 
 /**
- *  该类工具类，实现image和bufferedImage的相互转换
+ * 该类工具类，实现image和bufferedImage的相互转换
+ *
  * @author 申雄全
  * Date 2023/12/5 20:37
  */

@@ -7,7 +7,8 @@ import io.vproxy.vfx.theme.impl.DarkTheme;
 import io.vproxy.vfx.theme.impl.DarkThemeFontProvider;
 
 /**
- *  该类用于设定程序的主题、字体、图标
+ * 该类用于设定程序的主题、字体、图标
+ *
  * @author 吴鹄远
  * Date 2023/11/30 19:14
  */
@@ -19,6 +20,7 @@ public class ThemeSet extends DarkTheme {
 
     /**
      * 设定黑暗主题
+     *
      * @author 吴鹄远
      * Date 2023/12/24 11:51
      */

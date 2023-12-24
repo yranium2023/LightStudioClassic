@@ -4,7 +4,6 @@ import io.vproxy.vfx.ui.button.FusionImageButton;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import org.example.Curve.SplineCanvas.SplineBrightnessAdjustment;
@@ -29,25 +28,19 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicReference;
 
 /**
- *  统一管理每个导入的图片 有其原图 精致压缩（用于编辑）和粗糙压缩（用于当图标使用）的图片
+ * 统一管理每个导入的图片 有其原图 精致压缩（用于编辑）和粗糙压缩（用于当图标使用）的图片
+ *
  * @author 张喆宇
  * Date 2023/12/9 11:05
  */
 public class ImageObj implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    private transient Image originalImage = null;
-
-    private transient Image buttonImage = null;
-
-    private transient Image editingImage = null;
-
-    private transient List<Image> clipImages = new ArrayList<>();
-
     String imagePath = null;
-
     transient String imageName = null;
-
+    private transient Image originalImage = null;
+    private transient Image buttonImage = null;
+    private transient Image editingImage = null;
+    private transient List<Image> clipImages = new ArrayList<>();
     private transient VBox buttonVBox = null;
 
     private transient FusionImageButton imageButton = null;
@@ -70,44 +63,18 @@ public class ImageObj implements Serializable {
     //历史记录
     private List<AdjustHistory> adjustHistory = new ArrayList<>();
 
-    private Map<String,AdjustHistory> adjustHistoryMap=new HashMap<>();
-
-    /**
-     *  该枚举类实现轴对应的类型
-     * @author 申雄全
-     * Date 2023/12/24 1:01
-     */
-    public enum sliderType_1 {
-        /**
-         *对比度轴
-         */
-        CONTRAST,
-        /**
-         *曝光度轴
-         */
-        EXPOSURE,
-        /**
-         *饱和度轴
-         */
-        SATURATION,
-        /**
-         *色温轴
-         */
-        TEMPERATURE
-    }
-
+    private Map<String, AdjustHistory> adjustHistoryMap = new HashMap<>();
     private transient SplineCanvas splineCanvas = new SplineCanvas(190);
-
-
-    private transient HashMap<HSLColor,HSLInfo> hslInfos = new HashMap<>() {{
-        put(HSLColor.Red,new HSLInfo(HSLColor.Red));
-        put(HSLColor.Yellow,new HSLInfo(HSLColor.Yellow));
-        put(HSLColor.Orange,new HSLInfo(HSLColor.Orange));
-        put(HSLColor.Green,new HSLInfo(HSLColor.Green));
-        put(HSLColor.Cyan,new HSLInfo(HSLColor.Cyan));
-        put(HSLColor.Blue,new HSLInfo(HSLColor.Blue));
-        put(HSLColor.Purple,new HSLInfo(HSLColor.Purple));
+    private final transient HashMap<HSLColor, HSLInfo> hslInfos = new HashMap<>() {{
+        put(HSLColor.Red, new HSLInfo(HSLColor.Red));
+        put(HSLColor.Yellow, new HSLInfo(HSLColor.Yellow));
+        put(HSLColor.Orange, new HSLInfo(HSLColor.Orange));
+        put(HSLColor.Green, new HSLInfo(HSLColor.Green));
+        put(HSLColor.Cyan, new HSLInfo(HSLColor.Cyan));
+        put(HSLColor.Blue, new HSLInfo(HSLColor.Blue));
+        put(HSLColor.Purple, new HSLInfo(HSLColor.Purple));
     }};
+
 
     /***
      *  构造函数 用于构建Image对象
@@ -119,79 +86,6 @@ public class ImageObj implements Serializable {
     public ImageObj(Image originalImage) {
         this.originalImage = originalImage;
         this.imagePath = originalImage.getUrl();
-    }
-
-    /**
-     *  传入按钮图片
-     * @param buttonImage
-     * @author 张喆宇
-     * Date 2023/12/9 11:13
-     **/
-    public void setButtonImage(Image buttonImage) {
-        this.buttonImage = buttonImage;
-    }
-
-    /**
-     *  传入编辑用图片
-     * @param editingImage
-     * @author 张喆宇
-     * Date 2023/12/9 11:13
-     **/
-    public void setEditingImage(Image editingImage) {
-        this.editingImage = editingImage;
-    }
-
-    /***
-     *  获取原图
-     * @return javafx.scene.image.Image
-     * @author 张喆宇
-     * Date 2023/12/9 11:14
-     **/
-    public Image getOriginalImage() {
-        return originalImage;
-    }
-
-    /***
-     *  获取按钮图片
-     * @return javafx.scene.image.Image
-     * @author 张喆宇
-     * Date 2023/12/9 11:14
-     **/
-
-    public Image getButtonImage() {
-        return buttonImage;
-    }
-
-    /***
-     *  获取编辑中图片
-     * @return javafx.scene.image.Image
-     * @author 张喆宇
-     * Date 2023/12/9 11:14
-     **/
-
-    public Image getEditingImage() {
-        return editingImage;
-    }
-
-    /***
-     *  获取图片路径
-     * @return java.lang.String
-     * @author 张喆宇
-     * Date 2023/12/9 11:14
-     **/
-
-    public String getImagePath() {
-        return imagePath;
-    }
-
-    /***
-     *  获取裁剪图片列表
-     * @author 张喆宇
-     * Date 2023/12/9 11:26
-     **/
-
-    public List<Image> getClipImages() {
-        return clipImages;
     }
 
     /***
@@ -248,34 +142,110 @@ public class ImageObj implements Serializable {
         return ConvertUtil.ConvertToFxImage(compressedButtonBufferedImage);
     }
 
+    // 序列化方法，接受一个包含多个 ImageObj 对象的列表，将它们保存到指定文件夹，并清空序列化文件
+    public static void serializeImageObjs(List<ImageObj> imageObjs, String filePath) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+            // 写入整个列表
+            oos.writeObject(imageObjs);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 反序列化方法，返回一个包含多个 ImageObj 对象的列表
+    public static List<ImageObj> deserializeImageObjs(String filePath) {
+        List<ImageObj> imageObjs = null;
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
+            // 读取整个列表
+            imageObjs = (List<ImageObj>) ois.readObject();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        return imageObjs;
+    }
+
     /***
-     *  存入图库中按钮
-     * @param imageButton
+     *  获取原图
+     * @return javafx.scene.image.Image
      * @author 张喆宇
-     * Date 2023/12/10 0:30
+     * Date 2023/12/9 11:14
+     **/
+    public Image getOriginalImage() {
+        return originalImage;
+    }
+
+    public void setOriginalImage(Image originalImage) {
+        this.originalImage = originalImage;
+    }
+
+    /***
+     *  获取按钮图片
+     * @return javafx.scene.image.Image
+     * @author 张喆宇
+     * Date 2023/12/9 11:14
      **/
 
-    public void setImageButton(FusionImageButton imageButton) {
-        this.imageButton = imageButton;
+    public Image getButtonImage() {
+        return buttonImage;
     }
 
-    public void setButtonVBox(VBox buttonVBox) {
-        this.buttonVBox = buttonVBox;
-    }
-
-    public void setCopyVBox(VBox copyVBox) {
-        this.copyVBox = copyVBox;
+    /**
+     * 传入按钮图片
+     *
+     * @param buttonImage
+     * @author 张喆宇
+     * Date 2023/12/9 11:13
+     **/
+    public void setButtonImage(Image buttonImage) {
+        this.buttonImage = buttonImage;
     }
 
     /***
-     *  存入横版按钮
-     * @param copyButton
+     *  获取编辑中图片
+     * @return javafx.scene.image.Image
      * @author 张喆宇
-     * Date 2023/12/10 0:30
+     * Date 2023/12/9 11:14
      **/
 
-    public void setCopyButton(FusionImageButton copyButton) {
-        this.copyButton = copyButton;
+    public Image getEditingImage() {
+        return editingImage;
+    }
+
+    /**
+     * 传入编辑用图片
+     *
+     * @param editingImage
+     * @author 张喆宇
+     * Date 2023/12/9 11:13
+     **/
+    public void setEditingImage(Image editingImage) {
+        this.editingImage = editingImage;
+    }
+
+    /***
+     *  获取图片路径
+     * @return java.lang.String
+     * @author 张喆宇
+     * Date 2023/12/9 11:14
+     **/
+
+    public String getImagePath() {
+        return imagePath;
+    }
+
+    /***
+     *  获取裁剪图片列表
+     * @author 张喆宇
+     * Date 2023/12/9 11:26
+     **/
+
+    public List<Image> getClipImages() {
+        return clipImages;
+    }
+
+    public void setClipImages(List<Image> clipImages) {
+        this.clipImages = clipImages;
     }
 
     /***
@@ -294,8 +264,7 @@ public class ImageObj implements Serializable {
     }
 
     /**
-     * @param nowImage
-     *  这个类用来生成新的压缩图片、图标图片、直方图、和图片面熟
+     * @param nowImage 这个类用来生成新的压缩图片、图标图片、直方图、和图片面熟
      * @author 吴鹄远
      * Date 2023/12/11 15:24
      **/
@@ -309,8 +278,8 @@ public class ImageObj implements Serializable {
         Image newEditingImage = ImageObj.resizeNormalImage(nowImage);
         setEditingImage(newEditingImage);
         Histogram.drawHistogram(newEditingImage);
-        if(!this.getClipImages().isEmpty()){
-            Image newClipImage=this.getClipImages().get(this.clipImages.size()-1);
+        if (!this.getClipImages().isEmpty()) {
+            Image newClipImage = this.getClipImages().get(this.clipImages.size() - 1);
             this.buttonVBox.getChildren().remove(1);
             Label descriptionLabel = new Label(Integer.toString((int) newClipImage.getWidth()) + '×' + (int) newClipImage.getHeight());
             descriptionLabel.setTextFill(Color.WHITE);
@@ -387,16 +356,46 @@ public class ImageObj implements Serializable {
         return imageButton;
     }
 
+    /***
+     *  存入图库中按钮
+     * @param imageButton
+     * @author 张喆宇
+     * Date 2023/12/10 0:30
+     **/
+
+    public void setImageButton(FusionImageButton imageButton) {
+        this.imageButton = imageButton;
+    }
+
     public FusionImageButton getCopyButton() {
         return copyButton;
+    }
+
+    /***
+     *  存入横版按钮
+     * @param copyButton
+     * @author 张喆宇
+     * Date 2023/12/10 0:30
+     **/
+
+    public void setCopyButton(FusionImageButton copyButton) {
+        this.copyButton = copyButton;
     }
 
     public VBox getButtonVBox() {
         return buttonVBox;
     }
 
+    public void setButtonVBox(VBox buttonVBox) {
+        this.buttonVBox = buttonVBox;
+    }
+
     public VBox getCopyVBox() {
         return copyVBox;
+    }
+
+    public void setCopyVBox(VBox copyVBox) {
+        this.copyVBox = copyVBox;
     }
 
     public VBox getOutPutImageVBox() {
@@ -411,24 +410,16 @@ public class ImageObj implements Serializable {
         return splineCanvas;
     }
 
+    public void setSplineCanvas(SplineCanvas splineCanvas) {
+        this.splineCanvas = splineCanvas;
+    }
+
     public HashMap<HSLColor, HSLInfo> getHslInfos() {
         return hslInfos;
     }
 
     public List<AdjustHistory> getAdjustHistory() {
         return adjustHistory;
-    }
-
-    public void setSplineCanvas(SplineCanvas splineCanvas) {
-        this.splineCanvas = splineCanvas;
-    }
-
-    public void setOriginalImage(Image originalImage) {
-        this.originalImage = originalImage;
-    }
-
-    public void setClipImages(List<Image> clipImages) {
-        this.clipImages = clipImages;
     }
 
     public void setAdjustHistory(List<AdjustHistory> adjustHistory) {
@@ -443,119 +434,103 @@ public class ImageObj implements Serializable {
         this.adjustHistoryMap = adjustHistoryMap;
     }
 
-    // 序列化方法，接受一个包含多个 ImageObj 对象的列表，将它们保存到指定文件夹，并清空序列化文件
-    public static void serializeImageObjs(List<ImageObj> imageObjs, String filePath) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
-            // 写入整个列表
-            oos.writeObject(imageObjs);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // 反序列化方法，返回一个包含多个 ImageObj 对象的列表
-    public static List<ImageObj> deserializeImageObjs(String filePath) {
-        List<ImageObj> imageObjs = null;
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
-            // 读取整个列表
-            imageObjs = (List<ImageObj>) ois.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return imageObjs;
-    }
     /**
-     *   此方法用于添加历史记录
+     * 此方法用于添加历史记录
+     *
      * @param History
      * @author 吴鹄远
      * Date 2023/12/18 19:58
-    **/
+     **/
 
-    public void addHistory(AdjustHistory History){
+    public void addHistory(AdjustHistory History) {
         adjustHistory.add(History);
         adjustHistoryMap.put(History.getAdjustProperty(), History);
     }
+
     /**
-     *   此方法用于导出最高品质的图像
+     * 此方法用于导出最高品质的图像
+     *
      * @return javafx.scene.image.Image
      * @author 吴鹄远
      * Date 2023/12/18 14:33
-    **/
+     **/
 
-    public Image AdjustRealImage(){
-        Image tempImage=null;
-        if(clipImages.isEmpty()){
-            tempImage=originalImage;
-        }else{
-            int lastIndex=clipImages.size()-1;
-            tempImage=clipImages.get(lastIndex);
+    public Image AdjustRealImage() {
+        Image tempImage = null;
+        if (clipImages.isEmpty()) {
+            tempImage = originalImage;
+        } else {
+            int lastIndex = clipImages.size() - 1;
+            tempImage = clipImages.get(lastIndex);
         }
 
-        ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage);
+        ImageAdjustment.bufferedImage = ImageTransfer.toBufferedImage(tempImage);
         Set<Map.Entry<String, AdjustHistory>> entrySet = adjustHistoryMap.entrySet();
-        Iterator <Map.Entry<String,AdjustHistory>> iterator=entrySet.iterator();
+        Iterator<Map.Entry<String, AdjustHistory>> iterator = entrySet.iterator();
         ExecutorService executor = Executors.newSingleThreadExecutor();
-            while (iterator.hasNext()) {
-                Map.Entry<String, AdjustHistory> entry = iterator.next();
-                String key = entry.getKey();
-                AdjustHistory value=entry.getValue();
-                ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage);
-                ImageAdjustment.setProcessedImage();
-                Future<?> future = executor.submit(()->{
-                    imageToHistory(value);
-                });
-                try {
-                    future.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-                tempImage=ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
+        while (iterator.hasNext()) {
+            Map.Entry<String, AdjustHistory> entry = iterator.next();
+            String key = entry.getKey();
+            AdjustHistory value = entry.getValue();
+            ImageAdjustment.bufferedImage = ImageTransfer.toBufferedImage(tempImage);
+            ImageAdjustment.setProcessedImage();
+            Future<?> future = executor.submit(() -> {
+                imageToHistory(value);
+            });
+            try {
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
-            executor.shutdown();
+            tempImage = ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
+        }
+        executor.shutdown();
         return ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage);
     }
+
     /**
-     *   此方法用于裁剪过程中对裁剪好的图像进行渲染
+     * 此方法用于裁剪过程中对裁剪好的图像进行渲染
+     *
      * @author 吴鹄远
      * Date 2023/12/18 14:39
-    **/
+     **/
 
-    public void editingImageToHistory(){
-        AtomicReference<Image> tempImage= new AtomicReference<>(this.editingImage);
-        ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage.get());
+    public void editingImageToHistory() {
+        AtomicReference<Image> tempImage = new AtomicReference<>(this.editingImage);
+        ImageAdjustment.bufferedImage = ImageTransfer.toBufferedImage(tempImage.get());
         Set<Map.Entry<String, AdjustHistory>> entrySet = adjustHistoryMap.entrySet();
-        Iterator <Map.Entry<String,AdjustHistory>> iterator=entrySet.iterator();
+        Iterator<Map.Entry<String, AdjustHistory>> iterator = entrySet.iterator();
         ExecutorService executor = Executors.newSingleThreadExecutor();
-            while (iterator.hasNext()) {
-                Map.Entry<String, AdjustHistory> entry = iterator.next();
-                String key = entry.getKey();
-                AdjustHistory value=entry.getValue();
-                ImageAdjustment.bufferedImage=ImageTransfer.toBufferedImage(tempImage.get());
-                ImageAdjustment.setProcessedImage();
-                Future<?> future = executor.submit(()->{
-                    imageToHistory(value);
-                });
-                try {
-                    future.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-                tempImage.set(ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage));
+        while (iterator.hasNext()) {
+            Map.Entry<String, AdjustHistory> entry = iterator.next();
+            String key = entry.getKey();
+            AdjustHistory value = entry.getValue();
+            ImageAdjustment.bufferedImage = ImageTransfer.toBufferedImage(tempImage.get());
+            ImageAdjustment.setProcessedImage();
+            Future<?> future = executor.submit(() -> {
+                imageToHistory(value);
+            });
+            try {
+                future.get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
-            executor.shutdown();
-            renewAll(tempImage.get());
+            tempImage.set(ImageTransfer.toJavaFXImage(ImageAdjustment.processedImage));
+        }
+        executor.shutdown();
+        renewAll(tempImage.get());
     }
 
     /**
-     *   用于根据某一条历史记录调整图像。注意每次调整都需要刷新bufferedImage。
+     * 用于根据某一条历史记录调整图像。注意每次调整都需要刷新bufferedImage。
+     *
      * @param history
      * @author 吴鹄远
      * Date 2023/12/18 10:05
-    **/
-    public void imageToHistory(AdjustHistory history){
-        var key=history.getAdjustProperty();
-        var value=history;
+     **/
+    public void imageToHistory(AdjustHistory history) {
+        var key = history.getAdjustProperty();
+        var value = history;
         if ("点曲线调整".equals(key)) {
             SplineCanvas.setResultLUT(value.getLUTValue());
             SplineBrightnessAdjustment.applyLUTToImage();
@@ -571,19 +546,19 @@ public class ImageObj implements Serializable {
         } else if ("色温调整".equals(key)) {
             ImageTemperatureAdjustment.setKelvin(value.getFirstValue());
             ImageTemperatureAdjustment.adjustTemperatureAsync();
-        } else if ("HSL色相调整".equals(key.substring(0,key.length()-1))) {
+        } else if ("HSL色相调整".equals(key.substring(0, key.length() - 1))) {
             //System.out.println(history.getAdjustProperty());
             HSLColorAdjustment.setSelectedColor(Character.getNumericValue(key.charAt(7)));
             //System.out.println(Character.getNumericValue(key.charAt(7)));
             HSLColorAdjustment.setHuePer(value.getFirstValue());
             HSLColorAdjustment.setSelectedProperty(0);
             HSLColorAdjustment.HSLAdjust();
-        } else if ("HSL饱和度调整".equals(key.substring(0,key.length()-1))) {
+        } else if ("HSL饱和度调整".equals(key.substring(0, key.length() - 1))) {
             HSLColorAdjustment.setSelectedColor(Character.getNumericValue(key.charAt(8)));
             HSLColorAdjustment.setSatuPer(value.getFirstValue());
             HSLColorAdjustment.setSelectedProperty(1);
             HSLColorAdjustment.HSLAdjust();
-        } else if ("HSL明度调整".equals(key.substring(0,key.length()-1))) {
+        } else if ("HSL明度调整".equals(key.substring(0, key.length() - 1))) {
             HSLColorAdjustment.setSelectedColor(Character.getNumericValue(key.charAt(7)));
             HSLColorAdjustment.setLumPer(value.getFirstValue());
             HSLColorAdjustment.setSelectedProperty(2);
@@ -591,6 +566,31 @@ public class ImageObj implements Serializable {
         } else if ("自动白平衡".equals(key)) {
             AutoWhiteBalance.WhiteBalance();
         }
+    }
+
+    /**
+     * 该枚举类实现轴对应的类型
+     *
+     * @author 申雄全
+     * Date 2023/12/24 1:01
+     */
+    public enum sliderType_1 {
+        /**
+         * 对比度轴
+         */
+        CONTRAST,
+        /**
+         * 曝光度轴
+         */
+        EXPOSURE,
+        /**
+         * 饱和度轴
+         */
+        SATURATION,
+        /**
+         * 色温轴
+         */
+        TEMPERATURE
     }
 
 }

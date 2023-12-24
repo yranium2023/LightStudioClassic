@@ -10,15 +10,13 @@ import org.example.Obj.ImageObj;
 import org.example.Scene.ImageEditScene;
 import org.example.StaticValues;
 
-import java.awt.image.BufferedImage;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
  * 该类实现图像对比度调整
- * @author 申雄全 
+ *
+ * @author 申雄全
  * @author 吴鹄远
  * Date 2023/12/22 22:38
  */
@@ -28,15 +26,16 @@ public class ImageContrastAdjustment extends ImageAdjustment {
     private static ChangeListener<Number> contrastSliderListener;
 
     /**
-     *  该方法用于绑定对比度调整滑动条
+     * 该方法用于绑定对比度调整滑动条
+     *
      * @param contrastSlider
      * @param editingImageObj
      * @author 吴鹄远
-     *  2023/12/12 16:27
-    **/
+     * 2023/12/12 16:27
+     **/
 
-    public static void contrastAdjustBind(VSlider contrastSlider, ImageObj editingImageObj){
-        if(editingImageObj!=null){
+    public static void contrastAdjustBind(VSlider contrastSlider, ImageObj editingImageObj) {
+        if (editingImageObj != null) {
             System.out.println("bind success");
             // 移除之前的监听器
             if (contrastSliderListener != null) {
@@ -44,11 +43,11 @@ public class ImageContrastAdjustment extends ImageAdjustment {
             }
             contrastSlider.setPercentage(StaticValues.editingImageObj.getContrastPercent());
             double threshold = 0.1; // 定义阈值，每次滑动长度大于该值时认为值发生改变
-            lastValue=1.0;
+            lastValue = 1.0;
             // 创建新的监听器
             contrastSliderListener = (obs, old, now) -> {
                 if (old == now) return;
-                if(editingImageObj.getNowSlider_1()!= ImageObj.sliderType_1.CONTRAST){
+                if (editingImageObj.getNowSlider_1() != ImageObj.sliderType_1.CONTRAST) {
                     bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
                     ImageAdjustment.setProcessedImage();
                     editingImageObj.setNowSlider_1(ImageObj.sliderType_1.CONTRAST);
@@ -75,9 +74,9 @@ public class ImageContrastAdjustment extends ImageAdjustment {
             };
             // 添加新的监听器
             contrastSlider.percentageProperty().addListener(contrastSliderListener);
-            contrastSlider.setOnMouseReleased(e->{
+            contrastSlider.setOnMouseReleased(e -> {
                 editingImageObj.setContrastPercent(contrastSlider.getPercentage());
-                editingImageObj.addHistory(new AdjustHistory("对比度调整",contrastValue));
+                editingImageObj.addHistory(new AdjustHistory("对比度调整", contrastValue));
             });
         }
     }
@@ -85,33 +84,35 @@ public class ImageContrastAdjustment extends ImageAdjustment {
     public static void setContrastValue(double contrastValue) {
         ImageContrastAdjustment.contrastValue = contrastValue;
     }
+
     /**
      * 该方法实现对比度调整算法
+     *
      * @author 申雄全
      * 2023/12/23 23:24
      */
     public static void adjustContrastAsync() {
 
-            new ThreadProcess(bufferedImage, processedImage) {
-                @Override
-                public int calculateRGB(int rgb) {
-                    int alpha = (rgb >> 24) & 0xFF;
-                    int red = (rgb >> 16) & 0xFF;
-                    int green = (rgb >> 8) & 0xFF;
-                    int blue = rgb & 0xFF;
+        new ThreadProcess(bufferedImage, processedImage) {
+            @Override
+            public int calculateRGB(int rgb) {
+                int alpha = (rgb >> 24) & 0xFF;
+                int red = (rgb >> 16) & 0xFF;
+                int green = (rgb >> 8) & 0xFF;
+                int blue = rgb & 0xFF;
 
-                    // Adjust the contrast
-                    red = (int) (Math.pow(red / 255.0, 1.0 / contrastValue) * 255.0);
-                    green = (int) (Math.pow(green / 255.0, 1.0 / contrastValue) * 255.0);
-                    blue = (int) (Math.pow(blue / 255.0, 1.0 / contrastValue) * 255.0);
-                    // Clamp the values to the valid range [0, 255]
-                    red = Math.max(0, Math.min(255, red));
-                    green = Math.max(0, Math.min(255, green));
-                    blue = Math.max(0, Math.min(255, blue));
-                    // Compose the adjusted color
-                    return (alpha << 24) | (red << 16) | (green << 8) | blue;
-                }
-            }.run();
+                // Adjust the contrast
+                red = (int) (Math.pow(red / 255.0, 1.0 / contrastValue) * 255.0);
+                green = (int) (Math.pow(green / 255.0, 1.0 / contrastValue) * 255.0);
+                blue = (int) (Math.pow(blue / 255.0, 1.0 / contrastValue) * 255.0);
+                // Clamp the values to the valid range [0, 255]
+                red = Math.max(0, Math.min(255, red));
+                green = Math.max(0, Math.min(255, green));
+                blue = Math.max(0, Math.min(255, blue));
+                // Compose the adjusted color
+                return (alpha << 24) | (red << 16) | (green << 8) | blue;
+            }
+        }.run();
 
 
     }

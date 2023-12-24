@@ -10,13 +10,6 @@ import javafx.geometry.Insets;
 import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.CornerRadii;
-import org.example.Curve.SplineCanvas.SplineBrightnessAdjustment;
-import org.example.Curve.SplineCanvas.SplineCanvas;
-import org.example.HSL.HSLColorAdjustment;
-import org.example.ImageModification.ImageContrastAdjustment;
-import org.example.ImageModification.ImageExposureAdjustment;
-import org.example.ImageModification.ImageSaturationAdjustment;
-import org.example.ImageModification.ImageTemperatureAdjustment;
 import org.example.Obj.AdjustHistory;
 import org.example.Obj.HSLColor;
 import org.example.Obj.ImageObj;
@@ -29,23 +22,25 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- *  这个场景用于显示图像编辑的历史记录，并添加撤回、重做操作等
+ * 这个场景用于显示图像编辑的历史记录，并添加撤回、重做操作等
+ *
  * @author 吴鹄远
  * Date 2023/12/17 10:50
  */
-public class EditHistoryScene extends SuperScene{
+public class EditHistoryScene extends SuperScene {
 
-    public static VTableView historyTable=new VTableView<AdjustHistory>(){{
+    public static VTableView historyTable = new VTableView<AdjustHistory>() {{
         getNode().setLayoutY(50);
-       getNode().setPrefHeight(600);
-       getNode().setPrefWidth(320);
+        getNode().setPrefHeight(600);
+        getNode().setPrefWidth(320);
     }};
-    public static VTableColumn<AdjustHistory, String> labelCol=new VTableColumn<AdjustHistory,String>("修改内容", data->data.getAdjustProperty());
-    public static VTableColumn<AdjustHistory, ZonedDateTime>timeCol=new VTableColumn<AdjustHistory, ZonedDateTime>("修改时间",data->
+    public static VTableColumn<AdjustHistory, String> labelCol = new VTableColumn<AdjustHistory, String>("修改内容", data -> data.getAdjustProperty());
+    public static VTableColumn<AdjustHistory, ZonedDateTime> timeCol = new VTableColumn<AdjustHistory, ZonedDateTime>("修改时间", data ->
             ZonedDateTime.ofInstant(
                     Instant.ofEpochMilli(data.getTime()), ZoneId.systemDefault()
             ));
-    public EditHistoryScene(){
+
+    public EditHistoryScene() {
         super(VSceneRole.DRAWER_VERTICAL);
         getNode().setPrefWidth(350);
         enableAutoContentWidth();
@@ -55,58 +50,61 @@ public class EditHistoryScene extends SuperScene{
                 Insets.EMPTY
         )));
         labelCol.setPrefWidth(170);
-        historyTable.getColumns().addAll(labelCol,timeCol);
-        FXUtils.observeWidthCenter(getContentPane(),historyTable.getNode());
+        historyTable.getColumns().addAll(labelCol, timeCol);
+        FXUtils.observeWidthCenter(getContentPane(), historyTable.getNode());
         timeCol.setTextBuilder(MiscUtils.YYYYMMddHHiissDateTimeFormatter::format);
         getContentPane().getChildren().add(historyTable.getNode());
 
 
-
     }
+
     /**
-     *  该类实现历史记录的调整
+     * 该类实现历史记录的调整
+     *
      * @param history
      * @param tableView
      * @author 申雄全
      * Date 2023/12/23 23:30
      */
-    public static void addLabel(AdjustHistory history,VTableView tableView){
+    public static void addLabel(AdjustHistory history, VTableView tableView) {
 
-        var key=history.getAdjustProperty();
-        var newHis=new AdjustHistory(history);
+        var key = history.getAdjustProperty();
+        var newHis = new AdjustHistory(history);
         System.out.println(key);
         if ("点曲线调整".equals(key)) {
             newHis.setAdjustProperty(key);
         } else if ("对比度调整".equals(key)) {
-            newHis.setAdjustProperty(key+" "+String.format("%.6f",newHis.getFirstValue()));
+            newHis.setAdjustProperty(key + " " + String.format("%.6f", newHis.getFirstValue()));
         } else if ("饱和度调整".equals(key)) {
-            newHis.setAdjustProperty(key+" "+String.format("%.6f",newHis.getFirstValue()));
+            newHis.setAdjustProperty(key + " " + String.format("%.6f", newHis.getFirstValue()));
         } else if ("曝光度调整".equals(key)) {
-            newHis.setAdjustProperty(key+" "+String.format("%.6f",newHis.getFirstValue()));
+            newHis.setAdjustProperty(key + " " + String.format("%.6f", newHis.getFirstValue()));
         } else if ("色温调整".equals(key)) {
-            newHis.setAdjustProperty(key+" "+String.format("%.2f",newHis.getFirstValue()));
-        } else if ("HSL色相调整".equals(key.substring(0,key.length()-1))) {
-            int index=extractNumber(key);
-            HSLColor color1=getColor(index);
-            newHis.setAdjustProperty("HSL色相调整 "+color1);
-        } else if ("HSL饱和度调整".equals(key.substring(0,key.length()-1))) {
-            int index=extractNumber(key);
-            HSLColor color1=getColor(index);
-            newHis.setAdjustProperty("HSL饱和度调整 "+color1);
-        } else if ("HSL明度调整".equals(key.substring(0,key.length()-1))) {
-            int index=extractNumber(key);
-            HSLColor color1=getColor(index);
-            newHis.setAdjustProperty("HSL明度调整 "+color1);
+            newHis.setAdjustProperty(key + " " + String.format("%.2f", newHis.getFirstValue()));
+        } else if ("HSL色相调整".equals(key.substring(0, key.length() - 1))) {
+            int index = extractNumber(key);
+            HSLColor color1 = getColor(index);
+            newHis.setAdjustProperty("HSL色相调整 " + color1);
+        } else if ("HSL饱和度调整".equals(key.substring(0, key.length() - 1))) {
+            int index = extractNumber(key);
+            HSLColor color1 = getColor(index);
+            newHis.setAdjustProperty("HSL饱和度调整 " + color1);
+        } else if ("HSL明度调整".equals(key.substring(0, key.length() - 1))) {
+            int index = extractNumber(key);
+            HSLColor color1 = getColor(index);
+            newHis.setAdjustProperty("HSL明度调整 " + color1);
         }
         tableView.getItems().add(newHis);
     }
+
     /**
-     *   截取正则表达式中的数字
+     * 截取正则表达式中的数字
+     *
      * @param input
      * @return int
      * @author 吴鹄远
      * Date 2023/12/18 17:08
-    **/
+     **/
 
     private static int extractNumber(String input) {
         // 定义匹配数字的正则表达式
@@ -122,25 +120,29 @@ public class EditHistoryScene extends SuperScene{
             return -1;
         }
     }
-    public static HSLColor getColor(int index){
-        HSLColor[] values=HSLColor.values();
+
+    public static HSLColor getColor(int index) {
+        HSLColor[] values = HSLColor.values();
         return values[index];
     }
+
     /**
-     *   在切换所选对象时更新表
+     * 在切换所选对象时更新表
+     *
      * @author 吴鹄远
      * Date 2023/12/18 19:24
-    **/
+     **/
 
-    public static void renewEditHistoryScene(){
-        ImageObj editingImageObj= StaticValues.editingImageObj;
+    public static void renewEditHistoryScene() {
+        ImageObj editingImageObj = StaticValues.editingImageObj;
         historyTable.getItems().clear();
-        if(editingImageObj!=null&&!editingImageObj.getAdjustHistory().isEmpty()){
-            for(var history:editingImageObj.getAdjustHistory()){
-                addLabel(history,historyTable);
+        if (editingImageObj != null && !editingImageObj.getAdjustHistory().isEmpty()) {
+            for (var history : editingImageObj.getAdjustHistory()) {
+                addLabel(history, historyTable);
             }
         }
     }
+
     @Override
     public String title() {
         return "EditHistory";

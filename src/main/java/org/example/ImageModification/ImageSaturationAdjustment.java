@@ -10,35 +10,34 @@ import org.example.Obj.ImageObj;
 import org.example.Scene.ImageEditScene;
 import org.example.StaticValues;
 
-import java.awt.image.BufferedImage;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- *  该类实现图片饱和度的调整
+ * 该类实现图片饱和度的调整
+ *
  * @author 申雄全
  * @author 吴鹄远
  * Date 2023/12/9 15:00
  */
 public class ImageSaturationAdjustment extends ImageAdjustment {
 
-    private static double lastValue=1;
+    private static double lastValue = 1;
     private static double saturationValue;
     private static ChangeListener<Number> SliderListener;
 
 
     /**
-     *   该方法用于绑定饱和度调整滑动条
+     * 该方法用于绑定饱和度调整滑动条
+     *
      * @param saturationSlider
      * @param editingImageObj
      * @author 吴鹄远
      * Date 2023/12/12 16:44
-    **/
+     **/
 
-    public static void saturationAdjustBind(VSlider saturationSlider, ImageObj editingImageObj){
-        if(editingImageObj!=null){
+    public static void saturationAdjustBind(VSlider saturationSlider, ImageObj editingImageObj) {
+        if (editingImageObj != null) {
             System.out.println("bind success");
             // 移除之前的监听器
             if (SliderListener != null) {
@@ -46,11 +45,11 @@ public class ImageSaturationAdjustment extends ImageAdjustment {
             }
             saturationSlider.setPercentage(StaticValues.editingImageObj.getSaturationPercent());
             double threshold = 0.1; // 定义阈值，每次滑动长度大于该值时认为值发生改变
-            lastValue=1;
+            lastValue = 1;
             // 创建新的监听器
             SliderListener = (obs, old, now) -> {
                 if (old == now) return;
-                if(editingImageObj.getNowSlider_1()!= ImageObj.sliderType_1.SATURATION){
+                if (editingImageObj.getNowSlider_1() != ImageObj.sliderType_1.SATURATION) {
                     bufferedImage = ImageTransfer.toBufferedImage(editingImageObj.getEditingImage());
                     ImageAdjustment.setProcessedImage();
                     editingImageObj.setNowSlider_1(ImageObj.sliderType_1.SATURATION);
@@ -76,31 +75,33 @@ public class ImageSaturationAdjustment extends ImageAdjustment {
             };
             // 添加新的监听器
             saturationSlider.percentageProperty().addListener(SliderListener);
-            saturationSlider.setOnMouseReleased(e->{
+            saturationSlider.setOnMouseReleased(e -> {
                 editingImageObj.setSaturationPercent(saturationSlider.getPercentage());
-                editingImageObj.addHistory(new AdjustHistory("饱和度调整",saturationValue));
+                editingImageObj.addHistory(new AdjustHistory("饱和度调整", saturationValue));
             });
         }
     }
+
     /**
-     *  该方法实现饱和度调整算法
+     * 该方法实现饱和度调整算法
+     *
      * @author 申雄全
      * Date 2023/12/23 23:24
      */
     public static void adjustSaturationAsync() {
-            new ThreadProcess(bufferedImage,processedImage){
-                @Override
-                public int calculateRGB(int rgb) {
-                    int alpha = (rgb >> 24) & 0xFF;
-                    int red = (rgb >> 16) & 0xFF;
-                    int green = (rgb >> 8) & 0xFF;
-                    int blue = rgb & 0xFF;
-                    double[] hsl = rgbToHsl(red, green, blue);
-                    hsl[1] *= saturationValue;
-                    hsl[1] = Math.max(0, Math.min(1, hsl[1]));
-                    return hslToRgb(hsl[0], hsl[1], hsl[2], alpha);
-                }
-            }.run();
+        new ThreadProcess(bufferedImage, processedImage) {
+            @Override
+            public int calculateRGB(int rgb) {
+                int alpha = (rgb >> 24) & 0xFF;
+                int red = (rgb >> 16) & 0xFF;
+                int green = (rgb >> 8) & 0xFF;
+                int blue = rgb & 0xFF;
+                double[] hsl = rgbToHsl(red, green, blue);
+                hsl[1] *= saturationValue;
+                hsl[1] = Math.max(0, Math.min(1, hsl[1]));
+                return hslToRgb(hsl[0], hsl[1], hsl[2], alpha);
+            }
+        }.run();
 
     }
 
@@ -155,7 +156,7 @@ public class ImageSaturationAdjustment extends ImageAdjustment {
     }
 
     // 将 HSL 转换回 RGB
-    private static int hslToRgb(double h, double s, double l,int alpha) {
+    private static int hslToRgb(double h, double s, double l, int alpha) {
         int r, g, b;
 
         if (s <= 0.01) {
@@ -177,7 +178,7 @@ public class ImageSaturationAdjustment extends ImageAdjustment {
             b = (int) (255.0 * hueToRgb(var_1, var_2, h - (1.0 / 3.0)));
         }
 
-        return  (alpha << 24) | (r << 16) | (g << 8) | b;
+        return (alpha << 24) | (r << 16) | (g << 8) | b;
     }
 
     private static double hueToRgb(double v1, double v2, double vH) {

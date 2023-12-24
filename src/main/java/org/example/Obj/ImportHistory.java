@@ -8,13 +8,14 @@ import java.util.List;
 
 /**
  * 导入历史管理
+ *
  * @author 张喆宇
  * Date 2023/12/17 19:42
  */
 public class ImportHistory implements Serializable {
     private List<ImageObj> totalImageObj = new ArrayList<>();
 
-    private String date=null;
+    private String date = null;
 
     public ImportHistory(List<ImageObj> totalImageObj) {
         this.totalImageObj = totalImageObj;
@@ -23,7 +24,7 @@ public class ImportHistory implements Serializable {
         // 格式化时间
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formattedTime = currentTime.format(formatter);
-        this.date=formattedTime;
+        this.date = formattedTime;
     }
 
     public List<ImageObj> getTotalImageObj() {

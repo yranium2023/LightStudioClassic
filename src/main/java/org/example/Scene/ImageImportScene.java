@@ -32,14 +32,15 @@ import java.util.List;
 import java.util.function.Supplier;
 
 /**
- *  用于文件管理 暂时用于测试
+ * 用于文件管理 暂时用于测试
+ *
  * @author 张喆宇
  * Date 2023/12/3 20:56
  */
 public class ImageImportScene extends SuperScene {
 
     public static ImageImportMenuScene menuScene = null;
-    public static Pane histogramPane=new Pane();
+    public static Pane histogramPane = new Pane();
 
     public static VScrollPane scrollImportFlowPane = new VScrollPane() {{
         getNode().setLayoutX(70);
@@ -59,15 +60,15 @@ public class ImageImportScene extends SuperScene {
         setVgap(25);
     }};
 
-   private static VTableView historyTable=new VTableView<AdjustHistory>(){{
+    private static final VTableView historyTable = new VTableView<AdjustHistory>() {{
         getNode().setPrefHeight(600);
         getNode().setPrefWidth(320);
     }};
-   private static VTableColumn<AdjustHistory, String> labelCol=new VTableColumn<AdjustHistory,String>("修改内容", data->data.getAdjustProperty());
+    private static final VTableColumn<AdjustHistory, String> labelCol = new VTableColumn<AdjustHistory, String>("修改内容", data -> data.getAdjustProperty());
 
     public ImageImportScene(Supplier<VSceneGroup> sceneGroupSup) {
         super(VSceneRole.MAIN);
-        menuScene=new ImageImportMenuScene(sceneGroupSup);
+        menuScene = new ImageImportMenuScene(sceneGroupSup);
         enableAutoContentWidthHeight();
         //创建左上角的menuButton
         var menuBtn = new FusionImageButton(ImportImageResource.getInstance().getImage("image/menu.png")) {{
@@ -79,7 +80,7 @@ public class ImageImportScene extends SuperScene {
         }};
         //新建VScrollPane用于生成滑动窗口，并存放flowPane
         //绑定图片按钮显示pane和窗口
-        FXUtils.observeWidthHeight(LSMain.getStage().getInitialScene().getContentPane(),scrollImportFlowPane.getNode(),-350,-200);
+        FXUtils.observeWidthHeight(LSMain.getStage().getInitialScene().getContentPane(), scrollImportFlowPane.getNode(), -350, -200);
         //绑定两个pane的宽和高
         FXUtils.observeWidthHeight(scrollImportFlowPane.getNode(), flowImportPane);
         //绑定直方图和editImagePane的距离关系
@@ -89,7 +90,7 @@ public class ImageImportScene extends SuperScene {
         histogramPane.layoutYProperty().bind(scrollImportFlowPane.getNode().layoutYProperty());
 
         // 创建一个矩形用于显示flowPane的边框
-        Rectangle flowPaneRec = new Rectangle(scrollImportFlowPane.getNode().getLayoutX(), scrollImportFlowPane.getNode().getLayoutY(), flowImportPane.getPrefWidth() , flowImportPane.getPrefHeight()) {{
+        Rectangle flowPaneRec = new Rectangle(scrollImportFlowPane.getNode().getLayoutX(), scrollImportFlowPane.getNode().getLayoutY(), flowImportPane.getPrefWidth(), flowImportPane.getPrefHeight()) {{
             setFill(Color.TRANSPARENT);
             setStroke(Color.WHITE); // 设置矩形的边框颜色
             setStrokeType(StrokeType.OUTSIDE);//边框为内嵌式，不会超出pane的范围
@@ -130,7 +131,7 @@ public class ImageImportScene extends SuperScene {
         getContentPane().getChildren().add(histogramPane);
 
         //新建一个opPane用于存放文件操作按钮
-        FusionPane opPane=new FusionPane(){{
+        FusionPane opPane = new FusionPane() {{
             enableAutoContentWidthHeight();
             getNode().setPrefWidth(220);
             getNode().setPrefHeight(50);
@@ -152,10 +153,10 @@ public class ImageImportScene extends SuperScene {
 
 
         deleteBUtton.setOnAction(e -> {
-           if(StaticValues.editingImageObj!=null){
+            if (StaticValues.editingImageObj != null) {
                 StaticValues.editingImageObj.delete();
-               System.out.println("删除成功");
-           }
+                System.out.println("删除成功");
+            }
         });
 
         //绑定x坐标
@@ -189,12 +190,13 @@ public class ImageImportScene extends SuperScene {
         scrollImportFlowPane.setContent(flowImportPane);
 
     }
-    public static void renewHistoryTable(){
-        ImageObj editingImageObj= StaticValues.editingImageObj;
+
+    public static void renewHistoryTable() {
+        ImageObj editingImageObj = StaticValues.editingImageObj;
         historyTable.getItems().clear();
-        if(editingImageObj!=null&&!editingImageObj.getAdjustHistory().isEmpty()){
-            for(var history:editingImageObj.getAdjustHistory()){
-                EditHistoryScene.addLabel(history,historyTable);
+        if (editingImageObj != null && !editingImageObj.getAdjustHistory().isEmpty()) {
+            for (var history : editingImageObj.getAdjustHistory()) {
+                EditHistoryScene.addLabel(history, historyTable);
             }
         }
     }
