@@ -121,24 +121,22 @@ public class ImageObj implements Serializable {
         this.imagePath = originalImage.getUrl();
     }
 
-    /***
+    /**
      *  传入按钮图片
      * @param buttonImage
      * @author 张喆宇
      * Date 2023/12/9 11:13
      **/
-
     public void setButtonImage(Image buttonImage) {
         this.buttonImage = buttonImage;
     }
 
-    /***
+    /**
      *  传入编辑用图片
      * @param editingImage
      * @author 张喆宇
      * Date 2023/12/9 11:13
      **/
-
     public void setEditingImage(Image editingImage) {
         this.editingImage = editingImage;
     }
@@ -149,7 +147,6 @@ public class ImageObj implements Serializable {
      * @author 张喆宇
      * Date 2023/12/9 11:14
      **/
-
     public Image getOriginalImage() {
         return originalImage;
     }
