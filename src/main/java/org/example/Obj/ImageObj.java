@@ -78,19 +78,19 @@ public class ImageObj implements Serializable {
      * Date 2023/12/24 1:01
      */
     public enum sliderType_1 {
-        /*
+        /**
          *对比度轴
          */
         CONTRAST,
-        /*
+        /**
          *曝光度轴
          */
         EXPOSURE,
-        /*
+        /**
          *饱和度轴
          */
         SATURATION,
-        /*
+        /**
          *色温轴
          */
         TEMPERATURE

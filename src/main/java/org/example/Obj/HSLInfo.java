@@ -17,15 +17,15 @@ public class HSLInfo {
      * Date 2023/12/24 1:05
      */
     public enum sliderType{
-        /*
+        /**
          *色相轴
          */
         HUE,
-        /*
+        /**
          *饱和度轴
          */
         SATURATION,
-        /*
+        /**
          *明度轴
          */
         LUMINANCE

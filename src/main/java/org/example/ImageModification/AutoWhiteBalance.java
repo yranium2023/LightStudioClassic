@@ -1,11 +1,6 @@
 package org.example.ImageModification;
 
-/**
- *  该类用于实现自动白平衡
- * @author 申雄全 
- * @author 吴鹄远
- * Date 2023/12/9 14:56
- */
+
 import io.vproxy.vfx.ui.button.ImageButton;
 import javafx.application.Application;
 import javafx.embed.swing.SwingFXUtils;
@@ -21,7 +16,12 @@ import org.example.Scene.ImageEditScene;
 
 import java.awt.image.BufferedImage;
 import java.util.concurrent.*;
-
+/**
+ *  该类用于实现自动白平衡
+ * @author 申雄全
+ * @author 吴鹄远
+ * Date 2023/12/9 14:56
+ */
 
 public class AutoWhiteBalance extends ImageAdjustment{
 

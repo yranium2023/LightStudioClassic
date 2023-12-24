@@ -17,6 +17,11 @@ public class ThemeSet extends DarkTheme {
         return new IntroFontProvider();
     }
 
+    /**
+     * 设定黑暗主题
+     * @author 吴鹄远
+     * Date 2023/12/24 11:51
+     */
     public static class IntroFontProvider extends DarkThemeFontProvider {
         @Override
         protected void defaultFont(FontSettings settings) {

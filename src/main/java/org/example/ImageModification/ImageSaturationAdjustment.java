@@ -1,12 +1,5 @@
 package org.example.ImageModification;
 
-/**
- *  该类实现图片饱和度的调整
- * @author 申雄全
- * @author 吴鹄远
- * Date 2023/12/9 15:00
- */
-
 import io.vproxy.vfx.ui.slider.VSlider;
 import javafx.beans.value.ChangeListener;
 import javafx.embed.swing.SwingFXUtils;
@@ -23,6 +16,12 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ *  该类实现图片饱和度的调整
+ * @author 申雄全
+ * @author 吴鹄远
+ * Date 2023/12/9 15:00
+ */
 public class ImageSaturationAdjustment extends ImageAdjustment {
 
     private static double lastValue=1;

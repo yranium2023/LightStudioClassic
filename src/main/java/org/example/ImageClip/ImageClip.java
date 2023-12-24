@@ -23,9 +23,9 @@ import org.example.StaticValues;
 
 
 /**
- * @author 申雄全 
- * @author 吴鹄远
  *  此类实现行图片裁剪
+ * @author 申雄全
+ * @author 吴鹄远
  * Date 2023/12/3 20:22
  */
 

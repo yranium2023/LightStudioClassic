@@ -27,8 +27,8 @@ import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveAction;
 
 /**
+ * 该类实现曲线调整后图像效果的计算
  * @author 申雄全
- *  该类实现曲线调整后图像效果的计算
  * Date 2023/12/22 22:46
  */
 public class SplineBrightnessAdjustment extends ImageAdjustment {

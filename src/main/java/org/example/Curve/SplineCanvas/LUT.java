@@ -18,7 +18,7 @@ public class LUT implements Serializable {
         Arrays.fill(Curve, -1);
     }
     /**
-     *  将 x 映射到 y，并将结果存储在数组中
+     * 将 x 映射到 y，并将结果存储在数组中
      * @param x
      * @param y
      * @author 申雄全
@@ -35,7 +35,7 @@ public class LUT implements Serializable {
         return Curve[x];
     }
     /**
-     *  检查数组中的映射，确保没有未定义的值
+     * 检查数组中的映射，确保没有未定义的值
      * @author 申雄全
      * Date 2023/12/23 23:36
      */
